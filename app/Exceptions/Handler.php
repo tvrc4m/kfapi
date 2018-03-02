@@ -45,6 +45,11 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $e)
     {
-        return parent::render($request, $e);
+        if (env('APP_DEBUG')) {
+            // 框架默认处理方式
+            return parent::render($request, $e);
+        } else {
+            return api_error($e->getMessage());
+        }
     }
 }

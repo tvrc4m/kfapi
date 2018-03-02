@@ -18,7 +18,8 @@
     "autoload": {
         "psr-4": {
             "App\\": "app/"
-        }
+        },
+        "files": ["app/helps.php"]
     },
     "autoload-dev": {
         "classmap": [
