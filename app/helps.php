@@ -9,15 +9,14 @@
 if (! function_exists('api_success')) {
     /**
      * 成功消息
-     * @param string $message
      * @param array $data
      * @param array $header
      * @return \Illuminate\Http\JsonResponse
      */
-    function api_success(string $message = 'success', array $data = [], array $header = []) {
+    function api_success(array $data = [], array $header = []) {
         $resp = [
             'error_no' => 0,
-            'error_message' => $message,
+            'error_message' => 'success',
         ];
         if (!empty($data)) {
             $resp['data'] = $data;

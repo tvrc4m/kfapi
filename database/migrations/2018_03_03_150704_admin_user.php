@@ -15,8 +15,10 @@ class AdminUser extends Migration
     {
         Schema::create('admin_users', function (Blueprint $table) {
             $table->increments('id');
-            $table->string("username");
-            $table->string("password");
+            $table->string('username')->comment('用户名');
+            $table->string('password')->comment('密码');
+            $table->string('email')->comment('邮箱');
+            $table->tinyInteger('stat')->default(1)->comment('状态');
             $table->timestamps();
         });
     }
