@@ -56,7 +56,7 @@ if (! function_exists('print_sql')) {
             // $query->sql
             // $query->bindings
             // $query->time
-            dd($query->sql);
+            var_dump($query->sql);
         });
     }
 }

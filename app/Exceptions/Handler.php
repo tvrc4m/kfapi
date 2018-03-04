@@ -8,6 +8,10 @@ use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Laravel\Lumen\Exceptions\Handler as ExceptionHandler;
 use Symfony\Component\HttpKernel\Exception\HttpException;
+use Illuminate\Http\Exceptions\HttpResponseException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Debug\Exception\FlattenException;
+use Symfony\Component\Debug\ExceptionHandler as SymfonyExceptionHandler;
 
 class Handler extends ExceptionHandler
 {
@@ -45,11 +49,47 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $e)
     {
-        if (env('APP_DEBUG')) {
-            // 框架默认处理方式
-            return parent::render($request, $e);
-        } else {
+        // return parent::render($request, $e);
+        return $this->myRender($request, $e);
+    }
+
+    /**
+     * 自定义错误渲染
+     * @param $request
+     * @param Exception $e
+     * @return Response|\Illuminate\Http\JsonResponse|null|\Symfony\Component\HttpFoundation\Response
+     */
+    private function myRender($request, Exception $e)
+    {
+        // 表单验证异常
+        if ($e instanceof ValidationException && $e->getResponse()) {
+            // 获取第一条错误信息
+            $error_message = current($e->errors())[0];
+            return api_error($error_message);
+        }
+        // 非debug模式 所有异常统一格式
+        if (!env('APP_DEBUG')) {
             return api_error($e->getMessage());
         }
+
+        if ($e instanceof HttpResponseException) {
+            return $e->getResponse();
+        } elseif ($e instanceof ModelNotFoundException) {
+            $e = new NotFoundHttpException($e->getMessage(), $e);
+        } elseif ($e instanceof AuthorizationException) {
+            $e = new HttpException(403, $e->getMessage());
+        }
+
+        $fe = FlattenException::create($e);
+
+        $handler = new SymfonyExceptionHandler();
+
+        $decorated = $this->decorate($handler->getContent($fe), $handler->getStylesheet($fe));
+
+        $response = new Response($decorated, $fe->getStatusCode(), $fe->getHeaders());
+
+        $response->exception = $e;
+
+        return $response;
     }
 }

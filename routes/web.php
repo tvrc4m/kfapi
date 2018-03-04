@@ -35,5 +35,6 @@ $router->group(['prefix' => 'api'], function () use ($router) {
     // 前台接口定义 -------------------------------------------------------------------------
     $router->group(['prefix' => 'v1', 'namespace'=>'v1'], function () use ($router) {
         $router->get('test', 'TestController@index');
+        $router->post('test', 'TestController@post');
     });
 });
