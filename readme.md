@@ -1,21 +1,43 @@
-# Lumen PHP Framework
+# 分手吧项目api程序
 
-[![Build Status](https://travis-ci.org/laravel/lumen-framework.svg)](https://travis-ci.org/laravel/lumen-framework)
-[![Total Downloads](https://poser.pugx.org/laravel/lumen-framework/d/total.svg)](https://packagist.org/packages/laravel/lumen-framework)
-[![Latest Stable Version](https://poser.pugx.org/laravel/lumen-framework/v/stable.svg)](https://packagist.org/packages/laravel/lumen-framework)
-[![Latest Unstable Version](https://poser.pugx.org/laravel/lumen-framework/v/unstable.svg)](https://packagist.org/packages/laravel/lumen-framework)
-[![License](https://poser.pugx.org/laravel/lumen-framework/license.svg)](https://packagist.org/packages/laravel/lumen-framework)
+使用lumen框架开发，提供前端和后台所需的api功能
 
-Laravel Lumen is a stunningly fast PHP micro-framework for building web applications with expressive, elegant syntax. We believe development must be an enjoyable, creative experience to be truly fulfilling. Lumen attempts to take the pain out of development by easing common tasks used in the majority of web projects, such as routing, database abstraction, queueing, and caching.
+## 依赖
 
-## Official Documentation
+- php >= 7.1.3
+- git
+- compoer
+- redis
+- phpredis扩展
+- PDO 扩展
 
-Documentation for the framework can be found on the [Lumen website](http://lumen.laravel.com/docs).
+## 部署
 
-## Security Vulnerabilities
+1. git clone 当前项目
+2. composer install
+3. 编写配置文件，在当前目录复制一份 `.env.example` 重命名为 `.env` , 根据情况修改.env中的数据库配置和其他配置
 
-If you discover a security vulnerability within Lumen, please send an e-mail to Taylor Otwell at taylor@laravel.com. All security vulnerabilities will be promptly addressed.
+## nginx参考配置
 
-## License
+    server {
+        listen 80;
+        server_name breakup.test;
+        root /Users/dawn/Projects/php/breakup/public;
+        index index.html index.php;
+    
+        location / {
+            try_files $uri $uri/ /index.php?$query_string;
+        }
+    
+        location ~ \.php$ {
+            fastcgi_pass 127.0.0.1:9000;
+            fastcgi_index index.php;
+            fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+            include fastcgi_params;
+        }
+    }
 
-The Lumen framework is open-sourced software licensed under the [MIT license](http://opensource.org/licenses/MIT)
+## 框架文档
+
+[Lumen website](http://lumen.laravel.com/docs)
+
