@@ -16,6 +16,7 @@
 1. git clone 当前项目
 2. composer install
 3. 编写配置文件，在当前目录复制一份 `.env.example` 重命名为 `.env` , 根据情况修改.env中的数据库配置和其他配置
+4. 本地开发环境执行 `php artisan ide-helper:generate` 生成ide帮助文件
 
 ## nginx参考配置
 

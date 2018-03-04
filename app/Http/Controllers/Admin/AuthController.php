@@ -27,6 +27,7 @@ class AuthController extends Controller
         $credentials = [
             'username' => $request->input('username'),
             'password' => $request->input('password'),
+            'stat' => 1,
         ];
         if (! $token = Auth::guard("admin")->setTTL(60)->attempt($credentials)) {
             return api_error('用户名或密码错误', 1);
@@ -42,8 +43,7 @@ class AuthController extends Controller
      */
     public function me()
     {
-        $user = Auth::guard("admin")->user();
-        return api_success($user);
+        return api_success(Auth::guard("admin")->user());
     }
 
     /**

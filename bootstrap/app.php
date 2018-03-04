@@ -78,11 +78,16 @@ $app->routeMiddleware([
 |
 */
 
-$app->register(App\Providers\AppServiceProvider::class);
-$app->register(App\Providers\AuthServiceProvider::class);
+// $app->register(App\Providers\AppServiceProvider::class);
+// $app->register(App\Providers\AuthServiceProvider::class);
 // $app->register(App\Providers\EventServiceProvider::class);
+
+// jwt 服务
+$app->register(\Tymon\JWTAuth\Providers\LumenServiceProvider::class);
+// redis 服务
 $app->register(Illuminate\Redis\RedisServiceProvider::class);
 if (env('app_debug')) {
+    // 编辑器提示服务
     $app->register(Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class);
 }
 
