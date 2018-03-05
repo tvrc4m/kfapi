@@ -17,12 +17,12 @@ $router->get('/', function () use ($router) {
 
 $router->group(['prefix' => 'api'], function () use ($router) {
     // 后台接口定义
-    $router->group(['prefix' => 'admin','namespace'=>'admin'], function () use ($router) {
+    $router->group(['prefix' => 'admin','namespace'=>'Admin'], function () use ($router) {
         require __DIR__.'/admin.php';
     });
 
     // 前台接口定义
-    $router->group(['prefix' => 'v1', 'namespace'=>'v1'], function () use ($router) {
+    $router->group(['prefix' => 'v1', 'namespace'=>'V1'], function () use ($router) {
         require __DIR__.'/v1.php';
     });
 });
