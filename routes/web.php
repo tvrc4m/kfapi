@@ -16,25 +16,13 @@ $router->get('/', function () use ($router) {
 });
 
 $router->group(['prefix' => 'api'], function () use ($router) {
-    // 后台接口定义 -------------------------------------------------------------------------
+    // 后台接口定义
     $router->group(['prefix' => 'admin','namespace'=>'admin'], function () use ($router) {
-        // 登录认证接口组
-        $router->group(['prefix' => 'auth'], function () use ($router) {
-            // 登录获取token
-            $router->post('login', 'AuthController@login');
-            // 退出
-            $router->post('logout', 'AuthController@logout');
-            // 刷新token
-            $router->post('refresh', 'AuthController@refresh');
-            // 查看个人信息
-            $router->post('me', 'AuthController@me');
-        });
+        require __DIR__.'/admin.php';
     });
-    // 后台接口定义 end ----------------------------------------------------------------------
 
-    // 前台接口定义 -------------------------------------------------------------------------
+    // 前台接口定义
     $router->group(['prefix' => 'v1', 'namespace'=>'v1'], function () use ($router) {
-        $router->get('test', 'TestController@index');
-        $router->post('test', 'TestController@post');
+        require __DIR__.'/v1.php';
     });
 });
