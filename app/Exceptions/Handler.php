@@ -8,10 +8,6 @@ use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Laravel\Lumen\Exceptions\Handler as ExceptionHandler;
 use Symfony\Component\HttpKernel\Exception\HttpException;
-use Illuminate\Http\Exceptions\HttpResponseException;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\Debug\Exception\FlattenException;
-use Symfony\Component\Debug\ExceptionHandler as SymfonyExceptionHandler;
 
 class Handler extends ExceptionHandler
 {
@@ -49,7 +45,6 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $e)
     {
-        // return parent::render($request, $e);
         return $this->myRender($request, $e);
     }
 
@@ -72,24 +67,6 @@ class Handler extends ExceptionHandler
             return api_error($e->getMessage());
         }
 
-        if ($e instanceof HttpResponseException) {
-            return $e->getResponse();
-        } elseif ($e instanceof ModelNotFoundException) {
-            $e = new NotFoundHttpException($e->getMessage(), $e);
-        } elseif ($e instanceof AuthorizationException) {
-            $e = new HttpException(403, $e->getMessage());
-        }
-
-        $fe = FlattenException::create($e);
-
-        $handler = new SymfonyExceptionHandler();
-
-        $decorated = $this->decorate($handler->getContent($fe), $handler->getStylesheet($fe));
-
-        $response = new Response($decorated, $fe->getStatusCode(), $fe->getHeaders());
-
-        $response->exception = $e;
-
-        return $response;
+        return parent::render($request, $e);
     }
 }
