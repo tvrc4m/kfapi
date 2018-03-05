@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class LowCase extends Migration
+class LawCase extends Migration
 {
     /**
      * Run the migrations.
@@ -13,9 +13,9 @@ class LowCase extends Migration
      */
     public function up()
     {
-        Schema::create('low_cases', function (Blueprint $table) {
+        Schema::create('law_cases', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('low_id')->default(0)->unsigned()->comment('法规id');
+            $table->integer('law_id')->default(0)->unsigned()->comment('法规id');
             $table->integer('case_id')->default(0)->unsigned()->comment('案例id');
             $table->timestamps();
         });
@@ -28,6 +28,6 @@ class LowCase extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('low_cases');
+        Schema::dropIfExists('law_cases');
     }
 }
