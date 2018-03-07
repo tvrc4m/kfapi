@@ -18,6 +18,7 @@ class AdminUser extends Migration
             $table->string('username')->comment('用户名');
             $table->string('password')->comment('密码');
             $table->string('email')->comment('邮箱');
+            $table->integer('create_user_id')->default(0)->comment('创建人');
             $table->tinyInteger('stat')->default(1)->comment('状态');
             $table->timestamps();
         });
