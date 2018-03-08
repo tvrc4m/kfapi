@@ -17,3 +17,8 @@ $router->group(['prefix' => 'auth'], function () use ($router) {
     // 查看个人信息
     $router->post('me', 'AuthController@me');
 });
+
+// 需要登录才能使用的api组 使用了auth验证中间件
+$router->group(['middleware' => 'auth:admin'], function () use ($router) {
+    // 
+});
