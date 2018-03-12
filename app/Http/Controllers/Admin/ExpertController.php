@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\admin;
 use App\Http\Controllers\Controller;
+
+use App\Models\Experts;
 use Illuminate\Http\Request;
 
 class ExpertController extends Controller
@@ -17,9 +19,10 @@ class ExpertController extends Controller
     }
 
     //专家列表
-    public function index()
+    public function getAllExpert()
     {
-        return api_success();
+        $experts = Experts::all()->paginate();
+        return api_success($experts);
     }
 
 }

@@ -26,13 +26,15 @@ $router->group(['middleware' => 'auth:admin'], function () use ($router) {
 // 获取专家接口组
 $router->group(['prefix' => 'expert'], function () use ($router) {
     // 获取专家列表
-    $router->get('index', 'ExpertController@index');
+    $router->get('/', 'ExpertController@getAllExpert');
     // 添加专家
-    $router->post('add', 'ExpertController@add');
+    $router->post('/', 'ExpertController@addExpert');
     // 删除专家
-    $router->delete('delete', 'ExpertController@delete');
-    // 专家编辑页
-    $router->post('edit', 'ExpertController@edit');
+    $router->delete('/{id}', 'ExpertController@deleteExpert');
+    // 查看专家
+    $router->get('/{id}', 'ExpertController@getOneExpert');
+    // 修改专家
+    $router->put('/{id}', 'ExpertController@editExpert');
 });
 // 案例库
 $router->group(['prefix' => 'case'], function () use ($router) {
