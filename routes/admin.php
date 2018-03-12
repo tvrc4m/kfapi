@@ -22,16 +22,30 @@ $router->group(['prefix' => 'auth'], function () use ($router) {
 $router->group([], function () use ($router) {
     //法规接口组
     $router->group(['prefix' => 'law'], function () use ($router) {
-        // 获取法规条目列表
-        $router->get('/rule/', 'LawController@getLawRule');
         // 添加法规
         $router->post('/', 'LawController@addLaw');
+        // 获取法规列表
+        $router->get('/', 'LawController@getLaw');
+        // 删除法规
+        $router->delete('/{id}', 'LawController@delete');
+        // 修改法规条目
+        $router->put('/{id}', 'LawController@edit');
+
+        // 获取法规条目列表
+        $router->get('/rule/', 'LawController@getLawRule');
         // 添加法规条目
         $router->post('/rule/', 'LawController@addLawRule');
         // 删除法规条目
-        $router->delete('/rule/{id}', 'LawController@deleteRule');
+        $router->delete('/rule/{id}', 'LawController@deleteLawRule');
         // 修改法规条目
-        $router->put('/rule/{id}', 'LawController@editRule');
+        $router->put('/rule/{id}', 'LawController@editLawRule');
+    });
+    //关键词
+    $router->group(['prefix' => 'keyword'], function () use ($router) {
+        // 要素列表
+        $router->post('/getFactorList', 'KeywordController@getFactorList');
+        // 某个要素下的关键词列表
+        $router->get('/getKeywordList', 'KeywordController@getKeywordList');
     });
     // 获取专家接口组
     $router->group(['prefix' => 'expert'], function () use ($router) {
