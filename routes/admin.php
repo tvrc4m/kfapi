@@ -34,6 +34,8 @@ $router->group([], function () use ($router) {
     });
     // 案例库
     $router->group(['prefix' => 'case'], function () use ($router) {
+        // 搜索关键词
+        $router->post('searchKeyword', 'CaseController@searchKeyword');
         // 新增关键词
         $router->post('keyword', 'CaseController@createKeyword');
         // 保存案例的关键词

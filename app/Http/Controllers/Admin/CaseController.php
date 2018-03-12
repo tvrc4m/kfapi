@@ -164,6 +164,34 @@ class CaseController extends Controller
     }
 
     /**
+     * 搜索关键词
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function searchKeyword(Request $request)
+    {
+        $this->validate($request, [
+            'case_factor_id' => 'required|numeric',
+            'name' => 'required|max:255',
+        ],[
+            'name.required' => '名称不能为空',
+            'name.max' => '名称不能超过255个字符',
+            'case_factor_id.required' => '要素id不能为空',
+            'case_factor_id.numeric' => '要素id不合法',
+        ]);
+
+        $case_factor_id = $request->input('case_factor_id');
+        $name = $request->input('name');
+
+        $data = Keyword::where('name', 'like', "%{$name}%")
+            ->where('case_factor_id', $case_factor_id)
+            ->limit(20)
+            ->get();
+        
+        return api_success($data);
+    }
+
+    /**
      * 新增关键词
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
@@ -239,14 +267,18 @@ class CaseController extends Controller
 
         $res = [];
         foreach ($caseKeyword as $v) {
-            $res[$v->case_factor_id][] = [
+            if (!isset($res[$v->case_factor_id])) {
+                $res[$v->case_factor_id]['case_factor_name'] = $v->factor->name;
+                $res[$v->case_factor_id]['case_factor_id'] = $v->case_factor_id;
+                $res[$v->case_factor_id]['keywords'] = [];
+            }
+            $res[$v->case_factor_id]['keywords'][] = [
                 'case_factor_id' => $v->case_factor_id,
-                'case_factor_name' => $v->factor->name,
                 'keyword_id' => $v->keyword_id,
                 'keyword_name' => $v->keyword->name,
             ];
         }
-        return api_success($res);
+        return api_success(array_values($res));
     }
 
     /**
