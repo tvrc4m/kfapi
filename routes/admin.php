@@ -20,6 +20,19 @@ $router->group(['prefix' => 'auth'], function () use ($router) {
 
 // 需要登录才能使用的api组 使用了auth验证中间件
 $router->group(['middleware' => 'auth:admin'], function () use ($router) {
+    //法规接口组
+    $router->group(['prefix' => 'law'], function () use ($router) {
+        // 获取法规条目列表
+        $router->get('/rule/', 'LawController@getLawRule');
+        // 添加法规
+        $router->post('/', 'LawController@addLaw');
+        // 添加法规条目
+        $router->post('/rule/', 'LawController@addLawRule');
+        // 删除法规条目
+        $router->delete('/rule/{id}', 'LawController@deleteRule');
+        // 修改法规条目
+        $router->put('/rule/{id}', 'LawController@editRule');
+    });
     // 获取专家接口组
     $router->group(['prefix' => 'expert'], function () use ($router) {
         // 获取专家列表
