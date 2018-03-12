@@ -59,7 +59,7 @@ class LawController extends Controller
         if (!empty($name)) {
             $where[] = ['name','like', '%'.$name.'%'];
         }
-        $list = Law::where($where)->select(['id','fullname', 'name', 'pingyin'])->paginate();
+        $list = Law::where($where)->select(['id','fullname', 'name', 'pingyin'])->paginate;
 
         return api_success($list);
     }
@@ -139,7 +139,7 @@ class LawController extends Controller
      * 法规条目列表
      * @return \Illuminate\Http\JsonResponse
      */
-    public function getLawRule($law_id, Request $request)
+    public function getLawRule(Request $request)
     {
         $this->validate($request, [
             'law_id' => 'required|numeric',
@@ -148,11 +148,13 @@ class LawController extends Controller
             'law_id.numeric' => '法规不合法',
         ]);
 
+        $law_id = $request->input('law_id');
+
         $where = [];
         if (!empty($law_id)) {
             $where['law_id'] = $law_id;
         }
-        $list = Law::where($where)->select(['id','law_id', 'title', 'content'])->paginate();
+        $list = LawRule::where($where)->select(['id','law_id', 'title', 'content'])->paginate();
 
         return api_success($list);
     }

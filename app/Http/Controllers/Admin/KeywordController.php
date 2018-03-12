@@ -29,7 +29,7 @@ class KeywordController extends Controller
      */
     public function getFactorList()
     {
-        $list = CaseFactor::select(['id', 'name'])->paginate();
+        $list = CaseFactor::select(['id', 'name'])->get();
 
         return api_success($list);
     }
@@ -42,7 +42,7 @@ class KeywordController extends Controller
     {
         $where = [];
         $where['case_factor_id'] = intval($id);
-        $list = Keyword::where($where)->select(['id', 'name'])->paginate();
+        $list = Keyword::where($where)->select(['id', 'name'])->get();
 
         return api_success($list);
     }

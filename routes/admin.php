@@ -32,9 +32,9 @@ $router->group([], function () use ($router) {
         $router->put('/{id}', 'LawController@edit');
 
         // 获取法规条目列表
-        $router->get('/rule/', 'LawController@getLawRule');
+        $router->get('/rule', 'LawController@getLawRule');
         // 添加法规条目
-        $router->post('/rule/', 'LawController@addLawRule');
+        $router->post('/rule', 'LawController@addLawRule');
         // 删除法规条目
         $router->delete('/rule/{id}', 'LawController@deleteLawRule');
         // 修改法规条目
@@ -43,9 +43,9 @@ $router->group([], function () use ($router) {
     //关键词
     $router->group(['prefix' => 'keyword'], function () use ($router) {
         // 要素列表
-        $router->post('/getFactorList', 'KeywordController@getFactorList');
+        $router->get('/getFactorList', 'KeywordController@getFactorList');
         // 某个要素下的关键词列表
-        $router->get('/getKeywordList', 'KeywordController@getKeywordList');
+        $router->get('/getKeywordList/{id}', 'KeywordController@getKeywordList');
     });
     // 获取专家接口组
     $router->group(['prefix' => 'expert'], function () use ($router) {
