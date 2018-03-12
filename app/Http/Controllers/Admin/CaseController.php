@@ -3,8 +3,12 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\CaseFactor;
+use App\Models\CaseKeyword;
 use App\Models\Cases;
+use App\Models\Keyword;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 /**
  * 案例控制器
@@ -144,7 +148,152 @@ class CaseController extends Controller
      */
     public function getOneCase($id)
     {
-        $data = Cases::where('id', $id)->first();
+        $data = Cases::where('id', $id)->firstOrFail();
+        return api_success($data);
+    }
+
+    /**
+     * 新增关键词
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function createKeyword(Request $request)
+    {
+        $this->validate($request, [
+            'case_factor_id' => 'required|numeric',
+            'name' => 'required|max:255',
+        ],[
+            'name.required' => '名称不能为空',
+            'name.max' => '名称不能超过255个字符',
+            'case_factor_id.required' => '要素id不能为空',
+            'case_factor_id.numeric' => '要素id不合法',
+        ]);
+
+        $keyword = Keyword::firstOrCreate($request->all());
+        if ($keyword->id) {
+            return api_success(['keyword_id' => $keyword->id]);
+        }
+        return api_error();
+    }
+
+    /**
+     * 保存案例关键词
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     * @throws \Exception
+     */
+    public function editKeyword(Request $request)
+    {
+        $this->validate($request, [
+            'case_id' => 'required|numeric',
+            'data' => 'array',
+        ],[
+            'case_id.required' => '案例id不能为空',
+            'case_id.numeric' => '案例id不合法',
+            'data.array' => '数据格式不对',
+        ]);
+
+        $case_id = $request->input('case_id');
+        $saveArray = $request->input('data');
+        // 开启事务
+        DB::beginTransaction();
+        // 删除原有关键词
+        CaseKeyword::where('case_id', $case_id)->delete();
+        // 保存新的关键词
+        foreach ($saveArray as $v) {
+            $v['case_id'] = $case_id;
+            $res = CaseKeyword::create($v);
+            if (!$res) {
+                DB::rollBack();
+            }
+        }
+        DB::commit();
+
+        return api_success();
+    }
+
+    /**
+     * 查看案例关键词
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getAllKeyword(Request $request)
+    {
+        $case_id = $request->input('case_id');
+        $case = Cases::with(['factor','keyword'])->where('case_id', $case_id)->firstOrFail();
+        $caseKeyword = $case->caseKeyword();
+        $res = [];
+        foreach ($caseKeyword as $v) {
+            $res[$v->case_factor_id][] = [
+                'case_factor_id' => $v->case_factor_id,
+                'case_factor_name' => $v->factor()->name,
+                'keyword_id' => $v->keyword_id,
+                'keyword_name' => $v->keyword()->name,
+            ];
+        }
+        return api_success($res);
+    }
+
+    /**
+     * 新增案例要素
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function createFactor(Request $request)
+    {
+        $this->validate($request, [
+            'name' => 'required|max:255',
+            'count' => 'required|numeric',
+            'weight' => 'numeric',
+        ],[
+            'name.required' => '名称不能为空',
+            'name.max' => '名称不能超过255个字符',
+            'count.required' => '数量不能为空',
+            'count.numeric' => '数量必须是数字',
+            'weight.numeric' => '权重必须是数字',
+        ]);
+
+        $factor = CaseFactor::create($request->all());
+        if ($factor) {
+            return api_success();
+        }
+        return api_error();
+    }
+
+    /**
+     * 更新案例要素
+     * @param $id
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function editFactor($id, Request $request)
+    {
+        $this->validate($request, [
+            'name' => 'required|max:255',
+            'count' => 'required|numeric',
+            'weight' => 'numeric',
+        ],[
+            'name.required' => '名称不能为空',
+            'name.max' => '名称不能超过255个字符',
+            'count.required' => '数量不能为空',
+            'count.numeric' => '数量必须是数字',
+            'weight.numeric' => '权重必须是数字',
+        ]);
+
+        $factor = CaseFactor::where('id', $id)->firstOrFail();
+        if ($factor->update($request->all())) {
+            return api_success();
+        }
+        return api_error();
+    }
+
+    /**
+     * 查看案例要素
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getAllFactor()
+    {
+        $data = CaseFactor::all();
         return api_success($data);
     }
 }
