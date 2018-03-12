@@ -20,7 +20,7 @@ $router->group(['prefix' => 'auth'], function () use ($router) {
 
 // 需要登录才能使用的api组 使用了auth验证中间件
 $router->group(['middleware' => 'auth:admin'], function () use ($router) {
-    // 
+
 });
 
 // 获取专家接口组
@@ -33,4 +33,31 @@ $router->group(['prefix' => 'expert'], function () use ($router) {
     $router->delete('delete', 'ExpertController@delete');
     // 专家编辑页
     $router->post('edit', 'ExpertController@edit');
+});
+// 案例库
+$router->group(['prefix' => 'case'], function () use ($router) {
+    // 新增关键词
+    $router->post('keyword', 'CaseController@createKeyword');
+    // 保存案例的关键词
+    $router->put('keyword', 'CaseController@editKeyword');
+    // 查看案例关键词
+    $router->get('keyword', 'CaseController@getAllKeyword');
+
+    // 查看案例要素
+    $router->get('factor', 'CaseController@getAllFactor');
+    // 新增案例要素
+    $router->post('factor', 'CaseController@createFactor');
+    // 查看案例要素
+    $router->put('factor/{id}', 'CaseController@editFactor');
+
+    // 创建案例
+    $router->post('/', 'CaseController@createCase');
+    // 删除案例
+    $router->delete('/{id}', 'CaseController@deleteCase');
+    // 修改案例
+    $router->put('/{id}', 'CaseController@editCase');
+    // 案例列表
+    $router->get('/', 'CaseController@getAllCase');
+    // 查看案例
+    $router->get('/{id}', 'CaseController@getOneCase');
 });
