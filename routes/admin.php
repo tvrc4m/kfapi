@@ -22,3 +22,15 @@ $router->group(['prefix' => 'auth'], function () use ($router) {
 $router->group(['middleware' => 'auth:admin'], function () use ($router) {
     // 
 });
+
+// 获取专家接口组
+$router->group(['prefix' => 'expert'], function () use ($router) {
+    // 获取专家列表
+    $router->get('index', 'ExpertController@index');
+    // 添加专家
+    $router->post('add', 'ExpertController@add');
+    // 删除专家
+    $router->delete('delete', 'ExpertController@delete');
+    // 专家编辑页
+    $router->post('edit', 'ExpertController@edit');
+});
