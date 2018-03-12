@@ -19,7 +19,8 @@ $router->group(['prefix' => 'auth'], function () use ($router) {
 });
 
 // 需要登录才能使用的api组 使用了auth验证中间件
-$router->group(['middleware' => 'auth:admin'], function () use ($router) {
+// $router->group(['middleware' => 'auth:admin'], function () use ($router) {
+$router->group([], function () use ($router) {
     // 获取专家接口组
     $router->group(['prefix' => 'expert'], function () use ($router) {
         // 获取专家列表
@@ -44,9 +45,11 @@ $router->group(['middleware' => 'auth:admin'], function () use ($router) {
         $router->get('factor', 'CaseController@getAllFactor');
         // 新增案例要素
         $router->post('factor', 'CaseController@createFactor');
-        // 查看案例要素
+        // 修改案例要素
         $router->put('factor/{id}', 'CaseController@editFactor');
 
+        // 获得案例分类
+        $router->get('/cate', 'CaseController@getAllCate');
         // 创建案例
         $router->post('/', 'CaseController@createCase');
         // 删除案例
