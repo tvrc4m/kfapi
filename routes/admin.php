@@ -20,7 +20,23 @@ $router->group(['prefix' => 'auth'], function () use ($router) {
 
 // 需要登录才能使用的api组 使用了auth验证中间件
 //$router->group(['middleware' => 'auth:admin'], function () use ($router) {
-    $router->group([], function () use ($router) {
+$router->group([], function () use ($router) {
+    // 问题
+    $router->group(['prefix' => 'question'], function () use ($router) {
+        // 问题集相关
+
+
+        // 新增问题
+        $router->post('/', 'QuestionController@createQuestion');
+        // 修改问题
+        $router->put('/{id}', 'QuestionController@editQuestion');
+        // 删除问题
+        $router->delete('/', 'QuestionController@deleteQuestion');
+        // 问题列表
+        $router->get('/', 'QuestionController@getAllQuestion');
+        // 问题详情
+        $router->get('/{id}', 'QuestionController@getOneQuestion');
+    });
 
     //法规接口组
     $router->group(['prefix' => 'law'], function () use ($router) {
