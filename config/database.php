@@ -120,7 +120,7 @@ return [
     */
 
     'redis' => [
-        'client' => 'phpredis',
+        'client' => 'predis',
 
         'cluster' => env('REDIS_CLUSTER', false),
 

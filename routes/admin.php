@@ -23,8 +23,16 @@ $router->group(['prefix' => 'auth'], function () use ($router) {
 $router->group([], function () use ($router) {
     // 问题
     $router->group(['prefix' => 'question'], function () use ($router) {
-        // 问题集相关
-
+        // 新增问题集
+        $router->post('/collection', 'QuestionCollectionController@create');
+        // 修改问题集
+        $router->put('/collection/{id}', 'QuestionCollectionController@edit');
+        // 删除问题集
+        $router->delete('/collection', 'QuestionCollectionController@delete');
+        // 问题列表集
+        $router->get('/collection', 'QuestionCollectionController@getList');
+        // 问题集详情
+        $router->get('/collection/{id}', 'QuestionCollectionController@getDetail');
 
         // 新增问题
         $router->post('/', 'QuestionController@createQuestion');
