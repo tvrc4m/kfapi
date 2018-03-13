@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\CaseCate;
 use App\Models\CaseFactor;
 use App\Models\CaseKeyword;
 use App\Models\Cases;
@@ -24,6 +25,16 @@ class CaseController extends Controller
     public function __construct()
     {
         //
+    }
+
+    /**
+     * 获得所有分类
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getAllCate()
+    {
+        $data = CaseCate::all();
+        return api_success($data);
     }
 
     /**
@@ -109,7 +120,7 @@ class CaseController extends Controller
             'suggest.required' => '建议不能为空',
         ]);
 
-        $case = Cases::first($id);
+        $case = Cases::where('id', $id)->firstOrFail();
         if ($case->update($request->all())) {
             return api_success();
         }
@@ -137,7 +148,7 @@ class CaseController extends Controller
             $where['case_date'] = $case_date;
         }
 
-        $list = Cases::where($where)->paginate();
+        $list = Cases::where($where)->select(['name','is_breakup', 'created_at', 'updated_at','case_date'])->paginate();
         return api_success($list);
     }
 
@@ -149,6 +160,34 @@ class CaseController extends Controller
     public function getOneCase($id)
     {
         $data = Cases::where('id', $id)->firstOrFail();
+        return api_success($data);
+    }
+
+    /**
+     * 搜索关键词
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function searchKeyword(Request $request)
+    {
+        $this->validate($request, [
+            'case_factor_id' => 'required|numeric',
+            'name' => 'required|max:255',
+        ],[
+            'name.required' => '名称不能为空',
+            'name.max' => '名称不能超过255个字符',
+            'case_factor_id.required' => '要素id不能为空',
+            'case_factor_id.numeric' => '要素id不合法',
+        ]);
+
+        $case_factor_id = $request->input('case_factor_id');
+        $name = $request->input('name');
+
+        $data = Keyword::where('name', 'like', "%{$name}%")
+            ->where('case_factor_id', $case_factor_id)
+            ->limit(20)
+            ->get();
+        
         return api_success($data);
     }
 
@@ -187,6 +226,8 @@ class CaseController extends Controller
         $this->validate($request, [
             'case_id' => 'required|numeric',
             'data' => 'array',
+            'data.*.case_factor_id' => 'required|numeric',
+            'data.*.keyword_id' => 'required|numeric',
         ],[
             'case_id.required' => '案例id不能为空',
             'case_id.numeric' => '案例id不合法',
@@ -220,18 +261,24 @@ class CaseController extends Controller
     public function getAllKeyword(Request $request)
     {
         $case_id = $request->input('case_id');
-        $case = Cases::with(['factor','keyword'])->where('case_id', $case_id)->firstOrFail();
-        $caseKeyword = $case->caseKeyword();
+        $case = Cases::with(['caseKeyword'])->where('id', $case_id)->firstOrFail();
+
+        $caseKeyword = $case->caseKeyword()->with(['factor', 'keyword'])->get();
+
         $res = [];
         foreach ($caseKeyword as $v) {
-            $res[$v->case_factor_id][] = [
+            if (!isset($res[$v->case_factor_id])) {
+                $res[$v->case_factor_id]['case_factor_name'] = $v->factor->name;
+                $res[$v->case_factor_id]['case_factor_id'] = $v->case_factor_id;
+                $res[$v->case_factor_id]['keywords'] = [];
+            }
+            $res[$v->case_factor_id]['keywords'][] = [
                 'case_factor_id' => $v->case_factor_id,
-                'case_factor_name' => $v->factor()->name,
                 'keyword_id' => $v->keyword_id,
-                'keyword_name' => $v->keyword()->name,
+                'keyword_name' => $v->keyword->name,
             ];
         }
-        return api_success($res);
+        return api_success(array_values($res));
     }
 
     /**
@@ -242,12 +289,13 @@ class CaseController extends Controller
     public function createFactor(Request $request)
     {
         $this->validate($request, [
-            'name' => 'required|max:255',
+            'name' => 'required|max:255|unique:case_factors',
             'count' => 'required|numeric',
             'weight' => 'numeric',
         ],[
             'name.required' => '名称不能为空',
             'name.max' => '名称不能超过255个字符',
+            'name.unique' => '名称已存在',
             'count.required' => '数量不能为空',
             'count.numeric' => '数量必须是数字',
             'weight.numeric' => '权重必须是数字',

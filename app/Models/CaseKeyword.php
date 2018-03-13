@@ -22,7 +22,7 @@ class CaseKeyword extends Model
      */
     public function keyword()
     {
-        return $this->hasOne(\App\Models\Keyword::class, 'keyword_id', 'id');
+        return $this->hasOne(\App\Models\Keyword::class, 'id', 'keyword_id');
     }
 
     /**
@@ -32,6 +32,6 @@ class CaseKeyword extends Model
      */
     public function factor()
     {
-        return $this->hasOne(\App\Models\CaseFactor::class, 'case_factor_id', 'id');
+        return $this->hasOne(\App\Models\CaseFactor::class, 'id', 'case_factor_id');
     }
 }

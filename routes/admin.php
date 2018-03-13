@@ -22,7 +22,40 @@ $router->group(['prefix' => 'auth'], function () use ($router) {
 //$router->group(['middleware' => 'auth:admin'], function () use ($router) {
     $router->group([], function () use ($router) {
 
-    // 专家接口组
+    //法规接口组
+    $router->group(['prefix' => 'law'], function () use ($router) {
+        // 添加法规
+        $router->post('/', 'LawController@addLaw');
+        // 获取法规列表
+        $router->get('/', 'LawController@getLaw');
+        // 删除法规
+        $router->delete('/{id}', 'LawController@delete');
+        // 获取法规详情
+        $router->get('/detail/{id}', 'LawController@getLawDetail');
+        // 修改法规条目
+        $router->put('/{id}', 'LawController@edit');
+
+        // 获取法规条目列表
+        $router->get('/rule', 'LawController@getLawRule');
+        // 添加法规条目
+        $router->post('/rule', 'LawController@addLawRule');
+        // 删除法规条目
+        $router->delete('/rule/{id}', 'LawController@deleteLawRule');
+        // 获取法规条目详情
+        $router->get('/rule/detail/{id}', 'LawController@getLawRuleDetail');
+        // 修改法规条目
+        $router->put('/rule/{id}', 'LawController@editLawRule');
+    });
+    
+    //关键词
+    $router->group(['prefix' => 'keyword'], function () use ($router) {
+        // 要素列表
+        $router->get('/getFactorList', 'KeywordController@getFactorList');
+        // 某个要素下的关键词列表
+        $router->get('/getKeywordList', 'KeywordController@getKeywordList');
+    });
+
+    // 获取专家接口组
     $router->group(['prefix' => 'expert'], function () use ($router) {
         // 获取专家列表
         $router->get('/', 'ExpertController@getAllExpert');
@@ -52,6 +85,8 @@ $router->group(['prefix' => 'auth'], function () use ($router) {
 
     // 案例库
     $router->group(['prefix' => 'case'], function () use ($router) {
+        // 搜索关键词
+        $router->post('searchKeyword', 'CaseController@searchKeyword');
         // 新增关键词
         $router->post('keyword', 'CaseController@createKeyword');
         // 保存案例的关键词
@@ -63,9 +98,11 @@ $router->group(['prefix' => 'auth'], function () use ($router) {
         $router->get('factor', 'CaseController@getAllFactor');
         // 新增案例要素
         $router->post('factor', 'CaseController@createFactor');
-        // 查看案例要素
+        // 修改案例要素
         $router->put('factor/{id}', 'CaseController@editFactor');
 
+        // 获得案例分类
+        $router->get('/cate', 'CaseController@getAllCate');
         // 创建案例
         $router->post('/', 'CaseController@createCase');
         // 删除案例
