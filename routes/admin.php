@@ -28,12 +28,12 @@ $router->group([], function () use ($router) {
 
         // 新增问题
         $router->post('/', 'QuestionController@createQuestion');
+        // 问题列表
+        $router->get('/', 'QuestionController@getAllQuestion');
         // 修改问题
         $router->put('/{id}', 'QuestionController@editQuestion');
         // 删除问题
-        $router->delete('/', 'QuestionController@deleteQuestion');
-        // 问题列表
-        $router->get('/', 'QuestionController@getAllQuestion');
+        $router->delete('/{id}', 'QuestionController@deleteQuestion');
         // 问题详情
         $router->get('/{id}', 'QuestionController@getOneQuestion');
     });
