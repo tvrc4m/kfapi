@@ -37,10 +37,10 @@ class QuestionCollection extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function questionCollectionQuestionOption()
+    public function questionOption()
     {
-        return $this->hasMany(\App\Models\QuesOpQuesCollect::class, 'question_collection_id', 'id');
-        return $this->belongsToMany(Qu, 'role_user', 'user_id', 'role_id');
+        return $this->belongsToMany(\App\Models\QuestionOption::class, 'question_option_question_collections', 'question_collection_id',
+            'question_option_id');
 
     }
 }

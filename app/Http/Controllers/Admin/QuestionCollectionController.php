@@ -111,8 +111,25 @@ class QuestionCollectionController extends Controller
      */
     public function getDetail($id)
     {
-        $data = QuestionCollection::with(['questionCollectionQuestionOption'])->where('id', $id)->firstOrFail();
-        return api_success($data);
+        $collect = QuestionCollection::where('id', $id)->firstOrFail();
+        $options = $collect->questionOption()->with('question')->get()->toArray();
+        $relate_question = [];
+        if ($options){
+            foreach ($options as $key=>$val){
+                $result2 = QuestionCollection::where('id', $val['question']['question_collection_id'])->firstOrFail()->toArray();
+                if ($result2){
+                    $relate_question[$key]['question_collection_id'] = $result2['id'];
+                    $relate_question[$key]['question_collection_name'] = $result2['title'];
+                    $relate_question[$key]['question_id'] = $val['question']['id'];
+                    $relate_question[$key]['question_name'] = $val['question']['title'];
+                    $relate_question[$key]['option_id'] = $val['id'];
+                    $relate_question[$key]['options'] = $val['options'];
+                }
+            }
+        }
+        $backdata = $collect->toArray();
+        $backdata['relate_question'] = $relate_question;
+        return api_success($backdata);
     }
 
     /**

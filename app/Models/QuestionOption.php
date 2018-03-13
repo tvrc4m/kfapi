@@ -37,4 +37,9 @@ class QuestionOption extends Model
             'question_option_id',
             'keyword_id');
     }
+
+    public function question()
+    {
+        return $this->belongsTo(\App\Models\Question::class, 'question_id', 'id');
+    }
 }
