@@ -145,6 +145,14 @@ class QuestionController extends Controller
             return api_error();
         }
         // 删除原来的选项信息
+        $ops = QuestionOption::where('question_id', $question->id)->with('keyword')->get();
+        foreach ($ops as $op) {
+            $del = $op->keyword()->detach();
+            if (!$del) {
+                DB::rollBack();
+                return api_error();
+            }
+        }
         $del = QuestionOption::where('question_id', $question->id)->delete();
         if (!$del) {
             DB::rollBack();
@@ -183,14 +191,31 @@ class QuestionController extends Controller
      * 删除问题
      * @param $id
      * @return \Illuminate\Http\JsonResponse
+     * @throws \Exception
      */
     public function deleteQuestion($id)
     {
+        DB::beginTransaction();
         $del = Question::destroy($id);
-        if ($del) {
-            return api_success();
+        if (!$del) {
+            DB::rollBack();
+            return api_error();
         }
-        return api_error();
+        $ops = QuestionOption::where('question_id', $id)->with('keyword')->get();
+        foreach ($ops as $op) {
+            $del = $op->keyword()->detach();
+            if (!$del) {
+                DB::rollBack();
+                return api_error();
+            }
+        }
+        $del = QuestionOption::where('question_id', $id)->delete();
+        if (!$del) {
+            DB::rollBack();
+            return api_error();
+        }
+        DB::commit();
+        return api_success();
     }
 
     /**
