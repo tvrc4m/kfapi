@@ -246,6 +246,7 @@ class CaseController extends Controller
             $res = CaseKeyword::create($v);
             if (!$res) {
                 DB::rollBack();
+                return api_error();
             }
         }
         DB::commit();

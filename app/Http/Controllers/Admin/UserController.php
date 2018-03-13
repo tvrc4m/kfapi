@@ -5,9 +5,10 @@ use App\Http\Controllers\Controller;
 
 use App\Models\AdminUser;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
-class ExpertController extends Controller
+class UserController extends Controller
 {
     /**
      * Create a new controller instance.
@@ -19,181 +20,102 @@ class ExpertController extends Controller
         //
     }
 
-    //专家列表
-    public function getAllExpert()
+    //用户列表
+    public function getAllUser()
     {
-        $experts = Experts::paginate(20);
-        return api_success($experts);
+        $user = AdminUser::paginate(20);
+        return api_success($user);
     }
 
     /**
-     * 查看专家
+     * 查看用户
      * @param $id
      */
-    public function getOneExpert($id)
+    public function getOneUser($id)
     {
-        $data = Experts::where('id', $id)->firstOrFail();
+        $data = AdminUser::where('id', $id)->firstOrFail();
         return api_success($data);
     }
 
     /**
-     * 新增专家
+     * 新增用户
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function addExpert(Request $request)
+    public function addUser(Request $request)
     {
         $this->validate($request, [
-            'name' => 'required|max:255',
-            'nickname' => 'required|max:255',
-            'job_id' => 'required|numeric',
-            'icon' => 'required',
-            'certification' => 'required',
-            'province_id' => 'required|numeric',
-            'city_id' => 'required|numeric',
-            'good_at' => 'required',
-            'intro' => 'required|max:255',
-            'service.*.service_id' => 'required|numeric',
-            'service.*.description' => 'required|max:255',
-            'service.*.price' => 'required',
-            'service.*.limit_free' => 'required|numeric',
-            'account' => 'required|max:255',
+            'username' => 'required|max:255',
             'password' => 'required|max:255',
+            'email' => 'required|email'
         ],[
-            'name.required' => '专家名不能为空',
-            'name.max' => '专家名不能超过255个字符',
-            'nickname.required' => '昵称不能为空',
-            'nickname.max' => '昵称不能超过255个字符',
-            'job_id.required' => '职业不能为空',
-            'job_id.numeric' => '职业不合法',
-            'province_id.required' => '省份不能为空',
-            'province_id.numeric' => '省份不合法',
-            'city_id.required' => '城市不能为空',
-            'city_id.numeric' => '城市不合法',
-            'icon.required' => '头像不能为空',
-            'certification.required' => '认证不能为空',
-            'good_at.required' => '擅长不能为空',
-            'intro.required' => '介绍不能为空',
-            'intro.max' => '介绍不能超过255个字符',
-            'account.required' => '账号不能为空',
-            'account.max' => '账号不超过255个字符',
+            'username.required' => '用户名不能为空',
+            'username.max' => '用户名不能超过255个字符',
             'password.required' => '密码不能为空',
-            'password.max' => '密码不超过255个字符',
-            'service.*.service_id.required' => '服务id不能为空',
-            'service.*.service_id.numeric' => '服务id不合法',
-            'service.*.description.required' => '服务描述不能为空',
-            'service.*.description.max' => '服务描述不能超过255个字符',
-            'service.*.price.required' => '服务价格不能为空',
-            'service.*.limit_free.required' => '限时免费不能为空',
+            'password.max' => '密码不能超过255个字符',
+            'email.required' => '邮箱不能为空',
+            'email.email' => '邮箱格式不正确',
         ]);
-        //dd($request->only('service'));
-        $data=$request->except('service');
-        $data['certification'] = implode(',',$request->input('certification'));
-        $data['good_at'] = implode(',',$request->input('good_at'));
 
-        // 开启事务
-        DB::beginTransaction();
+        $data = $request->all();
+        $userinfo = Auth::guard("admin")->user()->toArray();
+        //dd($userinfo);
+        $data['create_user_id'] = $userinfo['id'];
+        $data['password'] = Hash::make($request->input('password'));
+        //dd($data);
+        $createUser = AdminUser::create($data);
 
-        $expert = Experts::create($data);
-        //dd($expert->id);
-        $service = $request->only('service')['service'];
-        foreach($service as $v){
-            $v['expert_id'] = $expert->id;
-            $expert_service = ExpertsServices::create($v);
-            if(!$expert_service){
-                DB::rollBack();
-            }
+        if(!$createUser){
+            return api_error();
         }
-        DB::commit();
         return api_success();
     }
 
     /**
-     * 删除专家
+     * 删除用户
      * @param $id
      * @return \Illuminate\Http\JsonResponse
      */
-    public function deleteExpert($id)
+    public function deleteUser($id)
     {
-        if (Experts::destroy(intval($id))) {
+        if (AdminUser::destroy(intval($id))) {
             return api_success();
         }
         return api_error();
     }
 
     /**
-     * 修改专家
+     * 修改用户
      * @param $id
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function editExpert($id, Request $request)
+    public function editUser($id, Request $request)
     {
         $this->validate($request, [
-            'name' => 'required|max:255',
-            'nickname' => 'required|max:255',
-            'job_id' => 'required|numeric',
-            'icon' => 'required',
-            'certification' => 'required',
-            'province_id' => 'required|numeric',
-            'city_id' => 'required|numeric',
-            'good_at' => 'required',
-            'intro' => 'required|max:255',
-            'service.*.service_id' => 'required|numeric',
-            'service.*.description' => 'required|max:255',
-            'service.*.price' => 'required',
-            'service.*.limit_free' => 'required|numeric',
-            'account' => 'required|max:255',
+            'username' => 'required|max:255',
             'password' => 'required|max:255',
+            'email' => 'required|email'
         ],[
-            'name.required' => '专家名不能为空',
-            'name.max' => '专家名不能超过255个字符',
-            'nickname.required' => '昵称不能为空',
-            'nickname.max' => '昵称不能超过255个字符',
-            'job_id.required' => '职业不能为空',
-            'job_id.numeric' => '职业不合法',
-            'province_id.required' => '省份不能为空',
-            'province_id.numeric' => '省份不合法',
-            'city_id.required' => '城市不能为空',
-            'city_id.numeric' => '城市不合法',
-            'icon.required' => '头像不能为空',
-            'certification.required' => '认证不能为空',
-            'good_at.required' => '擅长不能为空',
-            'intro.required' => '介绍不能为空',
-            'intro.max' => '介绍不能超过255个字符',
-            'account.required' => '账号不能为空',
-            'account.max' => '账号不超过255个字符',
+            'username.required' => '用户名不能为空',
+            'username.max' => '用户名不能超过255个字符',
             'password.required' => '密码不能为空',
-            'password.max' => '密码不超过255个字符',
-            'service.*.service_id.required' => '服务id不能为空',
-            'service.*.service_id.numeric' => '服务id不合法',
-            'service.*.description.required' => '服务描述不能为空',
-            'service.*.description.max' => '服务描述不能超过255个字符',
-            'service.*.price.required' => '服务价格不能为空',
-            'service.*.limit_free.required' => '限时免费不能为空',
+            'password.max' => '密码不能超过255个字符',
+            'email.required' => '邮箱不能为空',
+            'email.email' => '邮箱格式不正确',
         ]);
 
-        $expert = Experts::where('id',$id)->first();
-        $service = ExpertsServices::where('expert_id',$id)->first();
-        //dd($service);
-        $data=$request->except('service');
-        $data['certification'] = implode(',',$request->input('certification'));
-        $data['good_at'] = implode(',',$request->input('good_at'));
+        $userinfo = Auth::guard("admin")->user()->toArray();
+        $createUser = AdminUser::where('id',$id)->first();
+        //dd($user);
+        $data = $request->all();
+        $data['password'] = Hash::make($request->input('password'));
+        $data['create_user_id'] = $userinfo['id'];
 
-        // 开启事务
-        DB::beginTransaction();
-
-        $expert->update($data);
-        $newService = $request->only('service')['service'];
-        //dd($newService);
-        foreach($newService as $v){
-            $expert_service = $service->update($v);
-            if(!$expert_service){
-                DB::rollBack();
-            }
+        $res = $createUser->update($data);
+        if(!$res){
+            return api_error();
         }
-
-        DB::commit();
         return api_success();
     }
 
