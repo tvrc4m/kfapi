@@ -62,7 +62,7 @@ $router->group([], function () use ($router) {
         // 修改法规条目
         $router->put('/rule/{id}', 'LawController@editLawRule');
     });
-    
+
     //关键词
     $router->group(['prefix' => 'keyword'], function () use ($router) {
         // 要素列表
@@ -90,13 +90,13 @@ $router->group([], function () use ($router) {
         // 获取用户列表
         $router->get('/', 'UserController@getAllUser');
         // 添加用户
-        $router->post('/', 'ExpertController@addUser');
+        $router->post('/', 'UserController@addUser');
         // 删除用户
-        $router->delete('/{id}', 'ExpertController@deleteUser');
+        $router->delete('/{id}', 'UserController@deleteUser');
         // 查看用户
-        $router->get('/{id}', 'ExpertController@getOneUser');
+        $router->get('/{id}', 'UserController@getOneUser');
         // 修改用户
-        $router->put('/{id}', 'ExpertController@editUser');
+        $router->put('/{id}', 'UserController@editUser');
     });
 
     // 案例库

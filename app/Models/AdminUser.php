@@ -11,7 +11,7 @@ class AdminUser extends Model implements AuthenticatableContract,JWTSubject
     use Authenticatable;
 
     protected $fillable = [
-        'username', 'password', 'email', 'stat'
+        'username', 'password', 'email', 'stat' ,'create_user_id'
     ];
 
     protected $hidden = [
