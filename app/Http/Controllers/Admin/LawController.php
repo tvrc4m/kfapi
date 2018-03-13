@@ -65,6 +65,17 @@ class LawController extends Controller
     }
 
     /**
+     * 查看某个法规
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getLawDetail($id)
+    {
+        $data = Law::where('id', $id)->firstOrFail();
+        return api_success($data);
+    }
+
+    /**
      * 法规编辑
      * @return \Illuminate\Http\JsonResponse
      */
@@ -157,6 +168,17 @@ class LawController extends Controller
         $list = LawRule::where($where)->select(['id','law_id', 'title', 'content'])->paginate();
 
         return api_success($list);
+    }
+
+    /**
+     * 查看某个法规条目
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getLawRuleDetail($id)
+    {
+        $data = LawRule::where('id', $id)->firstOrFail();
+        return api_success($data);
     }
 
     /**

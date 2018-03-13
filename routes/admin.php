@@ -28,6 +28,8 @@ $router->group([], function () use ($router) {
         $router->get('/', 'LawController@getLaw');
         // 删除法规
         $router->delete('/{id}', 'LawController@delete');
+        // 获取法规详情
+        $router->get('/detail/{id}', 'LawController@getLawDetail');
         // 修改法规条目
         $router->put('/{id}', 'LawController@edit');
 
@@ -37,6 +39,8 @@ $router->group([], function () use ($router) {
         $router->post('/rule', 'LawController@addLawRule');
         // 删除法规条目
         $router->delete('/rule/{id}', 'LawController@deleteLawRule');
+        // 获取法规条目详情
+        $router->get('/rule/detail/{id}', 'LawController@getLawRuleDetail');
         // 修改法规条目
         $router->put('/rule/{id}', 'LawController@editLawRule');
     });
@@ -45,7 +49,7 @@ $router->group([], function () use ($router) {
         // 要素列表
         $router->get('/getFactorList', 'KeywordController@getFactorList');
         // 某个要素下的关键词列表
-        $router->get('/getKeywordList/{id}', 'KeywordController@getKeywordList');
+        $router->get('/getKeywordList', 'KeywordController@getKeywordList');
     });
     // 获取专家接口组
     $router->group(['prefix' => 'expert'], function () use ($router) {
