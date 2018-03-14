@@ -59,7 +59,7 @@ class LawController extends Controller
         if (!empty($name)) {
             $where[] = ['name','like', '%'.$name.'%'];
         }
-        $list = Law::where($where)->select(['id','fullname', 'name', 'pingyin'])->paginate;
+        $list = Law::where($where)->select(['id','fullname', 'name', 'pingyin'])->paginate();
 
         return api_success($list);
     }
