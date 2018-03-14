@@ -30,14 +30,14 @@ class LawController extends Controller
         $this->validate($request, [
             'fullname' => 'required|max:255',
             'name' => 'required|max:255',
-            'pingyin' => 'required|max:255',
+            'pinyin' => 'required|max:255',
         ],[
             'fullname.required' => '法规全称不能为空',
             'fullname.max' => '法规全称不能超过255个字符',
             'name.required' => '法规简称不能为空',
             'name.max' => '法规简称不能超过255个字符',
-            'pingyin.required' => '拼音缩写不能为空',
-            'pingyin.max' => '拼音缩写不能超过255个字符',
+            'pinyin.required' => '拼音缩写不能为空',
+            'pinyin.max' => '拼音缩写不能超过255个字符',
         ]);
 
         $result = Law::create($request->all());
@@ -59,7 +59,7 @@ class LawController extends Controller
         if (!empty($name)) {
             $where[] = ['name','like', '%'.$name.'%'];
         }
-        $list = Law::where($where)->select(['id','fullname', 'name', 'pingyin'])->paginate();
+        $list = Law::where($where)->select(['id','fullname', 'name', 'pinyin'])->paginate();
 
         return api_success($list);
     }
@@ -84,14 +84,14 @@ class LawController extends Controller
         $this->validate($request, [
             'fullname' => 'required|max:255',
             'name' => 'required|max:255',
-            'pingyin' => 'required|max:255',
+            'pinyin' => 'required|max:255',
         ],[
             'fullname.required' => '法规全称不能为空',
             'fullname.max' => '法规全称不能超过255个字符',
             'name.required' => '法规简称不能为空',
             'name.max' => '法规简称不能超过255个字符',
-            'pingyin.required' => '拼音缩写不能为空',
-            'pingyin.max' => '拼音缩写不能超过255个字符',
+            'pinyin.required' => '拼音缩写不能为空',
+            'pinyin.max' => '拼音缩写不能超过255个字符',
         ]);
 
         $law = Law::where('id', $id)->firstOrFail();

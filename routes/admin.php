@@ -29,7 +29,7 @@ $router->group([], function () use ($router) {
         $router->put('/collection/{id}', 'QuestionCollectionController@edit');
         // 删除问题集
         $router->delete('/collection', 'QuestionCollectionController@delete');
-        // 问题列表集
+        // 问题集列表
         $router->get('/collection', 'QuestionCollectionController@getList');
         // 问题集详情
         $router->get('/collection/{id}', 'QuestionCollectionController@getDetail');
