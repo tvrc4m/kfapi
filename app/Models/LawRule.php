@@ -45,7 +45,7 @@ class LawRule extends Model
             $result = LawRule::create($data);
             if ($result) {
                 if (!empty($keywords)){
-                    foreach ($keywords as $key=>$val){
+                    foreach ($keywords['data'] as $key=>$val){
                         $result2 = LawRuleKeyword::create(['law_rule_id' => $result->id, 'keyword_id'=> $val]);
                         if (!$result2){
                             DB::rollBack();
@@ -63,7 +63,7 @@ class LawRule extends Model
                         DB::rollBack();
                         return false;
                     }
-                    foreach ($keywords as $key=>$val){
+                    foreach ($keywords['data'] as $key=>$val){
                         $result2 = LawRuleKeyword::create(['law_rule_id' => $id, 'keyword_id'=> $val]);
                         if (!$result2){
                             DB::rollBack();

@@ -202,7 +202,9 @@ class LawController extends Controller
             'title.max' => '法规条目名称不能超过255个字符',
             'content.required' => '内容不能为空',
             'content.max' => '内容不能超过255个字符',
-            'data.array' => '数据格式不对',
+            'data.array' => '法规条目数据格式不对',
+            'data.*.keyword_id.required' => '匹配词ID不能为空',
+            'data.*.keyword_id.numeric' => '匹配词ID必须是数字',
         ]);
 
         $lawRule = new LawRule();

@@ -8,7 +8,10 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Http\Request;
 
 class QuestionCollection extends Model
 {
@@ -51,7 +54,7 @@ class QuestionCollection extends Model
      * @return bool|mixed
      * @throws \Exception
      */
-    public function saveQuestionCollecttion(Request $request, $id = 0)
+    public function saveQuestionCollection(Request $request, $id = 0)
     {
         $data = $request->except('question_option_id');
         $question_option_id = $request->only('question_option_id');
@@ -62,7 +65,7 @@ class QuestionCollection extends Model
             $result = QuestionCollection::create($data);
             if ($result) {
                 if (!empty($question_option_id)){
-                    foreach ($question_option_id as $key=>$val){
+                    foreach ($question_option_id['question_option_id'] as $key=>$val){
                         $result2 = QuesOpQuesCollect::create(['question_collection_id' => $result->id, 'question_option_id'=> $val]);
                         if (!$result2){
                             DB::rollBack();
@@ -80,7 +83,7 @@ class QuestionCollection extends Model
                         DB::rollBack();
                         return false;
                     }
-                    foreach ($question_option_id as $key=>$val){
+                    foreach ($question_option_id['question_option_id'] as $key=>$val){
                         $result2 = QuesOpQuesCollect::create(['question_collection_id' => $id, 'question_option_id'=> $val]);
                         if (!$result2){
                             DB::rollBack();

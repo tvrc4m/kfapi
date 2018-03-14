@@ -56,10 +56,10 @@ class QuestionCollectionController extends Controller
             'overdue.required' => '标题不能为空',
             'overdue.max' => '标题不能超过255个字符',
             'question_option_id.required' => '前置问题集ID不能为空',
-            'question_option_id.max' => '前置问题集ID不能超过255个字符',
+            'question_option_id.array' => '前置问题集ID是数组',
         ]);
         $questionCollection = new QuestionCollection();
-        if ($questionCollection->saveQuestionCollecttion($request)) {
+        if ($questionCollection->saveQuestionCollection($request,0)) {
             return api_success();
         }
 
@@ -143,11 +143,11 @@ class QuestionCollectionController extends Controller
             'is_single_page.required' => '不能为空',
             'overdue.required' => '标题不能为空',
             'overdue.max' => '标题不能超过255个字符',
-            'question_option_id.required' => '问题选项不能为空',
-            'question_option_id.array' => '问题选项格式不对',
+            'question_option_id.required' => '前置问题集ID不能为空',
+            'question_option_id.array' => '前置问题集ID是数组',
         ]);
         $questionCollection = new QuestionCollection();
-        if ($questionCollection->saveQuestionCollecttion($request, $id)) {
+        if ($questionCollection->saveQuestionCollection($request, $id)) {
             return api_success();
         }
 
