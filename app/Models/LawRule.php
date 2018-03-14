@@ -3,6 +3,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class LawRule extends Model
 {
@@ -36,16 +38,16 @@ class LawRule extends Model
     public function saveLawRule(Request $request, $id = 0)
     {
         //主信息
-        $data = $request->except('data');
+        $data = $request->except('keyword');
         //匹配词信息
-        $keywords = $request->only('data');
+        $keywords = $request->only('keyword');
         //开启事务
         DB::beginTransaction();
         if (empty($id)){
             $result = LawRule::create($data);
             if ($result) {
                 if (!empty($keywords)){
-                    foreach ($keywords['data'] as $key=>$val){
+                    foreach ($keywords['keyword'] as $key=>$val){
                         $result2 = LawRuleKeyword::create(['law_rule_id' => $result->id, 'keyword_id'=> $val]);
                         if (!$result2){
                             DB::rollBack();
@@ -63,7 +65,7 @@ class LawRule extends Model
                         DB::rollBack();
                         return false;
                     }
-                    foreach ($keywords['data'] as $key=>$val){
+                    foreach ($keywords['keyword'] as $key=>$val){
                         $result2 = LawRuleKeyword::create(['law_rule_id' => $id, 'keyword_id'=> $val]);
                         if (!$result2){
                             DB::rollBack();
