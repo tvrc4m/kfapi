@@ -31,3 +31,9 @@ $router->group(['prefix' => 'topic'], function () use ($router) {
     // 用户提交问题
     $router->post('/', 'TopicController@addTopic');
 });
+// 用户邀请
+$router->group(['prefix' => 'invitation'], function () use ($router) {
+    // 用户邀请专家
+    $router->post('/', 'InvitationController@addInvitation');
+});
+

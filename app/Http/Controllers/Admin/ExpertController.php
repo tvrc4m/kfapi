@@ -21,9 +21,10 @@ class ExpertController extends Controller
     }
 
     //专家列表
-    public function getAllExpert()
+    public function getAllExpert(Request $request)
     {
-        $experts = Experts::select(['icon','nickname','name','job_id','good_at'])->paginate(20)->toArray();
+        $type = $request->input('type');
+        $experts = Experts::select(['id','icon','nickname','name','job_id','good_at'])->where('type',$type)->paginate(20)->toArray();
 //dd($experts);
         $config = require APP_PATH . 'config/fieldDictionary.php';
 
