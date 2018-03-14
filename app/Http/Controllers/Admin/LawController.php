@@ -126,8 +126,7 @@ class LawController extends Controller
             'law_id' => 'required|numeric',
             'title' => 'required|max:255',
             'content' => 'required|max:255',
-            'data' => 'required|array',
-            'data.*.keyword_id' => 'required|numeric',
+            'keyword' => 'required|array',
         ],[
             'law_id.required' => '法规不能为空',
             'law_id.numeric' => '法规不合法',
@@ -135,9 +134,8 @@ class LawController extends Controller
             'title.max' => '法规条目名称不能超过255个字符',
             'content.required' => '内容不能为空',
             'content.max' => '内容不能超过255个字符',
-            'data.array' => '法规条目数据格式不对',
-            'data.*.keyword_id.required' => '匹配词ID不能为空',
-            'data.*.keyword_id.numeric' => '匹配词ID必须是数字',
+            'keyword.required' => '匹配词ID不能为空',
+            'keyword.array' => '匹配词必须是数组',
         ]);
         $lawRule = new LawRule();
         if ($lawRule->saveLawRule($request)) {
@@ -192,9 +190,7 @@ class LawController extends Controller
             'law_id' => 'required|numeric',
             'title' => 'required|max:255',
             'content' => 'required|max:255',
-            'data' => 'array',
-            'data.*.case_factor_id' => 'required|numeric',
-            'data.*.keyword_id' => 'required|numeric',
+            'keyword' => 'required|array',
         ],[
             'law_id.required' => '法规不能为空',
             'law_id.numeric' => '法规不合法',
@@ -202,9 +198,8 @@ class LawController extends Controller
             'title.max' => '法规条目名称不能超过255个字符',
             'content.required' => '内容不能为空',
             'content.max' => '内容不能超过255个字符',
-            'data.array' => '法规条目数据格式不对',
-            'data.*.keyword_id.required' => '匹配词ID不能为空',
-            'data.*.keyword_id.numeric' => '匹配词ID必须是数字',
+            'keyword.required' => '匹配词ID不能为空',
+            'keyword.array' => '匹配词必须是数组',
         ]);
 
         $lawRule = new LawRule();
