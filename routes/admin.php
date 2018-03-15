@@ -91,6 +91,8 @@ $router->group([], function () use ($router) {
         $router->get('/{id}', 'ExpertController@getOneExpert');
         // 修改专家
         $router->put('/{id}', 'ExpertController@editExpert');
+        // 获取专家职业列表
+        $router->get('/job', 'ExpertController@getAllJob');
     });
 
     // 用户接口组

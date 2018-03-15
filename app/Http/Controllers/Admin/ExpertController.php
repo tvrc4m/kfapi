@@ -220,6 +220,7 @@ class ExpertController extends Controller
             $expert_service = $service->update($v);
             if(!$expert_service){
                 DB::rollBack();
+                return api_error();
             }
         }
 
@@ -227,4 +228,11 @@ class ExpertController extends Controller
         return api_success();
     }
 
+    //职业列表
+    public function getAllJob(Request $request)
+    {
+        $config = require APP_PATH . 'config/fieldDictionary.php';
+        $job = $config['job'];
+        return api_success($job);
+    }
 }
