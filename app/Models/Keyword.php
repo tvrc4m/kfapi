@@ -25,4 +25,11 @@ class Keyword extends Model
      * @var array
      */
     protected $dates = ['deleted_at'];
+
+    /**
+     * 隐藏属性
+     *
+     * @var array
+     */
+    protected $hidden = ['stat', 'created_at', 'updated_at', 'deleted_at'];
 }
