@@ -4,6 +4,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\Request;
+use App\Models\Keyword;
 use Illuminate\Support\Facades\DB;
 
 class LawRule extends Model
@@ -27,6 +28,18 @@ class LawRule extends Model
      * @var array
      */
     protected $dates = ['deleted_at'];
+
+    /**
+     * 法规条目与匹配次关联关系
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function lawRuleKeyword()
+    {
+        //return $this->hasMany(\App\Models\LawRuleKeyword::class, 'law_rule_id', 'id');
+        return $this->belongsToMany(\App\Models\Keyword::class, 'law_rule_keywords', 'law_rule_id',
+            'keyword_id');
+    }
 
     /**
      * 保存法规条目信息

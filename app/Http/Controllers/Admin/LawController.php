@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\LawRule;
 use Illuminate\Http\Request;
 use App\Models\Law;
-use Illuminate\Support\Facades\DB;
 
 class LawController extends Controller
 {
@@ -164,9 +163,9 @@ class LawController extends Controller
         if (!empty($law_id)) {
             $where['law_id'] = $law_id;
         }
-        $list = LawRule::where($where)->select(['id','law_id', 'title', 'content'])->paginate();
+        $lawRuleList = LawRule::with(['lawRuleKeyword'])->where($where)->select(['id','law_id', 'title', 'content'])->paginate();
 
-        return api_success($list);
+        return api_success($lawRuleList);
     }
 
     /**
@@ -176,7 +175,7 @@ class LawController extends Controller
      */
     public function getLawRuleDetail($id)
     {
-        $data = LawRule::where('id', $id)->firstOrFail();
+        $data = LawRule::with(['lawRuleKeyword'])->where('id', $id)->firstOrFail();
         return api_success($data);
     }
 
