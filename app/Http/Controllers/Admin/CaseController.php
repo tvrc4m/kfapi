@@ -159,7 +159,6 @@ class CaseController extends Controller
      */
     public function getOneCase($id)
     {
-        dd(123);
         $data = Cases::where('id', $id)->firstOrFail();
         return api_success($data);
     }

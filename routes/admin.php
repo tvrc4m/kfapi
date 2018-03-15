@@ -22,50 +22,50 @@ $router->group(['prefix' => 'auth'], function () use ($router) {
 //$router->group(['middleware' => 'auth:admin'], function () use ($router) {
 $router->group([], function () use ($router) {
     // 问题
-    $router->group(['prefix' => 'question'], function () use ($router) {
-        // 新增建议
-        $router->post('/suggest', 'QuestionSuggestController@create');
-        // 修改建议
-        $router->put('/suggest/{id}', 'QuestionSuggestController@edit');
-        // 删除建议
-        $router->delete('/suggest', 'QuestionSuggestController@delete');
-        // 建议列表
-        $router->get('/suggest', 'QuestionSuggestController@getList');
-        // 建议详情
-        $router->get('/suggest/{id}', 'QuestionSuggestController@getDetail');
-        // 新增情感建议匹配关系
-        $router->post('/suggest/rule', 'QuestionSuggestController@createRule');
-        // 修改情感建议匹配关系
-        $router->put('/suggest/rule/{id}', 'QuestionSuggestController@editRule');
-        // 删除情感建议匹配关系
-        $router->delete('/suggest/rule/{id}', 'QuestionSuggestController@deleteRule');
-        // 情感建议匹配关系列表
-        $router->get('/suggest/rule', 'QuestionSuggestController@getRuleList');
-        // 情感建议匹配关系详情
-        $router->get('/suggest/rule/{id}', 'QuestionSuggestController@getRuleDetail');
-
-        // 新增问题集
-        $router->post('/collection', 'QuestionCollectionController@create');
-        // 修改问题集
-        $router->put('/collection/{id}', 'QuestionCollectionController@edit');
-        // 删除问题集
-        $router->delete('/collection', 'QuestionCollectionController@delete');
-        // 问题集列表
-        $router->get('/collection', 'QuestionCollectionController@getList');
-        // 问题集详情
-        $router->get('/collection/{id}', 'QuestionCollectionController@getDetail');
-
-        // 新增问题
-        $router->post('/', 'QuestionController@createQuestion');
-        // 问题列表
-        $router->get('/', 'QuestionController@getAllQuestion');
-        // 修改问题
-        $router->put('/{id}', 'QuestionController@editQuestion');
-        // 删除问题
-        $router->delete('/{id}', 'QuestionController@deleteQuestion');
-        // 问题详情
-        $router->get('/{id}', 'QuestionController@getOneQuestion');
-    });
+    // $router->group(['prefix' => 'question'], function () use ($router) {
+    //     // 新增建议
+    //     $router->post('/suggest', 'QuestionSuggestController@create');
+    //     // 修改建议
+    //     $router->put('/suggest/{id}', 'QuestionSuggestController@edit');
+    //     // 删除建议
+    //     $router->delete('/suggest', 'QuestionSuggestController@delete');
+    //     // 建议列表
+    //     $router->get('/suggest', 'QuestionSuggestController@getList');
+    //     // 建议详情
+    //     $router->get('/suggest/{id}', 'QuestionSuggestController@getDetail');
+    //     // 新增情感建议匹配关系
+    //     $router->post('/suggest/rule', 'QuestionSuggestController@createRule');
+    //     // 修改情感建议匹配关系
+    //     $router->put('/suggest/rule/{id}', 'QuestionSuggestController@editRule');
+    //     // 删除情感建议匹配关系
+    //     $router->delete('/suggest/rule/{id}', 'QuestionSuggestController@deleteRule');
+    //     // 情感建议匹配关系列表
+    //     $router->get('/suggest/rule', 'QuestionSuggestController@getRuleList');
+    //     // 情感建议匹配关系详情
+    //     $router->get('/suggest/rule/{id}', 'QuestionSuggestController@getRuleDetail');
+    //
+    //     // 新增问题集
+    //     $router->post('/collection', 'QuestionCollectionController@create');
+    //     // 修改问题集
+    //     $router->put('/collection/{id}', 'QuestionCollectionController@edit');
+    //     // 删除问题集
+    //     $router->delete('/collection', 'QuestionCollectionController@delete');
+    //     // 问题集列表
+    //     $router->get('/collection', 'QuestionCollectionController@getList');
+    //     // 问题集详情
+    //     $router->get('/collection/{id}', 'QuestionCollectionController@getDetail');
+    //
+    //     // 新增问题
+    //     $router->post('/', 'QuestionController@createQuestion');
+    //     // 问题列表
+    //     $router->get('/', 'QuestionController@getAllQuestion');
+    //     // 修改问题
+    //     $router->put('/{id}', 'QuestionController@editQuestion');
+    //     // 删除问题
+    //     $router->delete('/{id}', 'QuestionController@deleteQuestion');
+    //     // 问题详情
+    //     $router->get('/{id}', 'QuestionController@getOneQuestion');
+    // });
 
     //法规接口组
     $router->group(['prefix' => 'law'], function () use ($router) {
