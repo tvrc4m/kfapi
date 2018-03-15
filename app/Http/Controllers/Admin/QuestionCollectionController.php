@@ -56,27 +56,14 @@ class QuestionCollectionController extends Controller
             'overdue.required' => '标题不能为空',
             'overdue.max' => '标题不能超过255个字符',
             'question_option_id.required' => '前置问题集ID不能为空',
-            'question_option_id.max' => '前置问题集ID不能超过255个字符',
+            'question_option_id.array' => '前置问题集ID是数组',
         ]);
-        //开启事务
-        $question_option_id = $request->input('question_option_id');
-        $data = $request->except('question_option_id');
-        $data['create_user_id'] = Auth::guard("admin")->user()->id;
-        DB::beginTransaction();
-        $result = QuestionCollection::create($data);
-        if ($result) {
-            if (!empty($question_option_id)){
-                foreach ($question_option_id as $key=>$val){
-                    $result2 = QuesOpQuesCollect::create(['question_collection_id' => $result->id, 'question_option_id'=> $val]);
-                    if (!$result2){
-                        DB::rollBack();
-                        return api_error();
-                    }
-                }
-            }
+        $questionCollection = new QuestionCollection();
+        if ($questionCollection->saveQuestionCollection($request,0)) {
+            return api_success();
         }
-        DB::commit();
-        return api_success();
+
+        return api_error();
     }
 
     /**
@@ -145,7 +132,7 @@ class QuestionCollectionController extends Controller
             'content' => 'required|max:255',
             'is_single_page' => 'required',
             'overdue' => 'required|max:255',
-            'question_option_id' => 'required|max:255',
+            'question_option_id' => 'required|array',
         ],[
             'type.required' => '类型不能为空',
             'is_trunk.required' => '分支不能为空',
@@ -157,31 +144,13 @@ class QuestionCollectionController extends Controller
             'overdue.required' => '标题不能为空',
             'overdue.max' => '标题不能超过255个字符',
             'question_option_id.required' => '前置问题集ID不能为空',
-            'question_option_id.max' => '前置问题集ID不能超过255个字符',
+            'question_option_id.array' => '前置问题集ID是数组',
         ]);
-        //开启事务
-        $question_option_id = $request->input('question_option_id');
-        $data = $request->except('question_option_id');
-        $data['create_user_id'] = Auth::guard("admin")->user()->id;
-        DB::beginTransaction();
-        $quesCollect = QuestionCollection::where('id', $id)->firstOrFail();
-        $result = $quesCollect->update($data);
-        if ($result) {
-            if (!empty($question_option_id)){
-                if (!QuesOpQuesCollect::where('question_collection_id', $id)->delete()) {
-                    DB::rollBack();
-                    return api_error();
-                }
-                foreach ($question_option_id as $key=>$val){
-                    $result2 = QuesOpQuesCollect::create(['question_collection_id' => $id, 'question_option_id'=> $val]);
-                    if (!$result2){
-                        DB::rollBack();
-                        return api_error();
-                    }
-                }
-            }
+        $questionCollection = new QuestionCollection();
+        if ($questionCollection->saveQuestionCollection($request, $id)) {
+            return api_success();
         }
-        DB::commit();
-        return api_success();
+
+        return api_error();
     }
 }

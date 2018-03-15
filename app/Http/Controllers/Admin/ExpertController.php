@@ -21,9 +21,30 @@ class ExpertController extends Controller
     }
 
     //专家列表
-    public function getAllExpert()
+    public function getAllExpert(Request $request)
     {
-        $experts = Experts::paginate(20);
+        $type = $request->input('type');
+        $experts = Experts::select(['id','icon','nickname','name','job_id','good_at'])->where('type',$type)->paginate(20)->toArray();
+//dd($experts);
+        $config = require APP_PATH . 'config/fieldDictionary.php';
+
+        if($experts['data']){
+            //dd($goodAt);
+            foreach($experts['data'] as $k=>&$v){
+                $v['job'] = $config['job'][$v['job_id']];
+                $goodAt = explode(',',$v['good_at']);
+                unset($v['good_at'],$v['job_id']);
+                //dd($goodAt);
+                //dd($config['good_at']);
+
+                foreach($goodAt as $k=>$vv){
+                    //dd($vv);
+                    //dd('asdsdaasdad');
+                    $v['good_at'][] = $config['good_at'][$vv];
+                }
+            }
+        }
+        //dd($experts);
         return api_success($experts);
     }
 
@@ -33,7 +54,12 @@ class ExpertController extends Controller
      */
     public function getOneExpert($id)
     {
-        $data = Experts::where('id', $id)->firstOrFail();
+        $data = DB::table('experts')
+            ->leftJoin('experts_services', 'experts.id', '=', 'experts_services.expert_id')
+            ->where('experts.id',$id)
+            ->first();
+        //dd($data);
+        unset($data->id);
         return api_success($data);
     }
 

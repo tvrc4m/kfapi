@@ -21,3 +21,19 @@ $router->group(['prefix' => 'comment'], function () use ($router) {
     // 获取专家回复列表
     $router->get('/', 'CommentController@getAllComments');
 });
+
+// 获取用户问题组
+$router->group(['prefix' => 'topic'], function () use ($router) {
+    // 获取大家在测列表
+    $router->get('/', 'TopicController@getAllTopic');
+    // 获取问答详情页
+    $router->get('/{id}', 'TopicController@getOneTopic');
+    // 用户提交问题
+    $router->post('/', 'TopicController@addTopic');
+});
+// 用户邀请
+$router->group(['prefix' => 'invitation'], function () use ($router) {
+    // 用户邀请专家
+    $router->post('/', 'InvitationController@addInvitation');
+});
+

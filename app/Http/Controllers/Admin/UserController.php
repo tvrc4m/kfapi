@@ -23,7 +23,25 @@ class UserController extends Controller
     //用户列表
     public function getAllUser()
     {
-        $user = AdminUser::paginate(20);
+        $user = AdminUser::paginate(20)->toArray();
+        //dd($user);
+
+
+        if($user['data']){
+            foreach($user['data'] as $k=>&$v){
+
+                $userArr[$v['id']] = $v['username'];
+                //dd($userArr);
+                //dd($v);
+                if($v['create_user_id']!==0){
+                    $v['create_user'] = $userArr[$v['create_user_id']];
+                }else{
+                    $v['create_user'] = '';
+                }
+                //dd($createUser);
+            }
+        }
+
         return api_success($user);
     }
 
@@ -59,7 +77,7 @@ class UserController extends Controller
 
         $data = $request->all();
         $userinfo = Auth::guard("admin")->user()->toArray();
-        //dd($userinfo);
+        dd($userinfo);
         $data['create_user_id'] = $userinfo['id'];
         $data['password'] = Hash::make($request->input('password'));
         //dd($data);

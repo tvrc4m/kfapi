@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\LawRule;
 use Illuminate\Http\Request;
 use App\Models\Law;
-use Illuminate\Support\Facades\DB;
 
 class LawController extends Controller
 {
@@ -126,9 +125,7 @@ class LawController extends Controller
             'law_id' => 'required|numeric',
             'title' => 'required|max:255',
             'content' => 'required|max:255',
-            'data' => 'array',
-            'data.*.case_factor_id' => 'required|numeric',
-            'data.*.keyword_id' => 'required|numeric',
+            'keyword' => 'required|array',
         ],[
             'law_id.required' => '法规不能为空',
             'law_id.numeric' => '法规不合法',
@@ -136,13 +133,14 @@ class LawController extends Controller
             'title.max' => '法规条目名称不能超过255个字符',
             'content.required' => '内容不能为空',
             'content.max' => '内容不能超过255个字符',
-            'data.array' => '数据格式不对',
+            'keyword.required' => '匹配词ID不能为空',
+            'keyword.array' => '匹配词必须是数组',
         ]);
-
-        $result = LawRule::create($request->all());
-        if ($result) {
+        $lawRule = new LawRule();
+        if ($lawRule->saveLawRule($request)) {
             return api_success();
         }
+
         return api_error();
     }
 
@@ -165,9 +163,9 @@ class LawController extends Controller
         if (!empty($law_id)) {
             $where['law_id'] = $law_id;
         }
-        $list = LawRule::where($where)->select(['id','law_id', 'title', 'content'])->paginate();
+        $lawRuleList = LawRule::with(['lawRuleKeyword'])->where($where)->select(['id','law_id', 'title', 'content'])->paginate();
 
-        return api_success($list);
+        return api_success($lawRuleList);
     }
 
     /**
@@ -191,9 +189,7 @@ class LawController extends Controller
             'law_id' => 'required|numeric',
             'title' => 'required|max:255',
             'content' => 'required|max:255',
-            'data' => 'array',
-            'data.*.case_factor_id' => 'required|numeric',
-            'data.*.keyword_id' => 'required|numeric',
+            'keyword' => 'required|array',
         ],[
             'law_id.required' => '法规不能为空',
             'law_id.numeric' => '法规不合法',
@@ -201,13 +197,15 @@ class LawController extends Controller
             'title.max' => '法规条目名称不能超过255个字符',
             'content.required' => '内容不能为空',
             'content.max' => '内容不能超过255个字符',
-            'data.array' => '数据格式不对',
+            'keyword.required' => '匹配词ID不能为空',
+            'keyword.array' => '匹配词必须是数组',
         ]);
 
-        $lawRule = LawRule::where('id', $id)->firstOrFail();
-        if ($lawRule->update($request->all())) {
+        $lawRule = new LawRule();
+        if ($lawRule->saveLawRule($request, $id)) {
             return api_success();
         }
+
         return api_error();
     }
 
