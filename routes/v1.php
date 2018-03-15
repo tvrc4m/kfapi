@@ -45,3 +45,12 @@ $router->group(['prefix' => 'invitation'], function () use ($router) {
     $router->post('/', 'InvitationController@addInvitation');
 });
 
+// 确认下单
+$router->group(['prefix' => 'order'], function () use ($router) {
+
+    // 提交订单
+    $router->post('/', 'OrderController@addOrder');
+    // 查看下单信息
+    $router->get('/', 'OrderController@getOrder');
+});
+
