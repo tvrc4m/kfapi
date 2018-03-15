@@ -23,16 +23,16 @@ class UserController extends Controller
     //用户列表
     public function getAllUser()
     {
-        $user = AdminUser::paginate(20)->toArray();
-        //dd($user);
+        $allUser = AdminUser::get()->toArray();
 
+        foreach ($allUser as $k=>$v){
+            $userArr[$v['id']] = $v['username'];
+        }
+        //dd($userArr);
+        $user = AdminUser::paginate(20)->toArray();
 
         if($user['data']){
             foreach($user['data'] as $k=>&$v){
-
-                $userArr[$v['id']] = $v['username'];
-                //dd($userArr);
-                //dd($v);
                 if($v['create_user_id']!==0){
                     $v['create_user'] = $userArr[$v['create_user_id']];
                 }else{
