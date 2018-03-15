@@ -61,6 +61,7 @@ class UserAnswer extends Model
     /**
      * 获得问题集
      * @param $user_id
+     * @return Model|null|static
      */
     public function getQuestionCollection($user_id)
     {
@@ -70,6 +71,10 @@ class UserAnswer extends Model
             return null;
         }
         $collect_id = $collect_id_arr[0];
+        $collect = QuestionCollection::where('id', $collect_id)->firstOrFail();
+        $questions = $collect->questions()->get();
 
+        $collect['questions'] = $questions;
+        return $collect;
     }
 }

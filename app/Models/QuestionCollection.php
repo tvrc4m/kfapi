@@ -107,4 +107,13 @@ class QuestionCollection extends Model
         DB::commit();
         return true;
     }
+
+    /**
+     * 问题关联关系
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function questions()
+    {
+        return $this->hasMany(\App\Models\Question::class, 'question_collection_id', 'id');
+    }
 }

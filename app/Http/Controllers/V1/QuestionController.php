@@ -38,6 +38,6 @@ class QuestionController extends Controller
 
     public function getCollection(Request $request)
     {
-        // UserAnswer::first();
+        // UserAnswer::where('id', )->first();
     }
 }
