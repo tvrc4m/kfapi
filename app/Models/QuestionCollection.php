@@ -18,6 +18,17 @@ class QuestionCollection extends Model
     // 载入软删除方法
     use SoftDeletes;
 
+    // 类型
+    const TYPE_LAW = 1;
+    const TYPE_EMOTION = 2;
+    const TYPE_INIT = 3;
+    // 类型名字
+    const TYPE_NAME = [
+        self::TYPE_LAW => '法律',
+        self::TYPE_EMOTION => '情感',
+        self::TYPE_INIT => '初始问题',
+    ];
+
     // 表名
     protected $table = "question_collections";
 
@@ -44,6 +55,17 @@ class QuestionCollection extends Model
     {
         return $this->belongsToMany(\App\Models\QuestionOption::class, 'question_option_question_collections', 'question_collection_id',
             'question_option_id');
+
+    }
+
+    /**
+     * 问题集与后台管理人关联关系
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function adminUser()
+    {
+        return $this->belongsTo(\App\Models\AdminUser::class, 'create_user_id', 'id');
 
     }
 
@@ -95,5 +117,14 @@ class QuestionCollection extends Model
         }
         DB::commit();
         return true;
+    }
+
+    /**
+     * 问题关联关系
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function questions()
+    {
+        return $this->hasMany(\App\Models\Question::class, 'question_collection_id', 'id');
     }
 }

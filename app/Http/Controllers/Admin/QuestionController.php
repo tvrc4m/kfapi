@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Question;
+use App\Models\QuestionCollection;
 use App\Models\QuestionOption;
 use App\Models\QuestionOptionKeyword;
 use Illuminate\Http\Request;
@@ -57,12 +58,19 @@ class QuestionController extends Controller
             'options.*.keyword.required' => '选项关键词必填',
             'options.*.keyword.array' => '选项关键词必须是数组',
         ]);
-
+        $question_collection_id = $request->input('question_collection_id');
+        DB::beginTransaction();
         $question = new Question();
+        $questionCollection = new QuestionCollection();
         if ($question->saveQuestion($request)) {
+            if(!$questionCollection->where('id', $question_collection_id)->increment('num', 1)){
+                DB::rollBack();
+                return api_error();
+            }
+            DB::commit();
             return api_success();
         }
-
+        DB::rollBack();
         return api_error();
     }
 
@@ -117,10 +125,18 @@ class QuestionController extends Controller
     public function deleteQuestion($id)
     {
         $model = new Question();
-        if ($model->deleteQuestion($id)) {
+        $questionCollection = new QuestionCollection();
+        DB::beginTransaction();
+        $questionInfo = $model->deleteQuestion($id);
+        if ($questionInfo) {
+            if (!$questionCollection->where('id', $questionInfo->question_collection_id)->decrement('num', 1)){
+                DB::rollBack();
+                return api_error();
+            }
+            DB::commit();
             return api_success();
         }
-
+        DB::rollBack();
         return api_error();
     }
 

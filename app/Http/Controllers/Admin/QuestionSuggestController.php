@@ -34,7 +34,7 @@ class QuestionSuggestController extends Controller
             'question_collection_id' => 'required|numeric',
             'content' => 'required|max:255',
             'sort' => 'required|numeric',
-        ],[
+        ], [
             'question_collection_id.required' => '问题集ID不能为空',
             'question_collection_id.numeric' => '问题集ID不合法',
             'content.required' => '内容不能为空',
@@ -58,7 +58,7 @@ class QuestionSuggestController extends Controller
     {
         $this->validate($request, [
             'question_collection_id' => 'required|numeric',
-        ],[
+        ], [
             'question_collection_id.required' => '问题集ID不能为空',
             'question_collection_id.numeric' => '问题集ID不合法',
         ]);
@@ -69,7 +69,7 @@ class QuestionSuggestController extends Controller
         if (!empty($question_collection_id)) {
             $where['question_collection_id'] = $question_collection_id;
         }
-        $questionSuggestList = QuestionSuggest::where($where)->select(['id','question_collection_id', 'content', 'sort'])->paginate();
+        $questionSuggestList = QuestionSuggest::where($where)->select(['id', 'question_collection_id', 'content', 'sort'])->paginate();
 
         return api_success($questionSuggestList);
     }
@@ -95,7 +95,7 @@ class QuestionSuggestController extends Controller
             'question_collection_id' => 'required|numeric',
             'content' => 'required|max:255',
             'sort' => 'required|numeric',
-        ],[
+        ], [
             'question_collection_id.required' => '问题集ID不能为空',
             'question_collection_id.numeric' => '问题集ID不合法',
             'content.required' => '内容不能为空',
@@ -136,7 +136,7 @@ class QuestionSuggestController extends Controller
             'question_collection_id' => 'required|numeric',
             'question_suggest_id' => 'required|numeric',
             'suggest_rule' => 'required|array',
-        ],[
+        ], [
             'question_collection_id.required' => '问题集ID不能为空',
             'question_collection_id.numeric' => '问题集ID不合法',
             'question_suggest_id.required' => '建议ID不能为空',
@@ -159,7 +159,7 @@ class QuestionSuggestController extends Controller
     {
         $this->validate($request, [
             'question_collection_id' => 'required|numeric',
-        ],[
+        ], [
             'question_collection_id.required' => '问题集ID不能为空',
             'question_collection_id.numeric' => '问题集ID不合法',
         ]);
@@ -170,7 +170,7 @@ class QuestionSuggestController extends Controller
         if (!empty($question_collection_id)) {
             $where['question_collection_id'] = $question_collection_id;
         }
-        $questionSuggest = QuesCollectQuesSuggest::where($where)->select(['id','question_collection_id', 'question_suggest_id', 'suggest_rule'])->paginate();
+        $questionSuggest = QuesCollectQuesSuggest::where($where)->select(['id', 'question_collection_id', 'question_suggest_id', 'suggest_rule'])->paginate();
 
         return api_success($questionSuggest);
     }
@@ -196,7 +196,7 @@ class QuestionSuggestController extends Controller
             'question_collection_id' => 'required|numeric',
             'question_suggest_id' => 'required|numeric',
             'suggest_rule' => 'required|array',
-        ],[
+        ], [
             'question_collection_id.required' => '问题集ID不能为空',
             'question_collection_id.numeric' => '问题集ID不合法',
             'question_suggest_id.required' => '建议ID不能为空',
@@ -223,3 +223,5 @@ class QuestionSuggestController extends Controller
         }
         return api_error();
     }
+
+}
