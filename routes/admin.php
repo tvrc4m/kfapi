@@ -93,6 +93,12 @@ $router->group([], function () use ($router) {
         $router->put('/{id}', 'ExpertController@editExpert');
         // 获取专家职业列表
         $router->get('/job', 'ExpertController@getAllJob');
+        // 获取专家擅长列表
+        $router->get('/goodAt', 'ExpertController@getGoodAt');
+        // 获取服务列表
+        $router->get('/service', 'ExpertController@getService');
+        // 获取认证
+        $router->get('/certification', 'ExpertController@getCertification');
     });
 
     // 用户接口组

@@ -235,4 +235,28 @@ class ExpertController extends Controller
         $job = $config['job'];
         return api_success($job);
     }
+
+    //擅长列表
+    public function getGoodAt(Request $request)
+    {
+        $config = require APP_PATH . 'config/fieldDictionary.php';
+        $goodAt = $config['good_at'];
+        return api_success($goodAt);
+    }
+
+    //服务列表
+    public function getService(Request $request)
+    {
+        $config = require APP_PATH . 'config/fieldDictionary.php';
+        $service = $config['service'];
+        return api_success($service);
+    }
+
+    //认证列表
+    public function getCertification(Request $request)
+    {
+        $config = require APP_PATH . 'config/fieldDictionary.php';
+        $certification = $config['certification'];
+        return api_success($certification);
+    }
 }
