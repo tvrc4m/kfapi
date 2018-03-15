@@ -54,6 +54,8 @@ $router->group([], function () use ($router) {
         $router->get('/collection', 'QuestionCollectionController@getList');
         // 问题集详情
         $router->get('/collection/{id}', 'QuestionCollectionController@getDetail');
+        // 所有问题集列表
+        $router->get('/allcollection', 'QuestionCollectionController@getAllList');
 
         // 新增问题
         $router->post('/', 'QuestionController@createQuestion');

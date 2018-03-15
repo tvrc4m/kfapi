@@ -48,6 +48,17 @@ class QuestionCollection extends Model
     }
 
     /**
+     * 问题集与后台管理人关联关系
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function adminUser()
+    {
+        return $this->belongsTo(\App\Models\AdminUser::class, 'create_user_id', 'id');
+
+    }
+
+    /**
      * 保存问题集
      * @param Request $request
      * @param int $id

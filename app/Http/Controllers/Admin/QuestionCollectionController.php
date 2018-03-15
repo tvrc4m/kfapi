@@ -85,8 +85,8 @@ class QuestionCollectionController extends Controller
         if (!empty($type)) {
             $where['type'] = intval($type);
         }
-        $list = QuestionCollection::where($where)->select(['id','title', 'content', 'is_single_page', 'bgimage', 'is_trunk',
-            'type', 'overdue'])->paginate();
+        $list = QuestionCollection::with('adminUser')->with('questionOption')->where($where)->select(['id','title', 'content', 'is_single_page', 'bgimage', 'is_trunk',
+            'type', 'overdue', 'created_at', 'sort', 'create_user_id'])->paginate();
 
         return api_success($list);
     }
@@ -152,5 +152,30 @@ class QuestionCollectionController extends Controller
         }
 
         return api_error();
+    }
+
+    /**
+     * 所有问题集列表没有分页
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getAllList(Request $request)
+    {
+        $this->validate($request, [
+            'type' => 'required|numeric',
+        ],[
+            'type.required' => '法规不能为空',
+            'type.numeric' => '法规不合法',
+        ]);
+
+        $type = $request->input('type');
+
+        $where = [];
+        if (!empty($type)) {
+            $where['type'] = intval($type);
+        }
+        $list = QuestionCollection::where($where)->select(['id','title', 'content', 'is_single_page', 'bgimage', 'is_trunk',
+            'type', 'overdue'])->get();
+
+        return api_success($list);
     }
 }
