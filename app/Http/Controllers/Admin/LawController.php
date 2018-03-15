@@ -175,7 +175,7 @@ class LawController extends Controller
      */
     public function getLawRuleDetail($id)
     {
-        $data = LawRule::where('id', $id)->firstOrFail();
+        $data = LawRule::with(['lawRuleKeyword'])->where('id', $id)->firstOrFail();
         return api_success($data);
     }
 
