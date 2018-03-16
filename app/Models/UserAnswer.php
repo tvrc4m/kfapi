@@ -73,7 +73,7 @@ class UserAnswer extends Model
     /**
      * 获得问题集
      * @param $user_id
-     * @return Model|null|static
+     * @return array|Model|static
      */
     public function getQuestionCollection($user_id)
     {
@@ -82,13 +82,17 @@ class UserAnswer extends Model
         // 取得问题集
         $collect_id_arr = json_decode($paper->wait_question_collection_ids, true);
         if (empty($collect_id_arr)) {
-            return null;
+            // 修改试卷状态为已完成
+            $paper->stat = self::STATUS_FINISH;
+            $paper->save();
+            return ['paper_stat' => self::STATUS_FINISH];
         }
         $collect_id = $collect_id_arr[0];
         $collect = QuestionCollection::where('id', $collect_id)->firstOrFail();
 
-        $questions = $collect->questions()->get();
+        $questions = $collect->questions()->get()->toArray();
         $collect['paper_id'] = $paper->id;
+        $collect['paper_stat'] = $paper->stat;
         $collect['questions'] = $questions;
 
         return $collect;
@@ -136,14 +140,24 @@ class UserAnswer extends Model
             $suggest = $this->matchSuggest($initCollec, $data);
             if (empty($suggest)) {
                 DB::rollBack();
-                return api_error('建议匹配失败');
+                return false;
             }
             $paper->type = $suggest['type'];
             // 填充情感或者法规类型的主线题集
-
+            $collect_ids = QuestionCollection::where('is_trunk', 1)
+                ->orderBy('sort')
+                ->get(['id'])->pluck('id')->toArray();
+            if (empty($collect_ids)) {
+                DB::rollBack();
+                return false;
+            }
+            $paper->wait_question_collection_ids = json_encode($collect_ids);
         }
         // 保存修改
-        $paper->save();
+        if (!$paper->save()) {
+            DB::rollBack();
+            return false;
+        }
         DB::commit();
         return true;
     }

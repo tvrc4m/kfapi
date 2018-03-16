@@ -12,7 +12,7 @@ $router->post('test', 'TestController@post');
 // 问题相关
 $router->group(['prefix' => 'question'], function () use ($router) {
     // 获得问题
-    $router->get('/', 'QuestionController@getQuestion');
+    $router->get('/', 'QuestionController@question');
     // 提交问题
     $router->post('/', 'QuestionController@answer');
 });

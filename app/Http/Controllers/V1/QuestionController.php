@@ -29,7 +29,7 @@ class QuestionController extends Controller
      * 获得题目
      * @return \Illuminate\Http\JsonResponse
      */
-    public function getQuestion()
+    public function question()
     {
         // 返回题集题集
         $model = new UserAnswer();
@@ -62,10 +62,12 @@ class QuestionController extends Controller
             'data.*.option_id.array' => '答案id必须是数组',
         ]);
 
-        // 验证试卷id是否正确
-        // 记录答案
-        // 删除待回答问题
-        // 如果是初始化题集 分析出是情感还是法规类型 填充待回答主线问题集
+        // 保存答案
+        $model = new UserAnswer();
+        if (!$model->saveAnswer($request)) {
+            return api_error('保存问题失败');
+        }
         // 返回下一部分题集
+        return $this->getQuestion();
     }
 }
