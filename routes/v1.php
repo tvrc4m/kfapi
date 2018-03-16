@@ -54,3 +54,11 @@ $router->group(['prefix' => 'order'], function () use ($router) {
     $router->get('/', 'OrderController@getOrder');
 });
 
+// 评测记录
+$router->group(['prefix' => 'record'], function () use ($router) {
+
+    // 评测记录列表
+    $router->get('/', 'RecordController@getAllRecord');
+    // 删除评测记录
+    $router->delete('/', 'RecordController@deleteRecord');
+});

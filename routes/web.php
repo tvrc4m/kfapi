@@ -25,4 +25,9 @@ $router->group(['prefix' => 'api'], function () use ($router) {
     $router->group(['prefix' => 'v1', 'namespace'=>'V1', 'middleware' => 'auth:api'], function () use ($router) {
         require __DIR__.'/v1.php';
     });
+
+    // 前后端公共接口定义
+    $router->group(['prefix' => 'common', 'namespace'=>'Common'], function () use ($router) {
+        require __DIR__.'/common.php';
+    });
 });

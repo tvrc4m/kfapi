@@ -30,12 +30,27 @@ class TopicController extends Controller
             ->toArray();
         //dd($topics);
 
+        //取出所有省、城市
+        $provinces = DB::table('provinces')
+            ->select('provinces.id','provinces.name')
+            ->get()
+            ->toArray();
+        //dd($provinces);
+        foreach($provinces as $k=>$v){
+            $pArr[$v->id] = $v->name;
+        }
+        $city = DB::table('citys')
+            ->select('citys.cityid','citys.name')
+            ->get()
+            ->toArray();
+        foreach($city as $k=>$v){
+            $cArr[$v->cityid] = $v->name;
+        }
+
         if($topics['data']){
             foreach ($topics['data'] as $k=>&$v){
                 //$v->area = $config['job'][$v->job_id];
-                $city = DB::select('select p.name as provincename,c.name as cityname from bu_provinces as p left join bu_citys as c on c.provinceid= p.id where c.provinceid =? and c.cityid=?',[$v->province_id,$v->city_id]);
-                //dd($city);
-                $v->area = $city[0]->provincename.$city[0]->cityname;
+                $v->area = $pArr[$v->province_id].$cArr[$v->city_id];
                 if($v->cate == 1){
                     $v->cate = '法律';
                 }elseif($v->cate == 2){
