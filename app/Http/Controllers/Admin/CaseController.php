@@ -147,7 +147,7 @@ class CaseController extends Controller
         if (!empty($case_date)) {
             $where['case_date'] = $case_date;
         }
-
+        print_sql();
         $list = Cases::where($where)->select(['id','name','is_breakup', 'created_at', 'updated_at','case_date'])->paginate();
         return api_success($list);
     }

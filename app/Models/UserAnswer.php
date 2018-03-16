@@ -133,18 +133,66 @@ class UserAnswer extends Model
         // 如果是初始化题集 分析出是情感还是法规类型 填充待回答主线问题集
         $initCollec = QuestionCollection::where('type', QuestionCollection::TYPE_INIT)->firstOrFail();
         if ($initCollec->id == $question_collection_id) {
+            $suggest = $this->matchSuggest($initCollec, $data);
+            if (empty($suggest)) {
+                DB::rollBack();
+                return api_error('建议匹配失败');
+            }
+            $paper->type = $suggest['type'];
+            // 填充情感或者法规类型的主线题集
 
         }
-
+        // 保存修改
         $paper->save();
         DB::commit();
         return true;
     }
 
-    // 匹配建议
+    /**
+     * 匹配建议
+     * @param QuestionCollection $qc
+     * @param array $answer
+     * @return null|array
+     */
     private function matchSuggest(QuestionCollection $qc, array $answer)
     {
-        $suggests = $qc->suggests()->get();
-        
+        $suggests = $qc->suggests()->get()->toArray();
+        foreach ($suggests as $k => $v) {
+            $rule = json_decode($v['pivot']['suggest_suggest_rule'], true);
+            if ($this->compareRule($rule, $answer)) {
+                // 返回建议
+                return $v;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 对比答案和规则数组是否相同
+     * @param $arr1
+     * @param $arr2
+     * @return bool
+     */
+    private function compareRule($arr1, $arr2)
+    {
+        $arr1Count = count($arr1);
+        $arr2Count = count($arr2);
+        if ($arr1Count != $arr2Count) {
+            return false;
+        }
+
+        $count = 0;
+        foreach ($arr1 as $k => $v) {
+            foreach ($arr2 as $kk => $vv) {
+                if ($vv['option_id'] == $v['option_id'] && $vv['question_id'] == $v['question_id']) {
+                    $count++;
+                }
+            }
+        }
+        if ($count != $arr1Count) {
+            return false;
+        }
+
+        return true;
     }
 }
