@@ -127,4 +127,18 @@ class QuestionCollection extends Model
     {
         return $this->hasMany(\App\Models\Question::class, 'question_collection_id', 'id');
     }
+
+    /**
+     * 建议关联关系
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function suggests()
+    {
+        return $this->belongsToMany(
+            \App\Models\QuestionSuggest::class,
+            'question_collection_question_suggests',
+            'question_collection_id',
+            'question_suggest_id'
+        )->withPivot('suggest_rule');
+    }
 }
