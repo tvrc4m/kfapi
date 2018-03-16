@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\QuestionCollection;
 use App\Models\QuesOpQuesCollect;
 use App\Models\QuestionOption;
+use App\Models\Question;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -88,12 +89,27 @@ class QuestionCollectionController extends Controller
         }
         $list = QuestionCollection::with('adminUser')->with('questionOption')->where($where)->select(['id','title', 'content', 'is_single_page', 'bgimage', 'is_trunk',
             'type', 'overdue', 'created_at', 'sort', 'create_user_id', 'num'])->paginate()->toArray();
+        $questionList = Question::select()->get()->toArray();
+        if ($questionList){
+            foreach ($questionList as $qu_key=>$qu_val) {
+                $questionList[$qu_val['id']] = $qu_val;
+                unset($questionList[$qu_key]);
+            }
+        }
         if ($list){
             foreach ($list['data'] as $key=>$val) {
                 $list['data'][$key]['username'] = $val['admin_user']['username'];
+                unset($list['data'][$key]['admin_user']);
+                if ($val['question_option']){
+                    foreach ($val['question_option'] as $tt_key=>$tt_val){
+                        $list['data'][$key]['question_name'][$tt_key] = $questionList[$tt_val['question_id']]['title'];
+                    }
+                    unset($list['data'][$key]['question_option']);
+                }else{
+                    $list['data'][$key]['question_name'] = '';
+                }
             }
         }
-
         return api_success($list);
     }
 

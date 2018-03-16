@@ -59,6 +59,16 @@ class QuestionCollection extends Model
     }
 
     /**
+     * 问题选项与问题关联关系
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function question()
+    {
+        return $this->belongsTo(\App\Models\Question::class, 'question_id', 'id');
+    }
+
+    /**
      * 问题集与后台管理人关联关系
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
