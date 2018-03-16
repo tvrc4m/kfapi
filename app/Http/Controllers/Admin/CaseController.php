@@ -304,7 +304,7 @@ class CaseController extends Controller
 
         $factor = CaseFactor::create($request->all());
         if ($factor) {
-            return api_success();
+            return api_success($factor);
         }
         return api_error();
     }

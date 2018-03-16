@@ -59,6 +59,16 @@ class QuestionCollection extends Model
     }
 
     /**
+     * 问题选项与问题关联关系
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function question()
+    {
+        return $this->belongsTo(\App\Models\Question::class, 'question_id', 'id');
+    }
+
+    /**
      * 问题集与后台管理人关联关系
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
@@ -126,5 +136,19 @@ class QuestionCollection extends Model
     public function questions()
     {
         return $this->hasMany(\App\Models\Question::class, 'question_collection_id', 'id');
+    }
+
+    /**
+     * 建议关联关系
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function suggests()
+    {
+        return $this->belongsToMany(
+            \App\Models\QuestionSuggest::class,
+            'question_collection_question_suggests',
+            'question_collection_id',
+            'question_suggest_id'
+        )->withPivot('suggest_rule');
     }
 }
