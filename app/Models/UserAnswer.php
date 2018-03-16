@@ -85,6 +85,9 @@ class UserAnswer extends Model
             // 修改试卷状态为已完成
             $paper->stat = self::STATUS_FINISH;
             $paper->save();
+            // 生成报告书
+            $report = new UserQuestionReport();
+            $report->makeReport($paper);
             return ['paper_stat' => self::STATUS_FINISH];
         }
         $collect_id = $collect_id_arr[0];
@@ -187,7 +190,7 @@ class UserAnswer extends Model
      * @param $arr2
      * @return bool
      */
-    private function compareRule($arr1, $arr2)
+    public function compareRule($arr1, $arr2)
     {
         $arr1Count = count($arr1);
         $arr2Count = count($arr2);
