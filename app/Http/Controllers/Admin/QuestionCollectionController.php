@@ -87,7 +87,7 @@ class QuestionCollectionController extends Controller
             $where['type'] = intval($type);
         }
         $list = QuestionCollection::with('adminUser')->with('questionOption')->where($where)->select(['id','title', 'content', 'is_single_page', 'bgimage', 'is_trunk',
-            'type', 'overdue', 'created_at', 'sort', 'create_user_id'])->paginate()->toArray();
+            'type', 'overdue', 'created_at', 'sort', 'create_user_id', 'num'])->paginate()->toArray();
         if ($list){
             foreach ($list['data'] as $key=>$val) {
                 $list['data'][$key]['username'] = $val['admin_user']['username'];
