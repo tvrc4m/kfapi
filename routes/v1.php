@@ -60,5 +60,5 @@ $router->group(['prefix' => 'record'], function () use ($router) {
     // 评测记录列表
     $router->get('/', 'RecordController@getAllRecord');
     // 删除评测记录
-    $router->delete('/{id}', 'RecordController@deleteRecord');
+    $router->delete('/', 'RecordController@deleteRecord');
 });

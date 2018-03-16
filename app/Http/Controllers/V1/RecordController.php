@@ -71,4 +71,34 @@ class RecordController extends Controller
         return api_success($record);
     }
 
+    /**
+     * 删除用户评测记录
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function deleteRecord(Request $request)
+    {
+        //dd($request->all());
+        $topicIds = $request->input('topic_id');
+        //dd($topicIds);
+        $ids = explode(',',$topicIds);
+        $allIds = Topics::select('id')->get()->toArray();
+        //dd($allIds);
+        foreach($allIds as $k=>$v){
+            $newIds[] = $v['id'];
+        }
+        //dd($newIds);
+        //dd($ids);
+        foreach($ids as $k=>$v){
+            //dd($v);
+            if(in_array(intval($v),$newIds)){
+                $result = Topics::destroy(intval($v));
+                if(!$result){
+                    return api_error();
+                }
+            }
+        }
+        return api_success();
+    }
+
 }
