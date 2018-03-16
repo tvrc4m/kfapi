@@ -39,6 +39,7 @@ class QuestionController extends Controller
             'title' => 'required|max:255',
             'bgimage' => 'required',
             'type' => 'required|numeric',
+            'show_report' => 'required|numeric',
             'sort' => 'numeric',
             'options' => 'required|array',
             'options.*.name' => 'required',
@@ -51,6 +52,7 @@ class QuestionController extends Controller
             'question_collection_id.numeric' => '问题集id必须是数字',
             'bgimage.required' => '背景图片不能为空',
             'type.required' => '类型不能为空',
+            'show_report.required' => '类型不能为空',
             'options.required' => '问题选项不能为空',
             'options.array' => '问题选项格式不对',
             'options.*.name.required' => '选项名称不能为空',
@@ -88,6 +90,7 @@ class QuestionController extends Controller
             'title' => 'required|max:255',
             'bgimage' => 'required',
             'type' => 'required',
+            'show_report' => 'required|numeric',
             'sort' => 'numeric',
             'options' => 'required|array',
             'options.*.name' => 'required',
@@ -100,6 +103,7 @@ class QuestionController extends Controller
             'question_collection_id.numeric' => '问题集id必须是数字',
             'bgimage.required' => '背景图片不能为空',
             'type.required' => '类型不能为空',
+            'show_report.required' => '类型不能为空',
             'options.required' => '问题选项不能为空',
             'options.array' => '问题选项格式不对',
             'options.*.name.required' => '选项名称不能为空',
@@ -157,7 +161,7 @@ class QuestionController extends Controller
         $question_collection_id = $request->input('question_collection_id');
         $list = Question::with(['questionOption'])
             ->where('question_collection_id', $question_collection_id)
-            ->select(['id', 'title', 'sort'])
+            ->select(['id', 'title', 'sort', 'show_report'])
             ->orderBy('sort')
             ->paginate();
 
