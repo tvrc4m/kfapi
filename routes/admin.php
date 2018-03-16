@@ -139,6 +139,17 @@ $router->group([], function () use ($router) {
         $router->put('/{id}', 'UserController@editUser');
     });
 
+    // 后台帖子组
+    $router->group(['prefix' => 'topic'], function () use ($router) {
+        // 获取帖子列表
+        $router->get('/', 'TopicController@getAllTopics');
+        // 点击隐藏
+        $router->post('/Hide', 'TopicController@changeHide');
+        // 点击推荐
+        $router->post('/Top', 'UserController@changeTop');
+    });
+
+
     // 案例库
     $router->group(['prefix' => 'case'], function () use ($router) {
         // 搜索关键词

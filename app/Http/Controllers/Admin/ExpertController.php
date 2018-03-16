@@ -59,7 +59,7 @@ class ExpertController extends Controller
             ->where('experts.id',$id)
             ->first();
         //dd($data);
-        unset($data->id);
+        unset($data->id,$data->password);
         return api_success($data);
     }
 
@@ -174,7 +174,6 @@ class ExpertController extends Controller
             'service.*.price' => 'required',
             'service.*.limit_free' => 'required|numeric',
             'account' => 'required|max:255',
-            'password' => 'required|max:255',
         ],[
             'name.required' => '专家名不能为空',
             'name.max' => '专家名不能超过255个字符',
@@ -193,8 +192,6 @@ class ExpertController extends Controller
             'intro.max' => '介绍不能超过255个字符',
             'account.required' => '账号不能为空',
             'account.max' => '账号不超过255个字符',
-            'password.required' => '密码不能为空',
-            'password.max' => '密码不超过255个字符',
             'service.*.service_id.required' => '服务id不能为空',
             'service.*.service_id.numeric' => '服务id不合法',
             'service.*.description.required' => '服务描述不能为空',

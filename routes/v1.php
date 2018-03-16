@@ -11,10 +11,10 @@ $router->post('test', 'TestController@post');
 
 // 问题相关
 $router->group(['prefix' => 'question'], function () use ($router) {
-    // 获取专家列表
-    $router->get('/begin', 'QuestionController@begin');
-    // 获取专家详情
-    $router->get('/{id}', 'QuestionController@begin');
+    // 获得问题
+    $router->get('/', 'QuestionController@question');
+    // 提交问题
+    $router->post('/', 'QuestionController@answer');
 });
 
 // 获取专家接口组
