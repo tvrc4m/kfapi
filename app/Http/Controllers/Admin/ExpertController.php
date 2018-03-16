@@ -59,7 +59,7 @@ class ExpertController extends Controller
             ->where('experts.id',$id)
             ->first();
         //dd($data);
-        unset($data->id);
+        unset($data->id,$data->password);
         return api_success($data);
     }
 
