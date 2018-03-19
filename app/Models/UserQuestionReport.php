@@ -74,16 +74,10 @@ class UserQuestionReport extends Model
                 $suggest_ids[] = $v['question_suggest_id'];
             }
         }
-        // 组合所有建议
-        $suggests = QuestionSuggest::whereIn('id', $suggest_ids)->orderBy('sort')->get();
-        $suggestStr = '';
-        foreach ($suggests as $v) {
-            $suggestStr .= $v['content'];
-        }
-
+        // 保存情感建议
         $this->updateOrCreate(['user_answer_id' => $paper->id], [
             'user_id' => Auth::id(),
-            'suggest' => $suggestStr,
+            'suggest_ids' => json_encode($suggest_ids),
             'type' => QuestionCollection::TYPE_EMOTION,
         ]);
     }
@@ -106,22 +100,39 @@ class UserQuestionReport extends Model
         }
         $user_keyword_ids = QuestionOptionKeyword::whereIn('question_option_id', $option_ids)
             ->get()
-            ->pluck('keyword_id');
+            ->pluck('keyword_id')->all();
         $keyword_ids = array_unique($user_keyword_ids);
         sort($keyword_ids, SORT_NUMERIC);
         // 根据关键词匹配案例  获得建议
-        $this->matchCase($user_keyword_ids);
+        $case_ids = $this->matchCase($user_keyword_ids);
 
         // 根据关键词匹配法规
-        $this->matchLaw($user_keyword_ids);
+        $law_rule_ids = $this->matchLaw($user_keyword_ids);
 
         // 组合经调查了解的内容
-
+        $questionTitleArr = Question::whereIn('id', $question_ids)->get(['id,title'])->pluck('title', 'id')->all();
+        $optionTitleArr = QuestionOption::whereIn('id', $option_ids)->get(['id', 'options'])->pluck('options', 'id')->all();
+        $understand = "";
+        foreach ($answers as $collection) {
+            foreach ($collection['answer'] as $v) {
+                $str = $questionTitleArr[$v['question_id']] . " " . $optionTitleArr[$v['option_id']];
+                $understand .= $str;
+            }
+        }
+        // 保存结果
+        $this->updateOrCreate(['user_answer_id' => $paper->id], [
+            'user_id' => Auth::id(),
+            'case_ids' => json_encode($case_ids),
+            'law_rule_ids' => json_encode($law_rule_ids),
+            'understand' => $understand,
+            'type' => QuestionCollection::TYPE_LAW,
+        ]);
     }
 
     /**
      * 根据关键词匹配案例
      * @param $user_keyword_ids
+     * @return array
      */
     private function matchCase($user_keyword_ids)
     {
@@ -147,11 +158,14 @@ class UserQuestionReport extends Model
         }
         // 相似度倒序
         $percentArrSorted = arraySort($percentArr, 'percent');
+
+        return collect($percentArrSorted)->pluck('case_id')->all();
     }
 
     /**
      * 根据关键词匹配法规
      * @param $user_keyword_ids
+     * @return array
      */
     private function matchLaw($user_keyword_ids)
     {
@@ -177,5 +191,7 @@ class UserQuestionReport extends Model
         }
         // 相似度倒序
         $percentArrSorted = arraySort($percentArr, 'percent');
+
+        return collect($percentArrSorted)->pluck('law_rule_id')->all();
     }
 }
