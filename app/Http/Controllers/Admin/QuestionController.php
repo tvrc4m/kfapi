@@ -163,7 +163,19 @@ class QuestionController extends Controller
             ->where('question_collection_id', $question_collection_id)
             ->select(['id', 'title', 'sort', 'show_report'])
             ->orderBy('sort')
-            ->paginate();
+            ->paginate()->toArray();
+
+
+        $optionLetter = range('A', 'Z');
+        if ($list){
+            foreach ($list['data'] as $key=>$val){
+                if ($val['question_option']){
+                    foreach ($val['question_option'] as $tt_key=>$tt_val){
+                        $list['data'][$key]['question_option'][$tt_key]['optionLetter'] = $optionLetter[$tt_key];
+                    }
+                }
+            }
+        }
 
         return api_success($list);
     }
