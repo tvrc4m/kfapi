@@ -365,14 +365,8 @@ class CaseController extends Controller
         if (!empty($case_factor_id)) {
             $where['case_factor_id'] = $case_factor_id;
         }
-        $data = CaseKeyword::with(['keyword'])->where($where)->get()->toArray();
+        $data = Keyword::where($where)->get()->toArray();
 
-        if ($data){
-            foreach ($data as $key=>$val){
-                $data[$key]['name'] = $val['keyword']['name'];
-                unset($data[$key]['keyword']);
-            }
-        }
         return api_success($data);
     }
 }
