@@ -34,7 +34,7 @@ class TopicController extends Controller
             $where['cate'] = $cate;
         }
 
-        if (!empty($sort) && $sort=='comment') {
+        if (!empty($sort) && $sort==2) {
             $sortfield = 'comments.created_at';
         }else{
             $sortfield = 'topics.created_at';
@@ -78,73 +78,39 @@ class TopicController extends Controller
 
 
     /**
-     * 隐藏问题
+     * 隐藏问题/取消隐藏
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function hideQuestion(Request $request)
+    public function changeHide(Request $request)
     {
-
-        $data = $request->all();
-        $userinfo = Auth::guard("admin")->user()->toArray();
-        dd($userinfo);
-        $data['create_user_id'] = $userinfo['id'];
-        $data['password'] = Hash::make($request->input('password'));
+        $qid = $request->input('question_id');
         //dd($data);
-        $createUser = AdminUser::create($data);
-
-        if(!$createUser){
-            return api_error();
-        }
-        return api_success();
-    }
-
-    /**
-     * 删除用户
-     * @param $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function deleteUser($id)
-    {
-        if (AdminUser::destroy(intval($id))) {
+        $hide = $request->input('hide_stat');
+        $data = ['is_hide'=>$hide];
+        $question = Topics::where('id', $qid)->firstOrFail();
+        if ($question->update($data)) {
             return api_success();
         }
         return api_error();
     }
 
     /**
-     * 修改用户
-     * @param $id
+     * 隐藏问题/取消隐藏
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function editUser($id, Request $request)
+    public function changeTop(Request $request)
     {
-        $this->validate($request, [
-            'username' => 'required|max:255',
-            'password' => 'required|max:255',
-            'email' => 'required|email'
-        ],[
-            'username.required' => '用户名不能为空',
-            'username.max' => '用户名不能超过255个字符',
-            'password.required' => '密码不能为空',
-            'password.max' => '密码不能超过255个字符',
-            'email.required' => '邮箱不能为空',
-            'email.email' => '邮箱格式不正确',
-        ]);
-
-        $userinfo = Auth::guard("admin")->user()->toArray();
-        $createUser = AdminUser::where('id',$id)->first();
-        //dd($user);
-        $data = $request->all();
-        $data['password'] = Hash::make($request->input('password'));
-        $data['create_user_id'] = $userinfo['id'];
-
-        $res = $createUser->update($data);
-        if(!$res){
-            return api_error();
+        $qid = $request->input('question_id');
+        //dd($data);
+        $top = $request->input('top_stat');
+        $data = ['top'=>$top];
+        $question = Topics::where('id', $qid)->firstOrFail();
+        if ($question->update($data)) {
+            return api_success();
         }
-        return api_success();
+        return api_error();
     }
 
 }

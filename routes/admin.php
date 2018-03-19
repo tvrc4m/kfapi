@@ -144,9 +144,9 @@ $router->group([], function () use ($router) {
         // 获取帖子列表
         $router->get('/', 'TopicController@getAllTopics');
         // 点击隐藏
-        $router->post('/Hide', 'TopicController@changeHide');
+        $router->post('/hide', 'TopicController@changeHide');
         // 点击推荐
-        $router->post('/Top', 'UserController@changeTop');
+        $router->post('/top', 'TopicController@changeTop');
     });
 
 

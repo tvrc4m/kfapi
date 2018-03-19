@@ -21,6 +21,7 @@ class TopicController extends Controller
     //大家在测列表
     public function getAllTopic(Request $request)
     {
+        dd($request->header());
         $perpage = $request->input('per_page');
 
         $topics = DB::table('topics')
