@@ -20,9 +20,4 @@
             '2'=>array('id'=>2,'name'=>'专业律师'),
             '3'=>array('id'=>3,'name'=>'专业咨询师'),
         ),
-        //服务
-        'service' => array(
-            1=>array('id'=>1,'name'=>'电话答疑'),
-            2=>array('id'=>2,'name'=>'材料审阅'),
-        ),
     );

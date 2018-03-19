@@ -1,12 +1,13 @@
 <?php
 namespace App\Models;
+
 use Illuminate\Database\Eloquent\Model;
 
-class Topics extends Model
+class Comments extends Model
 {
 
     // 表名
-    protected $table = "topics";
+    protected $table = "comments";
 
     /**
      * 不可被批量赋值的属性。
@@ -20,8 +21,9 @@ class Topics extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function comments()
+    public function topic()
     {
-        return $this->hasMany(\App\Models\Comments::class, 'topic_id', 'id');
+        return $this->belongsTo(\App\Models\Topics::class, 'id', 'topic_id');
     }
+
 }
