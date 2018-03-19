@@ -162,7 +162,7 @@ $router->group([], function () use ($router) {
         $router->get('keyword', 'CaseController@getAllKeyword');
 
         // 查看案例要素对应的关键词列表
-        $router->get('factor/list', 'CaseController@getFactorList');
+        $router->get('factor/keywords', 'CaseController@getFactorList');
         // 查看案例要素
         $router->get('factor', 'CaseController@getAllFactor');
         // 新增案例要素
