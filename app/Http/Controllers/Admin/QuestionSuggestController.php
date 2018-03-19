@@ -34,6 +34,7 @@ class QuestionSuggestController extends Controller
             'question_collection_id' => 'required|numeric',
             'content' => 'required|max:255',
             'sort' => 'required|numeric',
+            'type' => 'required|numeric',
         ], [
             'question_collection_id.required' => '问题集ID不能为空',
             'question_collection_id.numeric' => '问题集ID不合法',
@@ -41,6 +42,8 @@ class QuestionSuggestController extends Controller
             'content.max' => '内容不能超过255个字符',
             'sort.required' => '排序不能为空',
             'sort.numeric' => '排序传入参数不合法',
+            'type.required' => '类型不能为空',
+            'type.numeric' => '类型传入参数不合法',
         ]);
 
         $result = QuestionSuggest::create($request->all());
@@ -69,7 +72,7 @@ class QuestionSuggestController extends Controller
         if (!empty($question_collection_id)) {
             $where['question_collection_id'] = $question_collection_id;
         }
-        $questionSuggestList = QuestionSuggest::where($where)->select(['id', 'question_collection_id', 'content', 'sort'])->paginate();
+        $questionSuggestList = QuestionSuggest::where($where)->select(['id', 'question_collection_id', 'content', 'sort', 'type'])->paginate();
 
         return api_success($questionSuggestList);
     }
@@ -95,6 +98,7 @@ class QuestionSuggestController extends Controller
             'question_collection_id' => 'required|numeric',
             'content' => 'required|max:255',
             'sort' => 'required|numeric',
+            'type' => 'required|numeric',
         ], [
             'question_collection_id.required' => '问题集ID不能为空',
             'question_collection_id.numeric' => '问题集ID不合法',
@@ -102,6 +106,8 @@ class QuestionSuggestController extends Controller
             'content.max' => '内容不能超过255个字符',
             'sort.required' => '排序不能为空',
             'sort.numeric' => '排序传入参数不合法',
+            'type.required' => '类型不能为空',
+            'type.numeric' => '类型传入参数不合法',
         ]);
 
         $questionSuggest = QuestionSuggest::where('id', $id)->firstOrFail();
