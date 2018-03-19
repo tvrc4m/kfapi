@@ -239,6 +239,7 @@ class ExpertController extends Controller
     {
         $config = require APP_PATH . 'config/fieldDictionary.php';
         $job = $config['job'];
+        $job = array_values($job);
         return api_success($job);
     }
 
@@ -247,6 +248,7 @@ class ExpertController extends Controller
     {
         $config = require APP_PATH . 'config/fieldDictionary.php';
         $goodAt = $config['good_at'];
+        $goodAt = array_values($goodAt);
         return api_success($goodAt);
     }
 
@@ -268,6 +270,7 @@ class ExpertController extends Controller
     {
         $config = require APP_PATH . 'config/fieldDictionary.php';
         $certification = $config['certification'];
+        $certification = array_values($certification);
         return api_success($certification);
     }
 }

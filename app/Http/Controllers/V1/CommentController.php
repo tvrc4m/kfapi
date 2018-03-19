@@ -26,7 +26,7 @@ class CommentController extends Controller
 
         $comments = DB::table('comments')
             ->leftJoin('experts', 'experts.id', '=', 'comments.expert_id')
-            ->select('experts.name as expertname','experts.icon','experts.job_id','comments.expert_id','comments.content','comments.comment_time')
+            ->select('experts.name as expertname','experts.icon','experts.job_id','comments.expert_id','comments.content','comments.created_at')
             ->where('topic_id',$topicId)
             ->paginate($perpage)
             ->toArray();
