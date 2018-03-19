@@ -94,10 +94,88 @@ class UserQuestionReport extends Model
      */
     private function makeLawReport(UserAnswer $paper)
     {
-        // 提取关键词
-        // 匹配法规
-        // 匹配案例
-        // 匹配建议
-        // 组合经调查了解
+        // 提取用户回答的关键词
+        $answers = json_decode($paper->data, true);
+        $option_ids = [];
+        $question_ids = [];
+        foreach ($answers as $collection) {
+            foreach ($collection['answer'] as $v) {
+                $option_ids[] = $v['option_id'];
+                $question_ids[] = $v['question_id'];
+            }
+        }
+        $user_keyword_ids = QuestionOptionKeyword::whereIn('question_option_id', $option_ids)
+            ->get()
+            ->pluck('keyword_id');
+        $keyword_ids = array_unique($user_keyword_ids);
+        sort($keyword_ids, SORT_NUMERIC);
+        // 根据关键词匹配案例  获得建议
+        $this->matchCase($user_keyword_ids);
+
+        // 根据关键词匹配法规
+        $this->matchLaw($user_keyword_ids);
+
+        // 组合经调查了解的内容
+
+    }
+
+    /**
+     * 根据关键词匹配案例
+     * @param $user_keyword_ids
+     */
+    private function matchCase($user_keyword_ids)
+    {
+        $case_keywords = CaseKeyword::get(['case_id', 'keyword_id']);
+        $caseKeywordArr = [];
+        foreach ($case_keywords as $v) {
+            if (!isset($caseKeywordArr[$v['case_id']])) {
+                $caseKeywordArr[$v['case_id']] = [];
+            }
+            if (!in_array($v['keyword_id'], $caseKeywordArr[$v['case_id']])) {
+                $caseKeywordArr[$v['case_id']][] = $v['keyword_id'];
+                sort($caseKeywordArr[$v['case_id']], SORT_NUMERIC);
+            }
+        }
+        // 最大相似度
+        $percentArr = [];
+        foreach ($caseKeywordArr as $case_id => $v) {
+            $percent = similar_array($user_keyword_ids, $v);
+            $percentArr[] = [
+                'percent' => $percent,
+                'case_id' => $case_id,
+            ];
+        }
+        // 相似度倒序
+        $percentArrSorted = arraySort($percentArr, 'percent');
+    }
+
+    /**
+     * 根据关键词匹配法规
+     * @param $user_keyword_ids
+     */
+    private function matchLaw($user_keyword_ids)
+    {
+        $lawKeywords = LawRuleKeyword::get(['law_rule_id', 'keyword_id']);
+        $lawKeywordArr = [];
+        foreach ($lawKeywords as $v) {
+            if (!isset($lawKeywordArr[$v['law_rule_id']])) {
+                $lawKeywordArr[$v['law_rule_id']] = [];
+            }
+            if (!in_array($v['keyword_id'], $lawKeywordArr[$v['law_rule_id']])) {
+                $lawKeywordArr[$v['law_rule_id']][] = $v['keyword_id'];
+                sort($lawKeywordArr[$v['law_rule_id']], SORT_NUMERIC);
+            }
+        }
+        // 最大相似度
+        $percentArr = [];
+        foreach ($lawKeywordArr as $law_rule_id => $v) {
+            $percent = similar_array($user_keyword_ids, $v);
+            $percentArr[] = [
+                'percent' => $percent,
+                'law_rule_id' => $law_rule_id,
+            ];
+        }
+        // 相似度倒序
+        $percentArrSorted = arraySort($percentArr, 'percent');
     }
 }
