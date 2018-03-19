@@ -28,7 +28,7 @@ class TopicController extends Controller
 
         $topics = DB::table('topics')
             ->leftJoin('users', 'users.id', '=', 'topics.user_id')
-            ->select('topics.cate','topics.content','topics.comments','topics.created_at','users.user_name','users.province_id','users.city_id')
+            ->select('topics.id','topics.cate','topics.content','topics.comments','topics.created_at','users.user_name','users.province_id','users.city_id')
             ->paginate($perpage)
             ->toArray();
         //dd($topics);
