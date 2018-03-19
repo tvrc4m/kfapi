@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\V1;
 
 use App\Http\Controllers\Controller;
+use App\Models\Topics;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -100,4 +101,26 @@ class TopicController extends Controller
         return api_success($topic);
     }
 
+    //用户提交问题
+    public function addTopic(Request $request)
+    {
+        $this->validate($request, [
+            'user_id' => 'required|numeric',
+            'content' => 'required|max:255',
+            'description' => 'required|max:500',
+        ],[
+            'user_id.required' => '用户ID不能为空',
+            'user_id.numeric' => '用户ID不合法',
+            'content.required' => '问题id不能为空',
+            'content.max' => '问题不超过255个字符',
+            'description.required' => '情感描述不能为空',
+            'description.max' => '情感描述不超过500个字符',
+        ]);
+
+        $result = Topics::create($request->all());
+        if ($result) {
+            return api_success();
+        }
+        return api_error();
+    }
 }
