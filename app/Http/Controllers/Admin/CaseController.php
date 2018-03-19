@@ -70,7 +70,7 @@ class CaseController extends Controller
 
         $case = Cases::create($request->all());
         if ($case) {
-            return api_success();
+            return api_success($case);
         }
         return api_error();
     }
@@ -122,7 +122,7 @@ class CaseController extends Controller
 
         $case = Cases::where('id', $id)->firstOrFail();
         if ($case->update($request->all())) {
-            return api_success();
+            return api_success($case);
         }
         return api_error();
     }
@@ -226,8 +226,6 @@ class CaseController extends Controller
         $this->validate($request, [
             'case_id' => 'required|numeric',
             'data' => 'array',
-            'data.*.case_factor_id' => 'required|numeric',
-            'data.*.keyword_id' => 'required|numeric',
         ],[
             'case_id.required' => '案例id不能为空',
             'case_id.numeric' => '案例id不合法',
@@ -241,12 +239,16 @@ class CaseController extends Controller
         // 删除原有关键词
         CaseKeyword::where('case_id', $case_id)->delete();
         // 保存新的关键词
-        foreach ($saveArray as $v) {
-            $v['case_id'] = $case_id;
-            $res = CaseKeyword::create($v);
-            if (!$res) {
-                DB::rollBack();
-                return api_error();
+        foreach ($saveArray as $factor_id => $keywords) {
+            foreach ($keywords as $keyword_id) {
+                $item['keyword_id'] = $keyword_id;
+                $item['case_factor_id'] = $factor_id;
+                $item['case_id'] = $case_id;
+                $res = CaseKeyword::create($item);
+                if (!$res) {
+                    DB::rollBack();
+                    return api_error();
+                }
             }
         }
         DB::commit();
