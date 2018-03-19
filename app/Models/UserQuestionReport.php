@@ -31,21 +31,21 @@ class UserQuestionReport extends Model
     /**
      * 生成报告书
      * @param UserAnswer $paper
-     * @return string|void
+     * @return Model
      */
     public function makeReport(UserAnswer $paper)
     {
         if ($paper->type == QuestionCollection::TYPE_EMOTION) { // 情感
-            $this->makeEmotionReport($paper);
+            return $this->makeEmotionReport($paper);
         } elseif ($paper->type == QuestionCollection::TYPE_LAW) { // 法规
-            $this->makeLawReport($paper);
+            return $this->makeLawReport($paper);
         }
     }
 
     /**
      * 生成情感报告
      * @param UserAnswer $paper
-     * @return string
+     * @return Model
      */
     private function makeEmotionReport(UserAnswer $paper)
     {
@@ -75,7 +75,7 @@ class UserQuestionReport extends Model
             }
         }
         // 保存情感建议
-        $this->updateOrCreate(['user_answer_id' => $paper->id], [
+        return $this->updateOrCreate(['user_answer_id' => $paper->id], [
             'user_id' => Auth::id(),
             'suggest_ids' => json_encode($suggest_ids),
             'type' => QuestionCollection::TYPE_EMOTION,
@@ -85,6 +85,7 @@ class UserQuestionReport extends Model
     /**
      * 生成法规报告
      * @param UserAnswer $paper
+     * @return Model
      */
     private function makeLawReport(UserAnswer $paper)
     {
@@ -120,7 +121,7 @@ class UserQuestionReport extends Model
             }
         }
         // 保存结果
-        $this->updateOrCreate(['user_answer_id' => $paper->id], [
+        return $this->updateOrCreate(['user_answer_id' => $paper->id], [
             'user_id' => Auth::id(),
             'case_ids' => json_encode($case_ids),
             'law_rule_ids' => json_encode($law_rule_ids),

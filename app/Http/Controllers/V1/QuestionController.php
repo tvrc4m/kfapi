@@ -4,6 +4,7 @@ namespace App\Http\Controllers\V1;
 
 use App\Http\Controllers\Controller;
 use App\Models\UserAnswer;
+use App\Models\UserQuestionReport;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -69,5 +70,46 @@ class QuestionController extends Controller
         }
         // 返回下一部分题集
         return $this->getQuestion();
+    }
+
+    /**
+     * 生成报告书
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function makeReport(Request $request)
+    {
+        $this->validate($request, [
+            'paper_id' => 'required|numeric',
+        ], [
+            'paper_id.required' => '试卷id不能为空',
+            'paper_id.numeric' => '试卷id必须是数字',
+        ]);
+        $paper = UserAnswer::where('id', $request->input('paper_id'))->firstOrFail();
+
+        // 生成报告书
+        $report = new UserQuestionReport();
+        $res = $report->makeReport($paper);
+
+        if ($res === false) {
+            return api_error('生成结果失败');
+        }
+
+        return api_success();
+    }
+
+    /**
+     * 查看报告书
+     * @param Request $request
+     */
+    public function getReport(Request $request)
+    {
+        $this->validate($request, [
+            'report_id' => 'required|numeric',
+        ], [
+            'report_id.required' => '报告书id不能为空',
+            'report_id.numeric' => '报告书id必须是数字',
+        ]);
+        // $report_id = $request->input('report_id');
     }
 }
