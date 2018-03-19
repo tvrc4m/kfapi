@@ -66,12 +66,8 @@ class TopicController extends Controller
             $userArr[$v->id] = $v->user_name;
         }
         //dd($userArr);
-        //dd($topics['data']);
         if($topics['data']){
             foreach($topics['data'] as $k=>&$v){
-//                dd($v);
-//                dd($v['user_id']);
-                //dd($userArr[$v->user_id]);
                 $v->user_name = $userArr[$v->user_id];
             }
         }
@@ -79,35 +75,15 @@ class TopicController extends Controller
         return api_success($topics);
     }
 
-    /**
-     * 查看用户
-     * @param $id
-     */
-    public function getOneUser($id)
-    {
-        $data = AdminUser::where('id', $id)->firstOrFail();
-        return api_success($data);
-    }
+
 
     /**
-     * 新增用户
+     * 隐藏问题
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function addUser(Request $request)
+    public function hideQuestion(Request $request)
     {
-        $this->validate($request, [
-            'username' => 'required|max:255',
-            'password' => 'required|max:255',
-            'email' => 'required|email'
-        ],[
-            'username.required' => '用户名不能为空',
-            'username.max' => '用户名不能超过255个字符',
-            'password.required' => '密码不能为空',
-            'password.max' => '密码不能超过255个字符',
-            'email.required' => '邮箱不能为空',
-            'email.email' => '邮箱格式不正确',
-        ]);
 
         $data = $request->all();
         $userinfo = Auth::guard("admin")->user()->toArray();

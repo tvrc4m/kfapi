@@ -54,13 +54,22 @@ class ExpertController extends Controller
      */
     public function getOneExpert($id)
     {
-        $data = DB::table('experts')
-            ->leftJoin('experts_services', 'experts.id', '=', 'experts_services.expert_id')
+        $expert = DB::table('experts')
+//            ->leftJoin('experts_services', 'experts.id', '=', 'experts_services.expert_id')
+//            ->leftJoin('services','services.id','=','experts_services.service_id')
             ->where('experts.id',$id)
             ->first();
-        //dd($data);
-        unset($data->id,$data->password);
-        return api_success($data);
+
+        $service = DB::table('experts_services')
+            ->leftJoin('services','services.id','=','experts_services.service_id')
+            ->select(['experts_services.*','services.cate'])
+            ->where('experts_services.expert_id',$id)
+            ->get()
+            ->toArray();
+        //dd($service);
+        $expert->service = $service;
+        unset($expert->id,$expert->password,$expert->service_id);
+        return api_success($expert);
     }
 
     /**
