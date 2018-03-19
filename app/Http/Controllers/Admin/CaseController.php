@@ -345,4 +345,34 @@ class CaseController extends Controller
         $data = CaseFactor::all();
         return api_success($data);
     }
+
+    /**
+     * 查看某个要素下的所有关键词
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getFactorList(Request $request)
+    {
+        $this->validate($request, [
+            'case_factor_id' => 'required|numeric',
+        ],[
+            'case_factor_id.required' => '要素不能为空',
+            'case_factor_id.numeric' => '要素ID不合法',
+        ]);
+
+        $case_factor_id = $request->input('case_factor_id');
+
+        $where = [];
+        if (!empty($case_factor_id)) {
+            $where['case_factor_id'] = $case_factor_id;
+        }
+        $data = CaseKeyword::with(['keyword'])->where($where)->get()->toArray();
+
+        if ($data){
+            foreach ($data as $key=>$val){
+                $data[$key]['name'] = $val['keyword']['name'];
+                unset($data[$key]['keyword']);
+            }
+        }
+        return api_success($data);
+    }
 }

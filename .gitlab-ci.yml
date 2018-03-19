@@ -1,0 +1,10 @@
+stages:
+  - deploy
+deploy:
+  stage: deploy
+  environment: doc
+  script:
+    - echo "deploy ing...";
+    - curl "http://webhook.vrcdkj.cn/deploy.php?branch=master&env=fdev&access_token=$access_token"
+  only:
+    - master
