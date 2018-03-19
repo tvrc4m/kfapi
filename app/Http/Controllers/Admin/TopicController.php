@@ -33,36 +33,49 @@ class TopicController extends Controller
         if (!empty($cate)) {
             $where['cate'] = $cate;
         }
-        //dd($sort);
-        if (!empty($sort)) {
-            if($sort=='question'){
-                $sortfield = 'topics.created_at';
-            }
-            if($sort=='comment'){
-                $sortfield = 'comments.created_at';
-            }
+
+        if (!empty($sort) && $sort=='comment') {
+            $sortfield = 'comments.created_at';
+        }else{
+            $sortfield = 'topics.created_at';
         }
-        if (!empty($hide_question)) {
+
+        if ($hide_question) {
             $where['topics.is_hide'] = $hide_question;
         }
-        if (!empty($hide_comment)) {
+
+        if ($hide_comment) {
             $where['comments.is_hide'] = $hide_comment;
         }
-        $topics = Topics::with(['comments'])->select('topics.id','topics.content','topics.comments','topics.created_at as question_time','topics.user_id','comments.content','comments.comment_time','comments.expert_id')
-                ->where($where)
-                ->orderBy($sortfield,'desc')
-                ->paginate(20)
-                ->toArray();
-        dd($topics);
-//        $topics = DB::table('topics')
-//            ->leftJoin('comments', 'comments.topic_id', '=', 'topics.id')
-//            ->select('topics.id','topics.content','topics.comments','topics.created_at as question_time','topics.user_id','comments.content','comments.comment_time','comments.expert_id')
-//            ->where($where)
-////            ->groupBy(['topics.id'])
-//            ->orderBy($sortfield,'desc')
-//            ->paginate(20)
-//            ->toArray();
 
+        $topics = DB::table('topics')
+            ->leftJoin('comments', 'comments.topic_id', '=', 'topics.id')
+            ->select('topics.id','topics.content','topics.comments','topics.created_at as question_time','topics.user_id')
+            ->where($where)
+            ->groupBy('topics.id')
+            ->orderBy($sortfield,'desc')
+            ->paginate(20)
+            ->toArray();
+        //dd($topics);
+        $users = DB::table('users')
+            ->select('users.user_name','users.id')
+            ->get()
+            ->toArray();
+        //dd($users);
+        foreach($users as $k=>$v){
+            $userArr[$v->id] = $v->user_name;
+        }
+        //dd($userArr);
+        //dd($topics['data']);
+        if($topics['data']){
+            foreach($topics['data'] as $k=>&$v){
+//                dd($v);
+//                dd($v['user_id']);
+                //dd($userArr[$v->user_id]);
+                $v->user_name = $userArr[$v->user_id];
+            }
+        }
+        //dd($topics);
         return api_success($topics);
     }
 

@@ -244,8 +244,13 @@ class ExpertController extends Controller
     //服务列表
     public function getService(Request $request)
     {
-        $config = require APP_PATH . 'config/fieldDictionary.php';
-        $service = $config['service'];
+        $cate = $request->input('cate');
+        $service = DB::table('services')
+            ->select('services.id','services.name')
+            ->where('services.cate',$cate)
+            ->get()
+            ->toArray();
+        //dd($service);
         return api_success($service);
     }
 
