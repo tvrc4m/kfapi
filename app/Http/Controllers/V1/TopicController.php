@@ -78,12 +78,38 @@ class TopicController extends Controller
         //print_sql();
         $topic = DB::table('topics')
             ->leftJoin('users', 'users.id', '=', 'topics.user_id')
-            ->leftJoin('opinions', 'opinions.id', '=', 'topics.opinion_id')
-            ->select('topics.cate','topics.content','topics.comments','topics.created_at','users.user_name','users.province_id','users.city_id','topics.opinion_id','opinions.advice')
+            ->leftJoin('user_question_report', 'user_question_report.id', '=', 'topics.opinion_id')
+            ->select('topics.cate','topics.content','topics.comments','topics.created_at','users.user_name','users.province_id','users.city_id','topics.opinion_id','user_question_report.suggest_ids','user_question_report.case_ids')
             ->where('topics.id',$id)
             ->first();
+        //dd($topic);
+        $newSuggest = '';
+        if($topic->cate==1){
+            //dd(json_decode($topic->case_ids));
+            $case_ids = json_decode($topic->case_ids);
+            $suggest = DB::table('cases')
+                ->select('cases.suggest')
+                ->whereIn('cases.id',$case_ids)
+                ->get()
+                ->toArray();
+            foreach ($suggest as $k=>$v){
+                $newSuggest .= $v->suggest.',';
+            }
+            //dd($suggest);
+        }else{
 
-        $topic->opinion_content = substr($topic->advice,0,30);
+            $suggest_ids = json_decode($topic->suggest_ids);
+            $suggest = DB::table('question_suggests')
+                ->select('question_suggests.content')
+                ->whereIn('question_suggests.id',$suggest_ids)
+                ->get()
+                ->toArray();
+            foreach ($suggest as $k=>$v){
+                $newSuggest = implode(',',$v->content);
+            }
+        }
+//dd($newSuggest);
+        $topic->opinion_content = substr($newSuggest,0,20);
 
         $city = DB::select('select p.name as provincename,c.name as cityname from bu_provinces as p left join bu_citys as c on c.provinceid= p.id where c.provinceid =? and c.cityid=?',[$topic->province_id,$topic->city_id]);
         $topic->area = $city[0]->provincename.$city[0]->cityname;
@@ -96,7 +122,7 @@ class TopicController extends Controller
             $topic->cate = '';
         }
 
-        unset($topic->province_id,$topic->city_id,$topic->advice);
+        unset($topic->province_id,$topic->city_id,$topic->suggest_ids,$topic->case_ids);
         //dd($topic);
         return api_success($topic);
     }
