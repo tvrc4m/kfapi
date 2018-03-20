@@ -32,9 +32,18 @@ class CommentController extends Controller
             ->toArray();
         //dd($comments);
         $config = require APP_PATH . 'config/fieldDictionary.php';
+        //dd($config['job']);
+        $newJob = [];
+        foreach($config['job'] as $k=>$v){
+            $newJob[$v['job_id']] = $v['name'];
+        }
         if($comments['data']){
             foreach ($comments['data'] as $k=>&$v){
-                $v->job = $config['job'][$v->job_id];
+                if($v->job_id){
+                    $v->job = $newJob[$v->job_id];
+                }else{
+                    $v->job = '';
+                }
             }
         }
 

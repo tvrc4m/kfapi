@@ -26,37 +26,40 @@ class ExpertController extends Controller
     public function getAllExpert(Request $request)
     {
         $per_page = $request->input('per_page');
+        $type = $request->input('type');
 
         //配置文件获取专家职业
-        $config = require APP_PATH . 'config/fieldDictionary.php';
+        $config = require base_path('config/fieldDictionary.php');
         //dd($config);
         $jobs = $config['job'];
+        $jobs = array_values($jobs);
+        $list = Experts::select(['id','name','icon', 'job_id', 'intro','type'])->where('type',$type)->paginate($per_page)->toArray();
+//dd($list);
+        //dd($jobs);
+        $newJobs = [];
+        foreach($jobs as $k=>$v){
+            $newJobs[$v['job_id']] = $v['name'];
+        }
 
-        $list = Experts::select(['id','name','icon', 'job_id', 'intro','type'])->paginate($per_page)->toArray();
-        $data['law_list'] = [];
-        $data['feel_list'] = [];
-        if($list){
+        if($list['data']){
+
             foreach ($list['data'] as $k=>$v){
-                $job = $jobs[$v['job_id']];
-
-                if($v['type']==1){
-                    $data['law_list'][$k]['id'] = $v['id'];
-                    $data['law_list'][$k]['name'] = $v['name'];
-                    $data['law_list'][$k]['icon'] = $v['icon'];
-                    $data['law_list'][$k]['job'] = $job;
-                    $data['law_list'][$k]['intro'] = $v['intro'];
+                if($v['job_id']){
+                    //var_dump($v['job_id']);
+                    //var_dump($newJobs[$v['job_id']]);
+                    $job = $newJobs[$v['job_id']];
+                }else{
+                    $job = '';
                 }
-                if($v['type']==2){
-                    $data['feel_list'][$k]['id'] = $v['id'];
-                    $data['feel_list'][$k]['name'] = $v['name'];
-                    $data['feel_list'][$k]['icon'] = $v['icon'];
-                    $data['feel_list'][$k]['job'] = $job;
-                    $data['feel_list'][$k]['intro'] = $v['intro'];
-                }
+                $list['data'][$k]['id'] = $v['id'];
+                $list['data'][$k]['name'] = $v['name'];
+                $list['data'][$k]['icon'] = $v['icon'];
+                $list['data'][$k]['job'] = $job;
+                $list['data'][$k]['intro'] = $v['intro'];
             }
         }
         //dd($data);
-        return api_success($data);
+        return api_success($list);
     }
 
     /**
