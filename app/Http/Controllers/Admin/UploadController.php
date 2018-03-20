@@ -37,19 +37,21 @@ class UploadController extends Controller
     {
 
         if (!$request->hasFile('file')) {
-            return api_error('图片验证失败!')
+            return api_error('图片不存在!');
         }
 
         $file = $request->file('file');
         if ($file->isValid()){
-            $imagePath = base_path('/public/upload/'). date("Y-m-d").'/'.md5(microtime()).'.'.$file->extension();
-            $data = $file->move($imagePath);
-            if($data){
-                return api_success($data);
-            }
-
-            return api_error('图片上传失败!');
+            return api_error('图片验证失败!');
         }
+
+        $imagePath = base_path('/public/upload/'). date("Y-m-d").'/'.md5(microtime()). mt_rand(1000,9999) .'.'.$file->extension();
+        $data = $file->move($imagePath);
+        if($data){
+            return api_success($data);
+        }
+
+        return api_error('图片上传失败!');
 
     }
 
