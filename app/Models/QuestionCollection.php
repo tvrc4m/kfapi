@@ -32,12 +32,9 @@ class QuestionCollection extends Model
     // 表名
     protected $table = "question_collections";
 
-    /**
-     * 不可被批量赋值的属性。
-     *
-     * @var array
-     */
-    protected $guarded = [];
+    protected $fillable = ['type', 'title', 'content', 'is_single_page', 'bgimage', 'is_trunk', 'overdue', 'stat',
+                            'sort', 'num', 'create_user_id'];
+
 
     /**
      * 需要被转换成日期的属性。

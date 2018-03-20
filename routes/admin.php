@@ -103,6 +103,12 @@ $router->group([], function () use ($router) {
         $router->get('/getKeywordList/{id}', 'KeywordController@getKeywordList');
     });
 
+    //上传
+    $router->group(['prefix' => 'upload'], function () use ($router) {
+        // 上传图片
+        $router->post('/', 'UploadController@image');
+    });
+
     // 获取专家接口组
     $router->group(['prefix' => 'expert'], function () use ($router) {
         // 获取专家列表

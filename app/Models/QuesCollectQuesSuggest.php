@@ -19,7 +19,7 @@ class QuesCollectQuesSuggest extends Model
     use SoftDeletes;
 
     // 表名
-    protected $table = "question_collect_question_suggest";
+    protected $table = "question_collection_question_suggests";
 
     /**
      * 不可被批量赋值的属性。
@@ -35,5 +35,12 @@ class QuesCollectQuesSuggest extends Model
      */
     protected $dates = ['deleted_at'];
 
-
+    /**
+     * 应该被转换成原生类型的属性。
+     *
+     * @var array
+     */
+    protected $casts = [
+        'suggest_rule' => 'array',
+    ];
 }
