@@ -47,5 +47,14 @@ class KeywordController extends Controller
         return api_success($list);
     }
 
+    /**
+     * 获得所有关键字列表
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getAll()
+    {
+        $data = CaseFactor::with('keywords')->get();
 
+        return api_success($data);
+    }
 }

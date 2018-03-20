@@ -14,4 +14,13 @@ class CaseFactor extends Model
      * @var array
      */
     protected $guarded = [];
+
+    /**
+     * 关键词关联关系
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function keywords()
+    {
+        return $this->hasMany(\App\Models\Keyword::class, 'case_factor_id', 'id');
+    }
 }
