@@ -95,7 +95,10 @@ class UserQuestionReport extends Model
         $question_ids = [];
         foreach ($answers as $collection) {
             foreach ($collection['answer'] as $v) {
-                $option_ids[] = $v['option_id'];
+                if (in_array($v['type'], [1,2,3])) {
+                    $option_ids = array_merge($option_ids, $v['option_id']);
+                }
+
                 $question_ids[] = $v['question_id'];
             }
         }
