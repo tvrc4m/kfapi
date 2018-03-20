@@ -210,4 +210,23 @@ class QuestionCollectionController extends Controller
 
         return api_success($list);
     }
+
+    /**
+     * 某个问题集下面的所有问题以及对应的选项
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getAllQuestionList(Request $request)
+    {
+        $this->validate($request, [
+            'question_collection_id' => 'required|numeric',
+        ], [
+            'question_collection_id.required' => '问题集ID不能为空',
+            'question_collection_id.numeric' => '问题集ID不合法',
+        ]);
+
+        $question_collection_id = $request->input('question_collection_id');
+        $backData = Question::where('question_collection_id', $question_collection_id)->with('questionOption')->get()->toArray();
+
+        return api_success($backData);
+    }
 }

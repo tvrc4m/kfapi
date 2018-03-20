@@ -27,6 +27,8 @@ $router->group([], function () use ($router) {
         $router->post('/suggest/rule', 'QuestionSuggestController@createRule');
         // 情感建议匹配关系列表
         $router->get('/suggest/rule', 'QuestionSuggestController@getRuleList');
+        // 情感建议匹配关系对应问题显示
+        $router->get('/suggest/rule/detail', 'QuestionSuggestController@getQuestionList');
         // 修改情感建议匹配关系
         $router->put('/suggest/rule/{id}', 'QuestionSuggestController@editRule');
         // 删除情感建议匹配关系
@@ -37,7 +39,7 @@ $router->group([], function () use ($router) {
         // 新增建议
         $router->post('/suggest', 'QuestionSuggestController@create');
         // 删除建议
-        $router->delete('/suggest', 'QuestionSuggestController@delete');
+        $router->delete('/suggest/{id}', 'QuestionSuggestController@delete');
         // 建议列表
         $router->get('/suggest', 'QuestionSuggestController@getList');
         // 修改建议
@@ -57,6 +59,8 @@ $router->group([], function () use ($router) {
         $router->get('/collection/{id}', 'QuestionCollectionController@getDetail');
         // 所有问题集列表
         $router->get('/allcollection', 'QuestionCollectionController@getAllList');
+        // 所有问题列表
+        $router->get('/allquestion', 'QuestionCollectionController@getAllQuestionList');
 
         // 新增问题
         $router->post('/', 'QuestionController@createQuestion');

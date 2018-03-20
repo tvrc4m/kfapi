@@ -36,20 +36,21 @@ class UploadController extends Controller
     public function image(Request $request)
     {
 
-        if ($request->hasFile('file')) {
-            $file = $request->file('file');
-            if ($file->isValid()){
-                $imagePath = base_path('/public/upload/'). date("Y-m-d").'/'.md5(microtime()).'.'.$file->extension();
-                $data = $file->move($imagePath);
-                if($data){
-                    return api_success($data);
-                }else{
-                    return api_error('图片上传失败!');
-                }
-            }
-        }else{
-            return api_error('图片验证失败!');
+        if (!$request->hasFile('file')) {
+            return api_error('图片验证失败!')
         }
+
+        $file = $request->file('file');
+        if ($file->isValid()){
+            $imagePath = base_path('/public/upload/'). date("Y-m-d").'/'.md5(microtime()).'.'.$file->extension();
+            $data = $file->move($imagePath);
+            if($data){
+                return api_success($data);
+            }
+
+            return api_error('图片上传失败!');
+        }
+
     }
 
 }

@@ -26,7 +26,7 @@ class ExpertController extends Controller
         $type = $request->input('type');
         $experts = Experts::select(['id','icon','nickname','name','job_id','good_at'])->where('type',$type)->paginate(20)->toArray();
 //dd($experts);
-        $config = require APP_PATH . 'config/fieldDictionary.php';
+        $config = require base_path('config/fieldDictionary.php');
 
         if($experts['data']){
             //dd($goodAt);
@@ -237,7 +237,7 @@ class ExpertController extends Controller
     //职业列表
     public function getAllJob(Request $request)
     {
-        $config = require APP_PATH . 'config/fieldDictionary.php';
+        $config = require base_path('config/fieldDictionary.php');
         $job = $config['job'];
         $job = array_values($job);
         return api_success($job);
@@ -246,7 +246,7 @@ class ExpertController extends Controller
     //擅长列表
     public function getGoodAt(Request $request)
     {
-        $config = require APP_PATH . 'config/fieldDictionary.php';
+        $config = require base_path('config/fieldDictionary.php');
         $goodAt = $config['good_at'];
         $goodAt = array_values($goodAt);
         return api_success($goodAt);
@@ -268,7 +268,7 @@ class ExpertController extends Controller
     //认证列表
     public function getCertification(Request $request)
     {
-        $config = require APP_PATH . 'config/fieldDictionary.php';
+        $config = require base_path('config/fieldDictionary.php');
         $certification = $config['certification'];
         $certification = array_values($certification);
         return api_success($certification);
