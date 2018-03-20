@@ -111,22 +111,53 @@ class RecordController extends Controller
         //dd($userid);
         $perpage = $request->input('per_page');
         $record = DB::table('user_question_report')
-            ->select('id','user_question_report.law_rule_ids','user_question_report.case_ids','user_question_report.suggest_ids','user_question_report.type','user_question_report.understand','user_question_report.remark')
+            ->select('id','user_question_report.case_ids','user_question_report.suggest_ids','user_question_report.type','created_at','updated_at')
             ->where('user_id',$userid)
             ->paginate($perpage)
             ->toArray();
-dd($record);
+//dd($record);
         //dd($cArr);
+        $newSuggest = '';
         if($record['data']){
-            foreach ($record['data'] as $k=>&$v){
-                //dd($city);
-                if($v->cate == 1){
-                    $v->cate = '法律';
-                }elseif($v->cate == 2){
-                    $v->cate = '情感';
+            foreach ($record['data'] as $k=>&$opinion){
+                if($opinion->type==1){
+                    //dd(json_decode($topic->case_ids));
+                    if(!empty($opinion->case_ids)){
+                        $case_ids = json_decode($opinion->case_ids);
+                        $suggest = DB::table('cases')
+                            ->select('cases.suggest')
+                            ->whereIn('cases.id',$case_ids)
+                            ->get()
+                            ->toArray();
+                        //dd($suggest);
+                        foreach ($suggest as $k=>$v){
+                            $newSuggest .= $v->suggest.'。';
+                        }
+                    }
+                    //dd($suggest);
                 }else{
-                    $v->cate = '';
+                    if(!empty($opinion->suggest_ids)){
+                        $suggest_ids = json_decode($opinion->suggest_ids);
+                        $suggest = DB::table('question_suggests')
+                            ->select('question_suggests.content')
+                            ->whereIn('question_suggests.id',$suggest_ids)
+                            ->get()
+                            ->toArray();
+                        foreach ($suggest as $k=>$v){
+                            $newSuggest .= $v->content.'。';
+                        }
+                    }
                 }
+                $opinion->opinion_content = mb_substr($newSuggest,0,60);
+                //dd($city);
+                if($opinion->type == 1){
+                    $opinion->type = '法律';
+                }elseif($opinion->type == 2){
+                    $opinion->type = '情感';
+                }else{
+                    $opinion->type = '';
+                }
+                unset($opinion->case_ids,$opinion->suggest_ids);
             }
         }
 
@@ -142,10 +173,11 @@ dd($record);
     public function deleteOpinion(Request $request)
     {
         //dd($request->all());
-        $topicIds = $request->input('topic_id');
+        $opinionIds = $request->input('opinion_id');
         //dd($topicIds);
-        $ids = explode(',',$topicIds);
-        $allIds = Topics::select('id')->get()->toArray();
+        $ids = explode(',',$opinionIds);
+        $allIds = DB::table('user_question_report')
+                ->select('id')->get()->toArray();
         //dd($allIds);
         foreach($allIds as $k=>$v){
             $newIds[] = $v['id'];

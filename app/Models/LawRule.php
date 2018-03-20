@@ -22,12 +22,7 @@ class LawRule extends Model
      */
     protected $guarded = [];
 
-    /**
-     * 需要被转换成日期的属性。
-     *
-     * @var array
-     */
-    protected $dates = ['deleted_at'];
+    protected $fillable = ['law_id', 'title', 'content', 'stat'];
 
     /**
      * 法规条目与匹配次关联关系

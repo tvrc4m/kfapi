@@ -68,7 +68,7 @@ class ExpertController extends Controller
             ->toArray();
         //dd($service);
         $expert->service = $service;
-        unset($expert->id,$expert->password,$expert->service_id);
+        unset($expert->password,$expert->service_id);
         return api_success($expert);
     }
 
