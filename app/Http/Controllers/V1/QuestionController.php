@@ -68,6 +68,7 @@ class QuestionController extends Controller
             'paper_id' => 'required|numeric',
             'question_collection_id' => 'required|numeric',
             'data' => 'required|array',
+            'data.*.type' => 'required',
             'data.*.question_id' => 'required|numeric',
             'data.*.option_id' => 'required|array',
         ], [
@@ -77,6 +78,7 @@ class QuestionController extends Controller
             'question_collection_id.numeric' => '问题集id必须是数字',
             'data.required' => '答案数据不能为空',
             'data.array' => '答案数据必须是数组',
+            'data.*.type' => '问题类型不能为空',
             'data.*.question_id.required' => '问题id不能为空',
             'data.*.question_id.numeric' => '问题id必须是数字',
             'data.*.option_id.required' => '答案id不能为空',
@@ -89,7 +91,7 @@ class QuestionController extends Controller
             return api_error('保存问题失败');
         }
         // 返回下一部分题集
-        return $this->question();
+        return $this->question($request);
     }
 
     /**

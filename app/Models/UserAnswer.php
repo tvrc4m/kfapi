@@ -76,7 +76,7 @@ class UserAnswer extends Model
         $collect_id = $collect_id_arr[0];
         $collect = QuestionCollection::where('id', $collect_id)->firstOrFail();
 
-        $questions = $collect->questions()->get()->toArray();
+        $questions = $collect->questions()->with('questionOption')->get()->toArray();
         $collect['paper_id'] = $paper->id;
         $collect['paper_stat'] = $paper->stat;
         $collect['questions'] = $questions;
@@ -128,6 +128,7 @@ class UserAnswer extends Model
                 DB::rollBack();
                 return false;
             }
+            // 保存试卷类型
             $paper->type = $suggest['type'];
             // 填充情感或者法规类型的主线题集
             $collect_ids = QuestionCollection::where('is_trunk', 1)
@@ -185,7 +186,11 @@ class UserAnswer extends Model
         $count = 0;
         foreach ($arr1 as $k => $v) {
             foreach ($arr2 as $kk => $vv) {
-                if ($vv['option_id'] == $v['option_id'] && $vv['question_id'] == $v['question_id']) {
+                $opArr1 = $v['option_id'];
+                $opArr2 = $vv['option_id'];
+                sort($opArr1);
+                sort($opArr2);
+                if ($opArr1 == $opArr2 && $vv['question_id'] == $v['question_id']) {
                     $count++;
                 }
             }
