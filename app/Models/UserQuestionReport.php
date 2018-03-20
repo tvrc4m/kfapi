@@ -49,7 +49,7 @@ class UserQuestionReport extends Model
      */
     private function makeEmotionReport(UserAnswer $paper)
     {
-        $answers = json_decode($paper->data, true);
+        $answers = $paper->data;
         // 所有问题集ids
         $collect_ids = [];
         // 键名为问题集id 键值为答案
@@ -66,8 +66,10 @@ class UserQuestionReport extends Model
         // 匹配建议
         $suggest_ids = [];
         foreach ($relations as $v) {
+            $v = (array)$v;
+            $suggest_rule = json_decode($v['suggest_rule'], true);
             $ok = $paper->compareRule(
-                $v['suggest_rule'],
+                $suggest_rule,
                 $collect_id_answer[$v['question_collection_id']]
             );
             if ($ok) {
@@ -90,7 +92,7 @@ class UserQuestionReport extends Model
     private function makeLawReport(UserAnswer $paper)
     {
         // 提取用户回答的关键词
-        $answers = json_decode($paper->data, true);
+        $answers = $paper->data;
         $option_ids = [];
         $question_ids = [];
         foreach ($answers as $collection) {
