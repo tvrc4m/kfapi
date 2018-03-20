@@ -46,7 +46,7 @@ class ExpertController extends Controller
         }
         //dd($expert_id);
         $invitation = DB::table('invitations')->where(['user_id'=>$user_id,'topic_id'=>$topic_id])->whereIn('expert_id',$expert_id)->get()->toArray();
-
+//dd($invitation);
         if($invitation){
             foreach($invitation as $k=>$v){
                 $expertId[] = $v->expert_id;
@@ -60,7 +60,7 @@ class ExpertController extends Controller
 
         if($list['data']){
             foreach ($list['data'] as $k=>$v){
-                if(in_array($v['id'],$expertId)){
+                if(!empty($expertId) && in_array($v['id'],$expertId)){
                     $list['data'][$k]['invi_stat'] = 1;
                 }else{
                     $list['data'][$k]['invi_stat'] = 0;
