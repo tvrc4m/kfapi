@@ -27,7 +27,10 @@ class ExpertController extends Controller
     {
         $per_page = $request->input('per_page');
         $type = $request->input('type');
+        $topic_id = $request->input('topic_id');
 
+        $user_id = \Auth::user()['id'];
+//dd($user_id);
         //配置文件获取专家职业
         $config = require base_path('config/fieldDictionary.php');
         //dd($config);
@@ -36,14 +39,32 @@ class ExpertController extends Controller
         $list = Experts::select(['id','name','icon', 'job_id', 'intro','type'])->where('type',$type)->paginate($per_page)->toArray();
 //dd($list);
         //dd($jobs);
+        if($list['data']){
+            foreach ($list['data'] as $k=>$v){
+                $expert_id[] = $v['id'];
+            }
+        }
+        //dd($expert_id);
+        $invitation = DB::table('invitations')->where(['user_id'=>$user_id,'topic_id'=>$topic_id])->whereIn('expert_id',$expert_id)->get()->toArray();
+
+        if($invitation){
+            foreach($invitation as $k=>$v){
+                $expertId[] = $v->expert_id;
+            }
+        }
+        //dd($expertId);
         $newJobs = [];
         foreach($jobs as $k=>$v){
             $newJobs[$v['job_id']] = $v['name'];
         }
 
         if($list['data']){
-
             foreach ($list['data'] as $k=>$v){
+                if(in_array($v['id'],$expertId)){
+                    $list['data'][$k]['invi_stat'] = 1;
+                }else{
+                    $list['data'][$k]['invi_stat'] = 0;
+                }
                 if($v['job_id']){
                     //var_dump($v['job_id']);
                     //var_dump($newJobs[$v['job_id']]);
