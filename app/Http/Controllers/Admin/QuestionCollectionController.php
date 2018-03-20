@@ -44,6 +44,7 @@ class QuestionCollectionController extends Controller
             'is_trunk' => 'required',
             'title' => 'required|max:255',
             'content' => 'required|max:255',
+            'bgimage' => 'required',
             'is_single_page' => 'required',
             'overdue' => 'required|max:255',
             'question_option_id' => 'required|max:255',
@@ -54,12 +55,16 @@ class QuestionCollectionController extends Controller
             'title.max' => '标题不能超过255个字符',
             'content.required' => '描述内容不能为空',
             'content.max' => '描述内容不能超过255个字符',
+            'bgimage.required' => '背景图片不能为空',
             'is_single_page.required' => '是否单页不能为空',
             'overdue.required' => '过渡页不能为空',
             'overdue.max' => '过渡页不能超过255个字符',
             'question_option_id.required' => '前置问题集ID不能为空',
             'question_option_id.array' => '前置问题集ID是数组',
         ]);
+        if (!Auth::guard("admin")->user()){
+            return api_error('未登录');
+        }
         $questionCollection = new QuestionCollection();
         if ($questionCollection->saveQuestionCollection($request,0)) {
             return api_success();
@@ -152,6 +157,7 @@ class QuestionCollectionController extends Controller
             'is_trunk' => 'required',
             'title' => 'required|max:255',
             'content' => 'required|max:255',
+            'bgimage' => 'required',
             'is_single_page' => 'required',
             'overdue' => 'required|max:255',
             'question_option_id' => 'required|array',
@@ -162,12 +168,16 @@ class QuestionCollectionController extends Controller
             'title.max' => '标题不能超过255个字符',
             'content.required' => '描述内容不能为空',
             'content.max' => '描述内容不能超过255个字符',
+            'bgimage.required' => '背景图片不能为空',
             'is_single_page.required' => '是否单页不能为空',
             'overdue.required' => '过渡页不能为空',
             'overdue.max' => '过渡页不能超过255个字符',
             'question_option_id.required' => '前置问题集ID不能为空',
             'question_option_id.array' => '前置问题集ID是数组',
         ]);
+        if (!Auth::guard("admin")->user()){
+            return api_error('未登录');
+        }
         $questionCollection = new QuestionCollection();
         if ($questionCollection->saveQuestionCollection($request, $id)) {
             return api_success();
