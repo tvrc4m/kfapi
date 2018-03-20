@@ -60,6 +60,9 @@ class QuestionCollectionController extends Controller
             'question_option_id.required' => '前置问题集ID不能为空',
             'question_option_id.array' => '前置问题集ID是数组',
         ]);
+        if (!Auth::guard("admin")->user()){
+            return api_error('未登录');
+        }
         $questionCollection = new QuestionCollection();
         if ($questionCollection->saveQuestionCollection($request,0)) {
             return api_success();
@@ -168,6 +171,9 @@ class QuestionCollectionController extends Controller
             'question_option_id.required' => '前置问题集ID不能为空',
             'question_option_id.array' => '前置问题集ID是数组',
         ]);
+        if (!Auth::guard("admin")->user()){
+            return api_error('未登录');
+        }
         $questionCollection = new QuestionCollection();
         if ($questionCollection->saveQuestionCollection($request, $id)) {
             return api_success();
