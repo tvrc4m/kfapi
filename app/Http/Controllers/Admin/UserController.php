@@ -77,7 +77,7 @@ class UserController extends Controller
 
         $data = $request->all();
         $userinfo = Auth::guard("admin")->user()->toArray();
-        dd($userinfo);
+        //dd($userinfo);
         $data['create_user_id'] = $userinfo['id'];
         $data['password'] = Hash::make($request->input('password'));
         //dd($data);
