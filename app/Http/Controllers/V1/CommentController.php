@@ -31,7 +31,7 @@ class CommentController extends Controller
             ->paginate($perpage)
             ->toArray();
         //dd($comments);
-        $config = require APP_PATH . 'config/fieldDictionary.php';
+        $config = require base_path('config/fieldDictionary.php');
         //dd($config['job']);
         $newJob = [];
         foreach($config['job'] as $k=>$v){

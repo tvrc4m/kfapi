@@ -82,7 +82,7 @@ class OrderController extends Controller
             ->first();
         //dd($order);
 
-        $config = require APP_PATH . 'config/fieldDictionary.php';
+        $config = require base_path('config/fieldDictionary.php');
         //组装服务信息
         $order->service_name = $config['service'][$order->service_name];
         $order->job = $config['job'][$order->job_id];
