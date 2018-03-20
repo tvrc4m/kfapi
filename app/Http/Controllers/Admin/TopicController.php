@@ -122,7 +122,7 @@ class TopicController extends Controller
     {
         $content = $request->input('content');
         //dd($data);
-        $topic = Topics::where('content', 'like','%'.$content.'%')->get();
+        $topic = Topics::where('content', 'like','%'.$content.'%')->paginate(20);
         if ($topic) {
             return api_success($topic);
         }
