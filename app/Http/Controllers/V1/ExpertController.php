@@ -105,7 +105,7 @@ class ExpertController extends Controller
             //dd($city);
 
             $data->area = $city ? $city[0]->provincename.$city[0]->cityname : '';
-            $config = require APP_PATH . 'config/fieldDictionary.php';
+            $config = require base_path('config/fieldDictionary.php');
 
             $data->service = array(
                 'name'=>$data->name,
