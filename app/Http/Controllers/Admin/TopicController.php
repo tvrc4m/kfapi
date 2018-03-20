@@ -50,7 +50,7 @@ class TopicController extends Controller
 
         $topics = DB::table('topics')
             ->leftJoin('comments', 'comments.topic_id', '=', 'topics.id')
-            ->select('topics.id','topics.content','topics.comments','topics.created_at as question_time','topics.user_id')
+            ->select('topics.id','topics.content','topics.comments','topics.created_at as question_time','topics.user_id','topics.is_hide','topics.top')
             ->where($where)
             ->groupBy('topics.id')
             ->orderBy($sortfield,'desc')
@@ -113,4 +113,19 @@ class TopicController extends Controller
         return api_error();
     }
 
+    /**
+     * 问题搜索
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function searchTopic(Request $request)
+    {
+        $content = $request->input('content');
+        //dd($data);
+        $topic = Topics::where('content', 'like','%'.$content.'%')->get();
+        if ($topic) {
+            return api_success($topic);
+        }
+        return api_error();
+    }
 }

@@ -147,6 +147,8 @@ $router->group([], function () use ($router) {
         $router->post('/hide', 'TopicController@changeHide');
         // 点击推荐
         $router->post('/top', 'TopicController@changeTop');
+        // 帖子搜索
+        $router->get('/search', 'TopicController@searchTopic');
     });
 
 
