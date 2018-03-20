@@ -28,16 +28,6 @@ class CaseController extends Controller
     }
 
     /**
-     * 获得所有分类
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function getAllCate()
-    {
-        $data = CaseCate::all();
-        return api_success($data);
-    }
-
-    /**
      * 创建案例
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse

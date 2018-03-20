@@ -182,8 +182,17 @@ $router->group([], function () use ($router) {
         // 修改案例要素
         $router->put('factor/{id}', 'CaseController@editFactor');
 
-        // 获得案例分类
-        $router->get('/cate', 'CaseController@getAllCate');
+        // 获得全部案例分类
+        $router->get('/cate', 'CaseCateController@getAll');
+        // 新增案例分类
+        $router->post('/cate', 'CaseCateController@create');
+        // 获得案例分类详情
+        $router->get('/cate/{id}', 'CaseCateController@getOne');
+        // 更新案例分类
+        $router->put('/cate/{id}', 'CaseCateController@edit');
+        // 删除案例分类
+        $router->delete('/cate/{id}', 'CaseCateController@delete');
+
         // 创建案例
         $router->post('/', 'CaseController@createCase');
         // 删除案例
