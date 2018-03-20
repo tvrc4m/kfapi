@@ -86,26 +86,29 @@ class TopicController extends Controller
         $newSuggest = '';
         if($topic->cate==1){
             //dd(json_decode($topic->case_ids));
-            $case_ids = json_decode($topic->case_ids);
-            $suggest = DB::table('cases')
-                ->select('cases.suggest')
-                ->whereIn('cases.id',$case_ids)
-                ->get()
-                ->toArray();
-            foreach ($suggest as $k=>$v){
-                $newSuggest .= $v->suggest.',';
+            if(!empty($topic->case_ids)){
+                $case_ids = json_decode($topic->case_ids);
+                $suggest = DB::table('cases')
+                    ->select('cases.suggest')
+                    ->whereIn('cases.id',$case_ids)
+                    ->get()
+                    ->toArray();
+                foreach ($suggest as $k=>$v){
+                    $newSuggest .= $v->suggest.',';
+                }
             }
             //dd($suggest);
         }else{
-
-            $suggest_ids = json_decode($topic->suggest_ids);
-            $suggest = DB::table('question_suggests')
-                ->select('question_suggests.content')
-                ->whereIn('question_suggests.id',$suggest_ids)
-                ->get()
-                ->toArray();
-            foreach ($suggest as $k=>$v){
-                $newSuggest .= $v->content.',';
+            if(!empty($topic->suggest_ids)){
+                $suggest_ids = json_decode($topic->suggest_ids);
+                $suggest = DB::table('question_suggests')
+                    ->select('question_suggests.content')
+                    ->whereIn('question_suggests.id',$suggest_ids)
+                    ->get()
+                    ->toArray();
+                foreach ($suggest as $k=>$v){
+                    $newSuggest .= $v->content.',';
+                }
             }
         }
 //dd($newSuggest);

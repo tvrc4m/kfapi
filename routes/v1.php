@@ -15,6 +15,8 @@ $router->group(['prefix' => 'question'], function () use ($router) {
     $router->get('/report', 'QuestionController@getReport');
     // 生成报告书
     $router->post('/report', 'QuestionController@makeReport');
+    // 开始答题
+    $router->get('/begin', 'QuestionController@begin');
     // 获得问题
     $router->get('/', 'QuestionController@question');
     // 提交问题
