@@ -27,14 +27,34 @@ class QuestionController extends Controller
     }
 
     /**
+     * 开始答题 获得试卷id
+     */
+    public function begin()
+    {
+        $model = new UserAnswer();
+        $paper = $model->initPaper($this->user->id);
+
+        return api_success($paper);
+    }
+
+    /**
      * 获得题目
      * @return \Illuminate\Http\JsonResponse
      */
-    public function question()
+    public function question(Request $request)
     {
+        $this->validate($request, [
+            'paper_id' => 'required|numeric',
+        ], [
+            'paper_id.required' => '试卷id不能为空',
+            'paper_id.numeric' => '试卷id必须是数字',
+        ]);
+
+        $paper_id = $request->input('paper_id');
+
         // 返回题集题集
         $model = new UserAnswer();
-        $collect = $model->getQuestionCollection($this->user->id);
+        $collect = $model->getQuestionCollection($paper_id, $this->user->id);
 
         return api_success($collect);
     }
@@ -69,7 +89,7 @@ class QuestionController extends Controller
             return api_error('保存问题失败');
         }
         // 返回下一部分题集
-        return $this->getQuestion();
+        return $this->question();
     }
 
     /**
