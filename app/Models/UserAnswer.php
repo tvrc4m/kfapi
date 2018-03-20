@@ -40,7 +40,7 @@ class UserAnswer extends Model
      * @param $user_id
      * @return $this|Model
      */
-    private function initPaper($user_id)
+    public function initPaper($user_id)
     {
         // 初始化问题
         $collec = QuestionCollection::where('type', QuestionCollection::TYPE_INIT)->firstOrFail();
@@ -52,33 +52,18 @@ class UserAnswer extends Model
     }
 
     /**
-     * 获得试卷
-     * @param $user_id
-     * @return UserAnswer|Model|null|object|static
-     */
-    private function getPaper($user_id)
-    {
-        $paper = $this->where([
-            'user_id' => $user_id,
-            'stat' => self::STATUS_UNFINISH,
-        ])->orderByDesc('updated_at')->first();
-
-        if (empty($paper)) {
-            return $this->initPaper($user_id);
-        }
-
-        return $paper;
-    }
-
-    /**
      * 获得问题集
      * @param $user_id
      * @return array|Model|static
      */
-    public function getQuestionCollection($user_id)
+    public function getQuestionCollection($paper_id, $user_id)
     {
         // 获得试卷
-        $paper = $this->getPaper($user_id);
+        $paper = $this->where([
+            'id' => $paper_id,
+            'user_id' => $user_id,
+            'stat' => self::STATUS_UNFINISH,
+        ])->orderByDesc('updated_at')->firstOrFail();
         // 取得问题集
         $collect_id_arr = json_decode($paper->wait_question_collection_ids, true);
         if (empty($collect_id_arr)) {
