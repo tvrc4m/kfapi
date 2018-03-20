@@ -39,7 +39,7 @@ $router->group([], function () use ($router) {
         // 新增建议
         $router->post('/suggest', 'QuestionSuggestController@create');
         // 删除建议
-        $router->delete('/suggest', 'QuestionSuggestController@delete');
+        $router->delete('/suggest/{id}', 'QuestionSuggestController@delete');
         // 建议列表
         $router->get('/suggest', 'QuestionSuggestController@getList');
         // 修改建议

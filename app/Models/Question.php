@@ -29,6 +29,29 @@ class Question extends Model
     protected $dates = ['deleted_at'];
 
     /**
+     * 获取背景图片 自动拼接为url访问地址
+     *
+     * @param  string  $value
+     * @return string
+     */
+    public function getBgimageAttribute($value)
+    {
+        return url($value);
+    }
+
+    /**
+     * 设置背景图片为相对路径
+     *
+     * @param  string  $value
+     * @return string
+     */
+    public function setBgimageAttribute($value)
+    {
+
+        return parse_url($value, PHP_URL_PATH);
+    }
+
+    /**
      * 关联选项关系
      */
     public function questionOption()
