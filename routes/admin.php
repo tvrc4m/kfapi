@@ -76,10 +76,10 @@ $router->group([], function () use ($router) {
         $router->post('/', 'LawController@addLaw');
         // 获取法规列表
         $router->get('/', 'LawController@getLaw');
-        // 删除法规
-        $router->delete('/{id}', 'LawController@delete');
         // 获取法规详情
         $router->get('/detail/{id}', 'LawController@getLawDetail');
+        // 删除法规
+        $router->delete('/{id}', 'LawController@delete');
         // 修改法规条目
         $router->put('/{id}', 'LawController@edit');
 
@@ -87,10 +87,10 @@ $router->group([], function () use ($router) {
         $router->get('/rule', 'LawController@getLawRule');
         // 添加法规条目
         $router->post('/rule', 'LawController@addLawRule');
-        // 删除法规条目
-        $router->delete('/rule/{id}', 'LawController@deleteLawRule');
         // 获取法规条目详情
         $router->get('/rule/detail/{id}', 'LawController@getLawRuleDetail');
+        // 删除法规条目
+        $router->delete('/rule/{id}', 'LawController@deleteLawRule');
         // 修改法规条目
         $router->put('/rule/{id}', 'LawController@editLawRule');
     });
