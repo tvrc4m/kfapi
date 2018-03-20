@@ -113,4 +113,19 @@ class TopicController extends Controller
         return api_error();
     }
 
+    /**
+     * 问题搜索
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function searchTopic(Request $request)
+    {
+        $content = $request->input('content');
+        //dd($data);
+        $topic = Topics::where('content', 'like','%'.$content.'%')->get();
+        if ($topic) {
+            return api_success($topic);
+        }
+        return api_error();
+    }
 }
