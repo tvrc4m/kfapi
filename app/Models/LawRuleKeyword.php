@@ -18,12 +18,7 @@ class LawRuleKeyword extends Model
     // 表名
     protected $table = "law_rule_keywords";
 
-    /**
-     * 不可被批量赋值的属性。
-     *
-     * @var array
-     */
-    protected $guarded = [];
+    protected $fillable = ['law_rule_id', 'keyword_id'];
 
     /**
      * 需要被转换成日期的属性。
