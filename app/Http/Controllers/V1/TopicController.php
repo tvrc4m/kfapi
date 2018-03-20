@@ -105,7 +105,7 @@ class TopicController extends Controller
                 ->get()
                 ->toArray();
             foreach ($suggest as $k=>$v){
-                $newSuggest = implode(',',$v->content);
+                $newSuggest .= $v->content.',';
             }
         }
 //dd($newSuggest);

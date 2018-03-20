@@ -26,7 +26,7 @@ class TopicController extends Controller
     {
         $cate = $request->input('cate');
         $sort = $request->input('sort');
-        $hide_question = $request->input('hide_question');
+        $hide_question = $request->input('hide_topic');
         $hide_comment = $request->input('hide_comment');
 
         $where = [];
@@ -84,7 +84,7 @@ class TopicController extends Controller
      */
     public function changeHide(Request $request)
     {
-        $qid = $request->input('question_id');
+        $qid = $request->input('topic_id');
         //dd($data);
         $hide = $request->input('hide_stat');
         $data = ['is_hide'=>$hide];
@@ -102,7 +102,7 @@ class TopicController extends Controller
      */
     public function changeTop(Request $request)
     {
-        $qid = $request->input('question_id');
+        $qid = $request->input('topic_id');
         //dd($data);
         $top = $request->input('top_stat');
         $data = ['top'=>$top];
