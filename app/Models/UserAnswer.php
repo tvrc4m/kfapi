@@ -85,9 +85,7 @@ class UserAnswer extends Model
             // 修改试卷状态为已完成
             $paper->stat = self::STATUS_FINISH;
             $paper->save();
-            // 生成报告书
-            $report = new UserQuestionReport();
-            $report->makeReport($paper);
+
             return ['paper_stat' => self::STATUS_FINISH];
         }
         $collect_id = $collect_id_arr[0];
@@ -148,8 +146,9 @@ class UserAnswer extends Model
             $paper->type = $suggest['type'];
             // 填充情感或者法规类型的主线题集
             $collect_ids = QuestionCollection::where('is_trunk', 1)
+                ->where('type', $suggest['type'])
                 ->orderBy('sort')
-                ->get(['id'])->pluck('id')->toArray();
+                ->get(['id'])->pluck('id')->all();
             if (empty($collect_ids)) {
                 DB::rollBack();
                 return false;
