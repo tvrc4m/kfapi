@@ -8,6 +8,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\QuesCollectQuesSuggest;
 use App\Models\QuestionSuggest;
 use Illuminate\Http\Request;
 
