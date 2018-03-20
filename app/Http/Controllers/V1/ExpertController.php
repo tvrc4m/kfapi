@@ -103,12 +103,12 @@ class ExpertController extends Controller
             //组装城市
             $city = DB::select('select p.name as provincename,c.name as cityname from bu_provinces as p left join bu_citys as c on c.provinceid= p.id where c.provinceid =? and c.cityid=?',[$data->province_id,$data->city_id]);
             //dd($city);
-            $data->area = $city[0]->provincename.$city[0]->cityname;
+
+            $data->area = $city ? $city[0]->provincename.$city[0]->cityname : '';
             $config = require APP_PATH . 'config/fieldDictionary.php';
-            //组装服务信息
-            $serviceName = $config['service'][$data->name];
+
             $data->service = array(
-                'name'=>$serviceName,
+                'name'=>$data->name,
                 'price'=>$data->price,
                 'description'=>$data->description,
                 'stat'=>$data->stat,
