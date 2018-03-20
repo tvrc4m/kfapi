@@ -36,6 +36,13 @@ class UserAnswer extends Model
     protected $dates = ['deleted_at'];
 
     /**
+     * 需要隐藏的字段
+     *
+     * @var array
+     */
+    protected $hidden = ['wait_question_collection_ids'];
+
+    /**
      * 初始化试卷
      * @param $user_id
      * @return $this|Model
@@ -77,6 +84,14 @@ class UserAnswer extends Model
         $collect = QuestionCollection::where('id', $collect_id)->firstOrFail();
 
         $questions = $collect->questions()->with('questionOption')->get()->toArray();
+        // 问题选项增加ABCD
+        $letters = range('A', 'Z');
+        foreach ($questions as $k => $q) {
+            foreach ($q['question_option'] as $kk => $v) {
+                $questions[$k]['question_option'][$kk]['lab'] = $letters[$kk];
+            }
+        }
+
         $collect['paper_id'] = $paper->id;
         $collect['paper_stat'] = $paper->stat;
         $collect['questions'] = $questions;
@@ -100,12 +115,12 @@ class UserAnswer extends Model
         DB::beginTransaction();
         // 验证试卷id是否正确
         $paper = $this->where([
-            'paper_id' => $paper_id,
+            'id' => $paper_id,
             'stat' => self::STATUS_UNFINISH,
         ])->firstOrFail();
 
         // 记录答案
-        $oldData = json_decode(($paper->data ?: []), true);
+        $oldData = $paper->data ? json_decode($paper->data, true) : [];
         $newData = [
             'question_collection_id' => $question_collection_id,
             'answer' => $data,

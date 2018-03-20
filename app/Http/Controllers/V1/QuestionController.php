@@ -78,7 +78,7 @@ class QuestionController extends Controller
             'question_collection_id.numeric' => '问题集id必须是数字',
             'data.required' => '答案数据不能为空',
             'data.array' => '答案数据必须是数组',
-            'data.*.type' => '问题类型不能为空',
+            'data.*.type.required' => '问题类型不能为空',
             'data.*.question_id.required' => '问题id不能为空',
             'data.*.question_id.numeric' => '问题id必须是数字',
             'data.*.option_id.required' => '答案id不能为空',
