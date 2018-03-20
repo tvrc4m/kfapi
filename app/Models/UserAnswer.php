@@ -43,6 +43,16 @@ class UserAnswer extends Model
     protected $hidden = ['wait_question_collection_ids'];
 
     /**
+     * 应该被转换成原生类型的属性。
+     *
+     * @var array
+     */
+    protected $casts = [
+        'wait_question_collection_ids' => 'array',
+        'data' => 'array',
+    ];
+
+    /**
      * 初始化试卷
      * @param $user_id
      * @return $this|Model
@@ -54,7 +64,7 @@ class UserAnswer extends Model
 
         return $this->create([
             'user_id' => $user_id,
-            'wait_question_collection_ids' => json_encode([$collec->id]),
+            'wait_question_collection_ids' => [$collec->id],
         ]);
     }
 
@@ -72,7 +82,7 @@ class UserAnswer extends Model
             'stat' => self::STATUS_UNFINISH,
         ])->orderByDesc('updated_at')->firstOrFail();
         // 取得问题集
-        $collect_id_arr = json_decode($paper->wait_question_collection_ids, true);
+        $collect_id_arr = $paper->wait_question_collection_ids;
         if (empty($collect_id_arr)) {
             // 修改试卷状态为已完成
             $paper->stat = self::STATUS_FINISH;
@@ -120,20 +130,21 @@ class UserAnswer extends Model
         ])->firstOrFail();
 
         // 记录答案
-        $oldData = $paper->data ? json_decode($paper->data, true) : [];
+        $oldData = $paper->data ? $paper->data : [];
         $newData = [
             'question_collection_id' => $question_collection_id,
             'answer' => $data,
         ];
-        $paper->data = array_merge($oldData, $newData);
+        $oldData[] = $newData;
+        $paper->data = $oldData;
         // 删除待回答问题
-        $oldQuestion = json_decode($paper->wait_question_collection_ids, true);
+        $oldQuestion = $paper->wait_question_collection_ids;
         if ($oldQuestion[0] != $question_collection_id) {
             DB::rollBack();
             return false;
         }
         array_shift($oldQuestion);
-        $paper->wait_question_collection_ids = json_encode($oldQuestion);
+        $paper->wait_question_collection_ids = $oldQuestion;
 
         // 如果是初始化题集 分析出是情感还是法规类型 填充待回答主线问题集
         $initCollec = QuestionCollection::where('type', QuestionCollection::TYPE_INIT)->firstOrFail();
@@ -154,7 +165,7 @@ class UserAnswer extends Model
                 DB::rollBack();
                 return false;
             }
-            $paper->wait_question_collection_ids = json_encode($collect_ids);
+            $paper->wait_question_collection_ids = $collect_ids;
         }
         // 保存修改
         if (!$paper->save()) {
@@ -175,7 +186,7 @@ class UserAnswer extends Model
     {
         $suggests = $qc->suggests()->get()->toArray();
         foreach ($suggests as $k => $v) {
-            $rule = json_decode($v['pivot']['suggest_suggest_rule'], true);
+            $rule = json_decode($v['pivot']['suggest_rule'], true);
             if ($this->compareRule($rule, $answer)) {
                 // 返回建议
                 return $v;
@@ -201,8 +212,8 @@ class UserAnswer extends Model
         $count = 0;
         foreach ($arr1 as $k => $v) {
             foreach ($arr2 as $kk => $vv) {
-                $opArr1 = $v['option_id'];
-                $opArr2 = $vv['option_id'];
+                $opArr1 = is_numeric($v['option_id']) ? [$v['option_id']] : $v['option_id'];
+                $opArr2 = is_numeric($v['option_id']) ? [$v['option_id']] : $v['option_id'];
                 sort($opArr1);
                 sort($opArr2);
                 if ($opArr1 == $opArr2 && $vv['question_id'] == $v['question_id']) {
