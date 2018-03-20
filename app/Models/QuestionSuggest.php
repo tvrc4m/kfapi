@@ -20,12 +20,7 @@ class QuestionSuggest extends Model
     // 表名
     protected $table = "question_suggests";
 
-    /**
-     * 不可被批量赋值的属性。
-     *
-     * @var array
-     */
-    protected $guarded = [];
+    protected $fillable = ['question_collection_id', 'content', 'sort', 'stat', 'type'];
 
     /**
      * 需要被转换成日期的属性。
