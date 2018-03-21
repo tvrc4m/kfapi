@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\LawRule;
 use Illuminate\Http\Request;
 use App\Models\Law;
+use Illuminate\Support\Facades\DB;
 
 class LawController extends Controller
 {
@@ -215,11 +216,16 @@ class LawController extends Controller
      */
     public function deleteLawRule($id)
     {
+        //开启事务
+        DB::beginTransaction();
         if (LawRule::destroy(intval($id))) {
-            return api_success();
+            if(LawRuleKeyword::where('law_rule_id', $id)->delete()){
+                DB::commit();
+                return api_success();
+            }
         }
+        DB::rollBack();
         return api_error();
     }
-
 
 }
