@@ -83,8 +83,6 @@ class OrderController extends Controller
         //dd($order);
 
         $config = require base_path('config/fieldDictionary.php');
-        //组装服务信息
-        $order->service_name = $config['service'][$order->service_name];
         $order->job = $config['job'][$order->job_id];
 
         //unset($topic->province_id,$topic->city_id,$topic->advice);
