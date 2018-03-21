@@ -20,7 +20,7 @@ class QuestionSuggest extends Model
     // 表名
     protected $table = "question_suggests";
 
-    protected $fillable = ['question_collection_id', 'content', 'sort', 'stat', 'type'];
+    protected $fillable = ['question_collection_id', 'title', 'content', 'sort', 'stat', 'type'];
 
     /**
      * 需要被转换成日期的属性。

@@ -35,12 +35,15 @@ class QuestionSuggestController extends Controller
     {
         $this->validate($request, [
             'question_collection_id' => 'required|numeric',
+            'title' => 'required|max:255',
             'content' => 'required|max:255',
             'sort' => 'required|numeric',
             'type' => 'required|numeric',
         ], [
             'question_collection_id.required' => '问题集ID不能为空',
             'question_collection_id.numeric' => '问题集ID不合法',
+            'title.required' => '建议标题不能为空',
+            'title.max' => '建议标题不能超过255个字符',
             'content.required' => '内容不能为空',
             'content.max' => '内容不能超过255个字符',
             'sort.required' => '排序不能为空',
@@ -75,7 +78,7 @@ class QuestionSuggestController extends Controller
         if (!empty($question_collection_id)) {
             $where['question_collection_id'] = $question_collection_id;
         }
-        $questionSuggestList = QuestionSuggest::where($where)->select(['id', 'question_collection_id', 'content', 'sort', 'type'])->paginate();
+        $questionSuggestList = QuestionSuggest::where($where)->select(['id', 'question_collection_id', 'title', 'content', 'sort', 'type'])->paginate();
 
         return api_success($questionSuggestList);
     }
@@ -99,12 +102,15 @@ class QuestionSuggestController extends Controller
     {
         $this->validate($request, [
             'question_collection_id' => 'required|numeric',
+            'title' => 'required|max:255',
             'content' => 'required|max:255',
             'sort' => 'required|numeric',
             'type' => 'required|numeric',
         ], [
             'question_collection_id.required' => '问题集ID不能为空',
             'question_collection_id.numeric' => '问题集ID不合法',
+            'title.required' => '建议标题不能为空',
+            'title.max' => '建议标题不能超过255个字符',
             'content.required' => '内容不能为空',
             'content.max' => '内容不能超过255个字符',
             'sort.required' => '排序不能为空',
