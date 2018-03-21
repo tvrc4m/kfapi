@@ -133,7 +133,7 @@ class QuestionController extends Controller
         DB::beginTransaction();
         $questionInfo = $model->deleteQuestion($id);
         if ($questionInfo) {
-            if (!$questionCollection->where('id', $questionInfo->question_collection_id)->decrement('num', 1)){
+            if (!$questionCollection->where('id', $id)->decrement('num', 1)){
                 DB::rollBack();
                 return api_error();
             }
@@ -188,10 +188,16 @@ class QuestionController extends Controller
     public function getOneQuestion($id)
     {
         $question = Question::where('id', $id)->firstOrFail();
-        $options = $question->questionOption()->with('keyword')->get();
+        $options = $question->questionOption()
+            ->select('id', 'options as name', 'weight')
+            ->with('keyword')->get();
 
         $data = $question->toArray();
         $data['options'] = $options->toArray();
+        foreach ($data['options'] as $k => $op) {
+            $keywordArr = collect($op['keyword'])->pluck('id')->all();
+            $data['options'][$k]['keyword'] = $keywordArr;
+        }
 
         return api_success($data);
     }
