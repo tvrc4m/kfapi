@@ -119,7 +119,7 @@ class UserQuestionReport extends Model
         $topic = Topics::where([
             'user_id' => Auth::id(),
             'user_answer_id' => $paper_id,
-        ])->first();
+        ])->firstOrFail();
 
         $topic->opinion_id = $report_id;
         return $topic->save();
@@ -156,6 +156,9 @@ class UserQuestionReport extends Model
         $law_rule_ids = $this->matchLaw($user_keyword_ids);
 
         // 组合经调查了解的内容
+        // 替换模板中的内容
+        $template = DB::table('report_template')->first()->content;
+
         $questionTitleArr = Question::whereIn('id', $question_ids)->get(['id,title'])->pluck('title', 'id')->all();
         $optionTitleArr = QuestionOption::whereIn('id', $option_ids)->get(['id', 'options'])->pluck('options', 'id')->all();
         $understand = "";

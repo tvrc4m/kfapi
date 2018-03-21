@@ -107,6 +107,10 @@ $router->group([], function () use ($router) {
         $router->get('/getFactorList', 'KeywordController@getFactorList');
         // 某个要素下的关键词列表
         $router->get('/getKeywordList/{id}', 'KeywordController@getKeywordList');
+        // 修改关键词
+        $router->put('/{id}', 'KeywordController@edit');
+        // 删除关键词
+        $router->delete('/{id}', 'KeywordController@delete');
     });
 
     //上传
