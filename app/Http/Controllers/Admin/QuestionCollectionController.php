@@ -47,7 +47,7 @@ class QuestionCollectionController extends Controller
             'bgimage' => 'required',
             'is_single_page' => 'required',
             'overdue' => 'required|max:255',
-            'question_option_id' => 'required|max:255',
+            'question_option_id' => 'array',
         ],[
             'type.required' => '类型不能为空',
             'is_trunk.required' => '分支不能为空',
@@ -59,7 +59,7 @@ class QuestionCollectionController extends Controller
             'is_single_page.required' => '是否单页不能为空',
             'overdue.required' => '过渡页不能为空',
             'overdue.max' => '过渡页不能超过255个字符',
-            'question_option_id.required' => '前置问题集ID不能为空',
+            //'question_option_id.required' => '前置问题集ID不能为空',
             'question_option_id.array' => '前置问题集ID是数组',
         ]);
         if (!Auth::guard("admin")->user()){
@@ -160,7 +160,7 @@ class QuestionCollectionController extends Controller
             'bgimage' => 'required',
             'is_single_page' => 'required',
             'overdue' => 'required|max:255',
-            'question_option_id' => 'required|array',
+            'question_option_id' => 'array',
         ],[
             'type.required' => '类型不能为空',
             'is_trunk.required' => '分支不能为空',
@@ -172,7 +172,7 @@ class QuestionCollectionController extends Controller
             'is_single_page.required' => '是否单页不能为空',
             'overdue.required' => '过渡页不能为空',
             'overdue.max' => '过渡页不能超过255个字符',
-            'question_option_id.required' => '前置问题集ID不能为空',
+            //'question_option_id.required' => '前置问题集ID不能为空',
             'question_option_id.array' => '前置问题集ID是数组',
         ]);
         if (!Auth::guard("admin")->user()){
@@ -225,7 +225,7 @@ class QuestionCollectionController extends Controller
         ]);
 
         $question_collection_id = $request->input('question_collection_id');
-        $backData = Question::where('question_collection_id', $question_collection_id)->with('questionOption')->get()->toArray();
+        $backData = Question::where('question_collection_id', $question_collection_id)->with('questionOption')->get();
 
         return api_success($backData);
     }
