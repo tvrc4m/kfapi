@@ -78,12 +78,13 @@ class OrderController extends Controller
             ->where([['experts.id',$expertid],['services.id',$servieid]])
             ->first();
         //dd($order);
-
-        $config = require base_path('config/fieldDictionary.php');
-        $order->job = $config['job'][$order->job_id];
-
+        if($order){
+            $config = require base_path('config/fieldDictionary.php');
+            $order->job = $config['job'][$order->job_id];
+        }
         //unset($topic->province_id,$topic->city_id,$topic->advice);
         //dd($order);
-        return api_success($order);
+        $data['data'] = $order;
+        return api_success($data);
     }
 }
