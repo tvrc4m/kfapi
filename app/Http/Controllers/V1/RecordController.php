@@ -71,6 +71,7 @@ class RecordController extends Controller
             }
         }
 
+        $record['user_id'] = $userid;
         //dd($data);
         return api_success($record);
     }
@@ -157,7 +158,7 @@ class RecordController extends Controller
                 unset($opinion->case_ids,$opinion->suggest_ids);
             }
         }
-
+        $record['user_id'] = $userid;
         //dd($data);
         return api_success($record);
     }
