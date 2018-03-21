@@ -53,7 +53,11 @@ class TopicController extends Controller
         if($topics['data']){
             foreach ($topics['data'] as $k=>&$v){
                 //$v->area = $config['job'][$v->job_id];
-                $v->area = $pArr[$v->province_id].$cArr[$v->city_id];
+                if($v->province_id && $v->city_id){
+                    $v->area = $pArr[$v->province_id].$cArr[$v->city_id];
+                }else{
+                    $v->area = '';
+                }
                 if($v->cate == 1){
                     $v->cate = '法律';
                 }elseif($v->cate == 2){
@@ -134,19 +138,26 @@ class TopicController extends Controller
     public function addTopic(Request $request)
     {
         $this->validate($request, [
-            'user_id' => 'required|numeric',
+            'paper_id' => 'required|numeric',
             'content' => 'required|max:255',
             'description' => 'required|max:500',
         ],[
-            'user_id.required' => '用户ID不能为空',
-            'user_id.numeric' => '用户ID不合法',
+            'paper_id.required' => '用户ID不能为空',
+            'paper_id.numeric' => '用户ID不合法',
             'content.required' => '问题id不能为空',
             'content.max' => '问题不超过255个字符',
             'description.required' => '情感描述不能为空',
             'description.max' => '情感描述不超过500个字符',
         ]);
 
-        $result = Topics::create($request->all());
+        $userid = \Auth::user()['id'];
+        $data = array(
+            'user_id'=>$userid,
+            'user_answer_id'=>$request->input('paper_id'),
+            'content'=>$request->input('content'),
+            'description'=>$request->input('description'),
+        );
+        $result = Topics::create($data);
         if ($result) {
             return api_success();
         }
