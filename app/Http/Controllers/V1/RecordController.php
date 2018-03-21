@@ -31,7 +31,7 @@ class RecordController extends Controller
         $perpage = $request->input('per_page');
         $record = DB::table('topics')
             ->leftJoin('users', 'users.id', '=', 'topics.user_id')
-            ->select('topics.cate','topics.content','topics.created_at','users.user_name','users.province_id','users.city_id')
+            ->select('topics.id','topics.cate','topics.content','topics.created_at','users.user_name','users.province_id','users.city_id')
             ->where('topics.user_id',$userid)
             ->paginate($perpage)
             ->toArray();
