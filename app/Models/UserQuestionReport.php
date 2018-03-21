@@ -29,6 +29,17 @@ class UserQuestionReport extends Model
     protected $dates = ['deleted_at'];
 
     /**
+     * 应该被转换成原生类型的属性。
+     *
+     * @var array
+     */
+    protected $casts = [
+        'law_rule_ids' => 'array',
+        'case_ids' => 'array',
+        'suggest_ids' => 'array',
+    ];
+
+    /**
      * 生成报告书
      * @param UserAnswer $paper
      * @return Model
@@ -79,7 +90,7 @@ class UserQuestionReport extends Model
         // 保存情感建议
         return $this->updateOrCreate(['user_answer_id' => $paper->id], [
             'user_id' => Auth::id(),
-            'suggest_ids' => json_encode($suggest_ids),
+            'suggest_ids' => $suggest_ids,
             'type' => QuestionCollection::TYPE_EMOTION,
         ]);
     }
@@ -97,7 +108,7 @@ class UserQuestionReport extends Model
         $question_ids = [];
         foreach ($answers as $collection) {
             foreach ($collection['answer'] as $v) {
-                if (in_array($v['type'], [1,2,3])) {
+                if (in_array($v['type'], [1,2,3])) { // 只有单选 多选 下拉列表 有关键词
                     $option_ids = array_merge($option_ids, $v['option_id']);
                 }
 
@@ -128,8 +139,8 @@ class UserQuestionReport extends Model
         // 保存结果
         return $this->updateOrCreate(['user_answer_id' => $paper->id], [
             'user_id' => Auth::id(),
-            'case_ids' => json_encode($case_ids),
-            'law_rule_ids' => json_encode($law_rule_ids),
+            'case_ids' => $case_ids,
+            'law_rule_ids' => $law_rule_ids,
             'understand' => $understand,
             'type' => QuestionCollection::TYPE_LAW,
         ]);
