@@ -240,10 +240,13 @@ class RecordController extends Controller
             }
             //dd($newAdvice);
             $data = array(
-                'law_rule'=>$rule,
-                'understand'=>$opinion->understand,
-                'suggest'=>$newAdvice,
-                'judgment'=>$judgment
+                'id'=>$opinion->id,
+                'type'=>$opinion->type,
+                'remark'=>$opinion->remark,
+                'law_rule'=>['name'=>'一、可参考法规','content'=>$rule],
+                'understand'=>['name'=>'二、经调查了解','content'=>$opinion->understand],
+                'suggest'=>['name'=>'三、本地建议如下','content'=>$newAdvice],
+                'judgment'=>['name'=>'四、综上所述','content'=>$judgment]
             );
         }else{
             $suggestIds = json_decode($opinion->suggest_ids);
@@ -257,7 +260,12 @@ class RecordController extends Controller
                 $newSuggest .= $v->content;
             }
             //dd($suggest);
-            $data['suggest'] = $newSuggest;
+            $data = array(
+                'id'=>$opinion->id,
+                'type'=>$opinion->type,
+                'remark'=>$opinion->remark,
+                'suggest'=>['name'=>'经调查了解','content'=>$newSuggest],
+            );
            // dd($data);
         }
         //dd($data);
