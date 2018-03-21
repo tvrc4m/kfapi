@@ -21,6 +21,13 @@ $router->group(['prefix' => 'auth'], function () use ($router) {
 // 需要登录才能使用的api组 使用了auth验证中间件
 //$router->group(['middleware' => 'auth:admin'], function () use ($router) {
 $router->group([], function () use ($router) {
+    // 报告书模板
+    $router->group(['prefix' => 'template'], function () use ($router) {
+        // 查看模板
+        $router->get('/', 'ReportTemplateController@getOne');
+        // 更新模板
+        $router->put('/', 'ReportTemplateController@edit');
+    });
     // 问题
     $router->group(['prefix' => 'question'], function () use ($router) {
         // 新增情感建议匹配关系

@@ -128,7 +128,8 @@ class UserQuestionReport extends Model
     /**
      * 生成法规报告
      * @param UserAnswer $paper
-     * @return Model
+     * @return bool
+     * @throws \Exception
      */
     private function makeLawReport(UserAnswer $paper)
     {
@@ -155,19 +156,27 @@ class UserQuestionReport extends Model
         // 根据关键词匹配法规
         $law_rule_ids = $this->matchLaw($user_keyword_ids);
 
-        // 组合经调查了解的内容
-        // 替换模板中的内容
-        $template = DB::table('report_template')->first()->content;
-
-        $questionTitleArr = Question::whereIn('id', $question_ids)->get(['id,title'])->pluck('title', 'id')->all();
+        // 组合经调查了解的内容 替换模板中的内容
+        $template = ReportTemplates::first()->content;
         $optionTitleArr = QuestionOption::whereIn('id', $option_ids)->get(['id', 'options'])->pluck('options', 'id')->all();
-        $understand = "";
+        $replaceKey = [];
+        $replaceVal = [];
         foreach ($answers as $collection) {
             foreach ($collection['answer'] as $v) {
-                $str = $questionTitleArr[$v['question_id']] . "【" . $optionTitleArr[$v['option_id']]."】";
-                $understand .= $str;
+                $key = '{'.$v['question_id'].'}';
+                $value = "";
+                foreach ($v['option_id'] as $option_id) {
+                    $value .= $optionTitleArr[$option_id] . ",";
+                }
+                $value = rtrim($value, ',');
+                if (!empty($value)) {
+                    $replaceKey[] = $key;
+                    $replaceVal[] = $value;
+                }
             }
         }
+        $understand = str_replace($replaceKey, $replaceVal, $template);
+
         // 保存结果
         DB::beginTransaction();
         $report = $this->updateOrCreate(['user_answer_id' => $paper->id], [
