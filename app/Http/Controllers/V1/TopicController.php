@@ -53,7 +53,11 @@ class TopicController extends Controller
         if($topics['data']){
             foreach ($topics['data'] as $k=>&$v){
                 //$v->area = $config['job'][$v->job_id];
-                $v->area = $pArr[$v->province_id].$cArr[$v->city_id];
+                if($v->province_id && $v->city_id){
+                    $v->area = $pArr[$v->province_id].$cArr[$v->city_id];
+                }else{
+                    $v->area = '';
+                }
                 if($v->cate == 1){
                     $v->cate = '法律';
                 }elseif($v->cate == 2){

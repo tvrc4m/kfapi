@@ -135,7 +135,7 @@ class RecordController extends Controller
                             ->toArray();
                         //dd($suggest);
                         foreach ($suggest as $k=>$v){
-                            $newSuggest .= $v->suggest.'。';
+                            $newSuggest .= $v->suggest.',';
                         }
                     }
                     //dd($suggest);
@@ -148,19 +148,12 @@ class RecordController extends Controller
                             ->get()
                             ->toArray();
                         foreach ($suggest as $k=>$v){
-                            $newSuggest .= $v->content.'。';
+                            $newSuggest .= $v->content.',';
                         }
                     }
                 }
-                $opinion->opinion_content = mb_substr($newSuggest,0,60);
+                $opinion->opinion_content = mb_substr($newSuggest,0,100);
                 //dd($city);
-                if($opinion->type == 1){
-                    $opinion->type = '法律';
-                }elseif($opinion->type == 2){
-                    $opinion->type = '情感';
-                }else{
-                    $opinion->type = '';
-                }
                 unset($opinion->case_ids,$opinion->suggest_ids);
             }
         }
@@ -180,29 +173,33 @@ class RecordController extends Controller
         $user_id = Auth::user()['id'];
         //dd($user_id);
         $opinionIds = $request->input('opinion_id');
-        //dd($topicIds);
+        //dd($opinionIds);
         $ids = explode(',',$opinionIds);
+        //dd($ids);
         $allIds = DB::table('user_question_report')
                 ->select('id')
                 ->where('user_id',$user_id)
                 ->get()->toArray();
         //dd($allIds);
-        foreach($allIds as $k=>$v){
-            $newIds[] = $v->id;
+        if($allIds){
+            foreach($allIds as $k=>$v){
+                $newIds[] = $v->id;
+            }
+            foreach($ids as $k=>$v){
+                //dd($v);
+                if(in_array(intval($v),$newIds)){
+                    //dd($v);
+                    $result = DB::table('user_question_report')->where('id',intval($v))->delete();
+                    //dd(2123);
+                    if(!$result){
+                        return api_error();
+                    }
+                }
+            }
         }
         //dd($newIds);
         //dd($ids);
 
-        foreach($ids as $k=>$v){
-            //dd($v);
-            if(in_array(intval($v),$newIds)){
-                $result = DB::table('user_question_report')->delete(intval($v));
-                //dd(2123);
-                if(!$result){
-                    return api_error();
-                }
-            }
-        }
         return api_success();
     }
 
@@ -211,10 +208,9 @@ class RecordController extends Controller
      * @param $id
      * @return \Illuminate\Http\JsonResponse
      */
-    public function getOneOpinion(Request $request)
+    public function getOneOpinion($opinionId)
     {
         //dd($user_id);
-        $opinionId = $request->input('opinion_id');
         //dd($topicIds);
         $opinion = DB::table('user_question_report')
             ->select('id','law_rule_ids','user_question_report.case_ids','user_question_report.suggest_ids','user_question_report.type','understand','remark')
