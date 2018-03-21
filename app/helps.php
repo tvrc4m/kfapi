@@ -68,6 +68,8 @@ if (! function_exists('similar_array')) {
      * @return int
      */
     function similar_array($arr1, $arr2) {
+        sort($arr1);
+        sort($arr2);
         $str1 = implode("-", $arr1);
         $str2 = implode("-", $arr2);
         similar_text($str1, $str2, $percent);
