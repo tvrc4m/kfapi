@@ -107,13 +107,14 @@ class ExpertController extends Controller
             $data->area = $city ? $city[0]->provincename.$city[0]->cityname : '';
             $config = require base_path('config/fieldDictionary.php');
 
-            $data->service = array(
-                'name'=>$data->name,
+            $data->service =
+                array(
+                array('name'=>$data->name,
                 'price'=>$data->price,
                 'description'=>$data->description,
                 'stat'=>$data->stat,
-                'limit_free'=>$data->limit_free,
-            );
+                'limit_free'=>$data->limit_free)
+                );
 
             //组装擅长、认证
             $goodAt = explode(',',$data->good_at);
