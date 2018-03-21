@@ -25,6 +25,13 @@ class LawRule extends Model
     protected $fillable = ['law_id', 'title', 'content', 'stat'];
 
     /**
+     * 需要被转换成日期的属性。
+     *
+     * @var array
+     */
+    protected $dates = ['deleted_at'];
+
+    /**
      * 法规条目与匹配次关联关系
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
@@ -69,7 +76,7 @@ class LawRule extends Model
             $result = $lawRule->update($data);
             if ($result) {
                 if (!empty($keywords)){
-                    if (!LawRuleKeyword::where('law_rule_id', $id)->delete()) {
+                    if (!$lawRule->lawRuleKeyword()->detach()) {
                         DB::rollBack();
                         return false;
                     }
