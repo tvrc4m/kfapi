@@ -71,6 +71,9 @@ class QuestionController extends Controller
             'data.*.type' => 'required',
             'data.*.question_id' => 'required|numeric',
             'data.*.option_id' => 'required|array',
+            'data.*.date' => 'string',
+            'data.*.provice' => 'numeric',
+            'data.*.city' => 'numeric',
         ], [
             'paper_id.required' => '试卷id不能为空',
             'paper_id.numeric' => '试卷id必须是数字',
