@@ -26,7 +26,6 @@ class OrderController extends Controller
         $this->validate($request, [
             'service_id' => 'required|numeric',
             'expert_id' => 'required|numeric',
-            'device' => 'required|max:255',
             'remark' => 'required|max:255',
             'user_name' => 'required|max:60',
             'phone' => 'required|max:11',
@@ -36,8 +35,6 @@ class OrderController extends Controller
             'service_id.numeric' => '服务id不合法',
             'expert_id.required' => '专家id不能为空',
             'expert_id.numeric' => '专家id不合法',
-            'device.required' => '用户设备号不能为空',
-            'device.max' => '用户设备号不能超过255个字符',
             'remark.required' => '备注不能为空',
             'remark.max' => '备注不能超过255个字符',
             'user_name.required' => '用户名不能为空',
@@ -83,8 +80,6 @@ class OrderController extends Controller
         //dd($order);
 
         $config = require base_path('config/fieldDictionary.php');
-        //组装服务信息
-        $order->service_name = $config['service'][$order->service_name];
         $order->job = $config['job'][$order->job_id];
 
         //unset($topic->province_id,$topic->city_id,$topic->advice);
