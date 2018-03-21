@@ -28,7 +28,7 @@ class OrderController extends Controller
             'expert_id' => 'required|numeric',
             'remark' => 'required|max:255',
             'user_name' => 'required|max:60',
-            'phone' => 'required|max:11|numeric',
+            'phone' => 'required|max:11',
 
         ],[
             'service_id.required' => '服务id不能为空',
@@ -41,7 +41,6 @@ class OrderController extends Controller
             'user_name.max' => '用户名不超过60个字符',
             'phone.required' => '用户电话不能为空',
             'phone.max' => '用户电话不能超过11位',
-            'phone.numeric' => '用户电话不合法',
         ]);
 
         $data=$request->except('user_name','phone');
