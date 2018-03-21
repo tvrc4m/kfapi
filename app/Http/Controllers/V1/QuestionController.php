@@ -101,6 +101,7 @@ class QuestionController extends Controller
      * 生成报告书
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
+     * @throws \Exception
      */
     public function makeReport(Request $request)
     {
@@ -110,7 +111,12 @@ class QuestionController extends Controller
             'paper_id.required' => '试卷id不能为空',
             'paper_id.numeric' => '试卷id必须是数字',
         ]);
-        $paper = UserAnswer::where('id', $request->input('paper_id'))->firstOrFail();
+        $paper_id = $request->input('paper_id');
+        $paper = UserAnswer::where([
+            'id' => $paper_id,
+            'user_id' => $this->user->id,
+            'stat' => UserAnswer::STATUS_FINISH,
+        ])->firstOrFail();
 
         // 生成报告书
         $report = new UserQuestionReport();
