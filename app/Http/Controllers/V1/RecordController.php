@@ -173,21 +173,27 @@ class RecordController extends Controller
     public function deleteOpinion(Request $request)
     {
         //dd($request->all());
+        $user_id = Auth::user()['id'];
+        //dd($user_id);
         $opinionIds = $request->input('opinion_id');
         //dd($topicIds);
         $ids = explode(',',$opinionIds);
         $allIds = DB::table('user_question_report')
-                ->select('id')->get()->toArray();
+                ->select('id')
+                ->where('user_id',$user_id)
+                ->get()->toArray();
         //dd($allIds);
         foreach($allIds as $k=>$v){
-            $newIds[] = $v['id'];
+            $newIds[] = $v->id;
         }
         //dd($newIds);
         //dd($ids);
+
         foreach($ids as $k=>$v){
             //dd($v);
             if(in_array(intval($v),$newIds)){
-                $result = Topics::destroy(intval($v));
+                $result = DB::table('user_question_report')->delete(intval($v));
+                //dd(2123);
                 if(!$result){
                     return api_error();
                 }
@@ -196,4 +202,37 @@ class RecordController extends Controller
         return api_success();
     }
 
+    /**
+     * 查看意见书详情
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getOneOpinion(Request $request)
+    {
+        //dd($user_id);
+        $opinionId = $request->input('opinion_id');
+        //dd($topicIds);
+        $opinion = DB::table('user_question_report')
+            ->select('id','law_rule_ids','user_question_report.case_ids','user_question_report.suggest_ids','user_question_report.type','understand','remark')
+            ->where('id',$opinionId)
+            ->first();
+        if($opinion->type==1){
+            $lawRuleIds = json_decode($opinion->law_rule_ids);
+            //dd($lawRuleIds);
+            $rule = DB::table('law_rules')
+                ->Join('laws','laws.id','=','law_rules.law_id')
+                ->select('law_rules.title','law_rules.content','laws.fullname')
+                ->whereIn('law_rules.id',$lawRuleIds)
+                ->get()
+                ->toArray();
+            dd($rule);
+
+            $data = array(
+                'id'=>$opinion->id,
+                'id'=>$opinion->id,
+            );
+        }
+        //dd($opinion);
+        return api_success();
+    }
 }
