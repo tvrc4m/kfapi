@@ -28,7 +28,7 @@ class OrderController extends Controller
             'expert_id' => 'required|numeric',
             'remark' => 'required|max:255',
             'user_name' => 'required|max:60',
-            'phone' => 'required|max:11',
+            'phone' => 'required|max:11|numeric',
 
         ],[
             'service_id.required' => '服务id不能为空',
@@ -41,15 +41,17 @@ class OrderController extends Controller
             'user_name.max' => '用户名不超过60个字符',
             'phone.required' => '用户电话不能为空',
             'phone.max' => '用户电话不能超过11位',
+            'phone.numeric' => '用户电话不合法',
         ]);
 
         $data=$request->except('user_name','phone');
+
         //dd($data);
         // 开启事务
         DB::beginTransaction();
 
         $order = Order::create($data);
-        $userinfo = $request->only('device','user_name','phone');
+        $userinfo = $request->only('user_name','phone');
 
         $user = User::create($userinfo);
         if(!$order && !$user){
