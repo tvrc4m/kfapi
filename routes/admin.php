@@ -101,6 +101,8 @@ $router->group([], function () use ($router) {
 
     //关键词
     $router->group(['prefix' => 'keyword'], function () use ($router) {
+        // 获得所有关键字和要素
+        $router->get('/', 'KeywordController@getAll');
         // 要素列表
         $router->get('/getFactorList', 'KeywordController@getFactorList');
         // 某个要素下的关键词列表
