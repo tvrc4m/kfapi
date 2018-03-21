@@ -94,11 +94,11 @@ class QuestionCollectionController extends Controller
         }
         $list = QuestionCollection::with('adminUser')->with('questionOption')->where($where)->select(['id','title', 'content', 'is_single_page', 'bgimage', 'is_trunk',
             'type', 'overdue', 'created_at', 'sort', 'create_user_id', 'num'])->paginate()->toArray();
-        $questionList = Question::select()->get()->toArray();
-        if ($questionList){
-            foreach ($questionList as $qu_key=>$qu_val) {
+        $questionListData = Question::select()->get()->toArray();
+        $questionList = [];
+        if ($questionListData){
+            foreach ($questionListData as $qu_key=>$qu_val) {
                 $questionList[$qu_val['id']] = $qu_val;
-                unset($questionList[$qu_key]);
             }
         }
         if ($list){
