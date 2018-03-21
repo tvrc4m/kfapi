@@ -101,6 +101,8 @@ class RecordController extends Controller
                 if(!$result){
                     return api_error();
                 }
+            }else{
+                return api_error('没有此ID');
             }
         }
         return api_success();
@@ -195,6 +197,8 @@ class RecordController extends Controller
                     if(!$result){
                         return api_error();
                     }
+                }else{
+                    return api_error('没有此ID');
                 }
             }
         }
