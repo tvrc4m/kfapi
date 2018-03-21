@@ -225,7 +225,7 @@ class QuestionCollectionController extends Controller
         ]);
 
         $question_collection_id = $request->input('question_collection_id');
-        $backData = Question::where('question_collection_id', $question_collection_id)->with('questionOption')->get()->toArray();
+        $backData = Question::where('question_collection_id', $question_collection_id)->with('questionOption')->get();
 
         return api_success($backData);
     }
