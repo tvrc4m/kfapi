@@ -44,12 +44,13 @@ class OrderController extends Controller
         ]);
 
         $data=$request->except('user_name','phone');
+
         //dd($data);
         // 开启事务
         DB::beginTransaction();
 
         $order = Order::create($data);
-        $userinfo = $request->only('device','user_name','phone');
+        $userinfo = $request->only('user_name','phone');
 
         $user = User::create($userinfo);
         if(!$order && !$user){
