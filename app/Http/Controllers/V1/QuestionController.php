@@ -128,19 +128,4 @@ class QuestionController extends Controller
 
         return api_success();
     }
-
-    /**
-     * 查看报告书
-     * @param Request $request
-     */
-    public function getReport(Request $request)
-    {
-        $this->validate($request, [
-            'report_id' => 'required|numeric',
-        ], [
-            'report_id.required' => '报告书id不能为空',
-            'report_id.numeric' => '报告书id必须是数字',
-        ]);
-        // $report_id = $request->input('report_id');
-    }
 }

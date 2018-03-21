@@ -11,8 +11,6 @@ $router->post('test', 'TestController@post');
 
 // 问题相关
 $router->group(['prefix' => 'question'], function () use ($router) {
-    // 查看报告书
-    $router->get('/report', 'QuestionController@getReport');
     // 生成报告书
     $router->post('/report', 'QuestionController@makeReport');
     // 开始答题
