@@ -225,14 +225,43 @@ class RecordController extends Controller
                 ->whereIn('law_rules.id',$lawRuleIds)
                 ->get()
                 ->toArray();
-            dd($rule);
-
+            //dd($rule);
+            $caseIds = json_decode($opinion->case_ids);
+            $advice = DB::table('cases')
+                ->select(['suggest','judgment'])
+                ->whereIn('id',$caseIds)
+                ->get()
+                ->toArray();
+            $newAdvice = '';
+            $judgment = '';
+            foreach($advice as $k=>$v){
+                $newAdvice .= $v->suggest;
+                $judgment .= $v->judgment;
+            }
+            //dd($newAdvice);
             $data = array(
-                'id'=>$opinion->id,
-                'id'=>$opinion->id,
+                'law_rule'=>$rule,
+                'understand'=>$opinion->understand,
+                'suggest'=>$newAdvice,
+                'judgment'=>$judgment
             );
+        }else{
+            $suggestIds = json_decode($opinion->suggest_ids);
+            $suggest = DB::table('question_suggests')
+                ->select('content')
+                ->whereIn('id',$suggestIds)
+                ->get()
+                ->toArray();
+            $newSuggest = '';
+            foreach($suggest as $k=>$v){
+                $newSuggest .= $v->content;
+            }
+            //dd($suggest);
+            $data['suggest'] = $newSuggest;
+           // dd($data);
         }
+        //dd($data);
         //dd($opinion);
-        return api_success();
+        return api_success($data);
     }
 }

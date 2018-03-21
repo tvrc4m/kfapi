@@ -63,12 +63,14 @@ $router->group(['prefix' => 'order'], function () use ($router) {
 // 评测记录
 $router->group(['prefix' => 'record'], function () use ($router) {
 
-    // 评测记录列表
+    // 我的提问列表
     $router->get('/', 'RecordController@getAllRecord');
-    // 删除评测记录
+    // 删除我的提问记录
     $router->delete('/', 'RecordController@deleteRecord');
-    // 评测列表
-    $router->get('/', 'RecordController@getAllOpinion');
-    // 删除评测记录
-    $router->delete('/', 'RecordController@deleteOpinion');
+    // 我的评测列表
+    $router->get('/opinion', 'RecordController@getAllOpinion');
+    // 删除我的评测记录
+    $router->delete('/opinion', 'RecordController@deleteOpinion');
+    // 查看我的评测记录
+    $router->get('/opinion', 'RecordController@getOneOpinion');
 });
