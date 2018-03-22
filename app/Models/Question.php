@@ -183,8 +183,12 @@ class Question extends Model
                         unset($oldRule[$k]);
                     }
                 }
-                $v->suggest_rule = array_values($oldRule);
-                $v->saveOrFail();
+                if (empty($oldRule)) {
+                    $v->delete();
+                } else {
+                    $v->suggest_rule = array_values($oldRule);
+                    $v->saveOrFail();
+                }
             }
         }
 
