@@ -39,9 +39,15 @@ class QuestionCollectionController extends Controller
      */
     public function delete($id)
     {
-        if (QuestionCollection::destroy($id)) {
-            return api_success();
+        //开启事务
+        DB::beginTransaction();
+        if (QuestionCollection::destroy(intval($id))) {
+            if(QuesOpQuesCollect::where('question_collection_id', $id)->delete()){
+                DB::commit();
+                return api_success();
+            }
         }
+        DB::rollBack();
         return api_error();
     }
 
