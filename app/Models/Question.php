@@ -59,6 +59,11 @@ class Question extends Model
         return $this->hasMany(\App\Models\QuestionOption::class, 'question_id','id');
     }
 
+    public function questionCollection()
+    {
+        return $this->belongsTo(\App\Models\QuestionCollection::class, 'question_collection_id', 'id');
+    }
+
     /**
      * 保存问题
      * @param Request $request
@@ -141,7 +146,10 @@ class Question extends Model
     public function deleteQuestion($id)
     {
         DB::beginTransaction();
-        $del = Question::destroy($id);
+        $ques = $this->where('id', $id)->firstOrFail();
+        $collect = $ques->questionCollection()->first();
+        $collect->decrement('num', 1);
+        $del = $ques->delete();
         if (!$del) {
             DB::rollBack();
             return false;
@@ -149,16 +157,9 @@ class Question extends Model
         $ops = QuestionOption::where('question_id', $id)->with('keyword')->get();
         foreach ($ops as $op) {
             $del = $op->keyword()->detach();
-            if (!$del) {
-                DB::rollBack();
-                return false;
-            }
         }
         $del = QuestionOption::where('question_id', $id)->delete();
-        if (!$del) {
-            DB::rollBack();
-            return false;
-        }
+
         DB::commit();
         return true;
     }

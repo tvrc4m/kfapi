@@ -129,14 +129,9 @@ class QuestionController extends Controller
     public function deleteQuestion($id)
     {
         $model = new Question();
-        $questionCollection = new QuestionCollection();
         DB::beginTransaction();
         $questionInfo = $model->deleteQuestion($id);
         if ($questionInfo) {
-            if (!$questionCollection->where('id', $id)->decrement('num', 1)){
-                DB::rollBack();
-                return api_error();
-            }
             DB::commit();
             return api_success();
         }
