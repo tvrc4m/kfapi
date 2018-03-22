@@ -158,7 +158,9 @@ class UserAnswer extends Model
                 ->get()->pluck('question_collection_id')->all();
             if (!empty($add_collection_id)) {
                 $temp = $paper->wait_question_collection_ids;
-                array_unshift($temp, $add_collection_id);
+                foreach ($add_collection_id as $collection_id) {
+                    array_unshift($temp, $collection_id);
+                }
                 $paper->wait_question_collection_ids = $temp;
             }
         }
