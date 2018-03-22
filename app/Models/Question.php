@@ -47,8 +47,14 @@ class Question extends Model
      */
     public function setBgimageAttribute($value)
     {
-
-        return parse_url($value, PHP_URL_PATH);
+        if (strpos($value, "http") === 0) {
+            $host = parse_url($value, PHP_URL_HOST);
+            if (strtoupper($host) == strtoupper($_SERVER['HTTP_HOST'])) {
+                $this->attributes['bgimage'] = parse_url($value, PHP_URL_PATH);
+                return;
+            }
+        }
+        $this->attributes['bgimage'] = $value;
     }
 
     /**
