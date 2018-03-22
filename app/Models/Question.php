@@ -158,17 +158,35 @@ class Question extends Model
         DB::beginTransaction();
         $ques = $this->where('id', $id)->firstOrFail();
         $collect = $ques->questionCollection()->first();
+        // 题集数量减一
         $collect->decrement('num', 1);
+        // 删除问题
         $del = $ques->delete();
         if (!$del) {
             DB::rollBack();
             return false;
         }
+        // 删除选项关联的关键词
         $ops = QuestionOption::where('question_id', $id)->with('keyword')->get();
         foreach ($ops as $op) {
-            $del = $op->keyword()->detach();
+            $op->keyword()->detach();
         }
-        $del = QuestionOption::where('question_id', $id)->delete();
+        // 删除关联选项
+        QuestionOption::where('question_id', $id)->delete();
+        // 删除建议关联
+        $rules = QuesCollectQuesSuggest::where('question_collection_id', $collect->id)->get();
+        if (!empty($rules)) {
+            foreach ($rules as $v) {
+                $oldRule = $v->suggest_rule;
+                foreach ($oldRule as $k => $r) {
+                    if ($r['question_id'] == $id) {
+                        unset($oldRule[$k]);
+                    }
+                }
+                $v->suggest_rule = array_values($oldRule);
+                $v->saveOrFail();
+            }
+        }
 
         DB::commit();
         return true;
