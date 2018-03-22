@@ -149,18 +149,18 @@ class UserAnswer extends Model
         $paper->wait_question_collection_ids = $oldQuestion;
         // 判断是否有分支问题集
         $option_ids = [];
-        foreach ($data as $collection) {
-            foreach ($collection['answer'] as $v) {
-                $option_ids = array_merge($option_ids, $v['option_id']);
-            }
+        foreach ($data as $v) {
+            $option_ids = array_merge($option_ids, ($v['option_id'] ?? []));
         }
         // 分支问题集id
-        $add_collection_id = QuesOpQuesCollect::whereIn('question_option_id', $option_ids)
-            ->get()->pluck('question_collection_id');
-        if (!empty($add_collection_id)) {
-            $temp = $paper->wait_question_collection_ids;
-            array_unshift($temp, $add_collection_id);
-            $paper->wait_question_collection_ids = $temp;
+        if (!empty($option_ids)) {
+            $add_collection_id = QuesOpQuesCollect::whereIn('question_option_id', $option_ids)
+                ->get()->pluck('question_collection_id');
+            if (!empty($add_collection_id)) {
+                $temp = $paper->wait_question_collection_ids;
+                array_unshift($temp, $add_collection_id);
+                $paper->wait_question_collection_ids = $temp;
+            }
         }
 
         // 如果是初始化题集 分析出是情感还是法规类型 填充待回答主线问题集
