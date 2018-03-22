@@ -56,10 +56,10 @@ $router->group([], function () use ($router) {
 
         // 新增问题集
         $router->post('/collection', 'QuestionCollectionController@create');
-        // 删除问题集
-        $router->delete('/collection', 'QuestionCollectionController@delete');
         // 问题集列表
         $router->get('/collection', 'QuestionCollectionController@getList');
+        // 删除问题集
+        $router->delete('/collection/{id}', 'QuestionCollectionController@delete');
         // 修改问题集
         $router->put('/collection/{id}', 'QuestionCollectionController@edit');
         // 问题集详情

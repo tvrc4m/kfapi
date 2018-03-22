@@ -33,6 +33,19 @@ class QuestionCollectionController extends Controller
     }
 
     /**
+     * 删除问题集
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function delete($id)
+    {
+        if (QuestionCollection::destroy($id)) {
+            return api_success();
+        }
+        return api_error();
+    }
+
+    /**
      * 新增问题集
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
