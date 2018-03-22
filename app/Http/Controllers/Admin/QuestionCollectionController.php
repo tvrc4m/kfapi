@@ -149,7 +149,7 @@ class QuestionCollectionController extends Controller
         $relate_question = [];
         if ($options){
             foreach ($options as $key=>$val){
-                $result2 = QuestionCollection::where('id', $val['question']['question_collection_id'])->get()->toArray();
+                $result2 = QuestionCollection::where('id', $val['question']['question_collection_id'])->firstOrFail()->toArray();
                 if ($result2){
                     $relate_question[$key]['question_collection_id'] = $result2['id'];
                     $relate_question[$key]['question_collection_name'] = $result2['title'];
