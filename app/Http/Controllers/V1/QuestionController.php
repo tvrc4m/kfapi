@@ -70,7 +70,7 @@ class QuestionController extends Controller
             'data' => 'required|array',
             'data.*.type' => 'required',
             'data.*.question_id' => 'required|numeric',
-            'data.*.option_id' => 'required|array',
+            'data.*.option_id' => 'array',
             'data.*.date' => 'string',
             'data.*.province' => 'numeric',
             'data.*.city' => 'numeric',
@@ -84,7 +84,6 @@ class QuestionController extends Controller
             'data.*.type.required' => '问题类型不能为空',
             'data.*.question_id.required' => '问题id不能为空',
             'data.*.question_id.numeric' => '问题id必须是数字',
-            'data.*.option_id.required' => '答案id不能为空',
             'data.*.option_id.array' => '答案id必须是数组',
         ]);
 

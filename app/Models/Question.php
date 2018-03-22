@@ -116,26 +116,28 @@ class Question extends Model
         }
 
         // 保存选项信息
-        foreach ($options['options'] as $option) {
-            $questionOption = QuestionOption::create([
-                'question_id' => $question->id,
-                'options' => $option['name'],
-                'weight' => intval($option['weight'] ?? 0)
-            ]);
-            if (!$questionOption) {
-                DB::rollBack();
-                return false;
-            }
-            if (!empty($option['keyword'])) {
-                foreach ($option['keyword'] as $keyword_id) {
-                    // 保存关键词信息
-                    $keyword = QuestionOptionKeyword::create([
-                        'question_option_id' => $questionOption->id,
-                        'keyword_id' => $keyword_id,
-                    ]);
-                    if (!$keyword) {
-                        DB::rollBack();
-                        return false;
+        if (!empty($options['options'])) {
+            foreach ($options['options'] as $option) {
+                $questionOption = QuestionOption::create([
+                    'question_id' => $question->id,
+                    'options' => $option['name'],
+                    'weight' => intval($option['weight'] ?? 0)
+                ]);
+                if (!$questionOption) {
+                    DB::rollBack();
+                    return false;
+                }
+                if (!empty($option['keyword'])) {
+                    foreach ($option['keyword'] as $keyword_id) {
+                        // 保存关键词信息
+                        $keyword = QuestionOptionKeyword::create([
+                            'question_option_id' => $questionOption->id,
+                            'keyword_id' => $keyword_id,
+                        ]);
+                        if (!$keyword) {
+                            DB::rollBack();
+                            return false;
+                        }
                     }
                 }
             }
