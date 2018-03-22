@@ -283,7 +283,7 @@ class CaseController extends Controller
     {
         $this->validate($request, [
             'name' => 'required|max:255|unique:case_factors',
-            'count' => 'required|numeric',
+            'count' => 'required|numeric|min:1',
             'weight' => 'numeric',
         ],[
             'name.required' => '名称不能为空',
@@ -311,7 +311,7 @@ class CaseController extends Controller
     {
         $this->validate($request, [
             'name' => 'required|max:255',
-            'count' => 'required|numeric',
+            'count' => 'required|numeric|min:1',
             'weight' => 'numeric',
         ],[
             'name.required' => '名称不能为空',
