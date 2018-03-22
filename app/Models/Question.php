@@ -126,15 +126,17 @@ class Question extends Model
                 DB::rollBack();
                 return false;
             }
-            foreach ($option['keyword'] as $keyword_id) {
-                // 保存关键词信息
-                $keyword = QuestionOptionKeyword::create([
-                    'question_option_id' => $questionOption->id,
-                    'keyword_id' => $keyword_id,
-                ]);
-                if (!$keyword) {
-                    DB::rollBack();
-                    return false;
+            if (!empty($option['keyword'])) {
+                foreach ($option['keyword'] as $keyword_id) {
+                    // 保存关键词信息
+                    $keyword = QuestionOptionKeyword::create([
+                        'question_option_id' => $questionOption->id,
+                        'keyword_id' => $keyword_id,
+                    ]);
+                    if (!$keyword) {
+                        DB::rollBack();
+                        return false;
+                    }
                 }
             }
         }
