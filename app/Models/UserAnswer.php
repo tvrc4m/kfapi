@@ -155,7 +155,7 @@ class UserAnswer extends Model
         // 分支问题集id
         if (!empty($option_ids)) {
             $add_collection_id = QuesOpQuesCollect::whereIn('question_option_id', $option_ids)
-                ->get()->pluck('question_collection_id');
+                ->get()->pluck('question_collection_id')->all();
             if (!empty($add_collection_id)) {
                 $temp = $paper->wait_question_collection_ids;
                 array_unshift($temp, $add_collection_id);
