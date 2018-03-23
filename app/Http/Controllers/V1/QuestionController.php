@@ -7,6 +7,7 @@ use App\Models\UserAnswer;
 use App\Models\UserQuestionReport;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 /**
  * 问题控制器
@@ -104,6 +105,7 @@ class QuestionController extends Controller
      */
     public function makeReport(Request $request)
     {
+        Log::debug($request->all());
         $this->validate($request, [
             'paper_id' => 'required|numeric',
         ], [
