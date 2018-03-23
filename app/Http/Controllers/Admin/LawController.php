@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\LawRule;
 use Illuminate\Http\Request;
 use App\Models\Law;
+use App\Models\LawRuleKeyword;
 use Illuminate\Support\Facades\DB;
 
 class LawController extends Controller

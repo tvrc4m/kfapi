@@ -143,24 +143,26 @@ class UserAnswer extends Model
         $oldQuestion = $paper->wait_question_collection_ids;
         if ($oldQuestion[0] != $question_collection_id) {
             DB::rollBack();
-            return false;
+            throw new \Exception("删除待回答问题不匹配");
         }
         array_shift($oldQuestion);
         $paper->wait_question_collection_ids = $oldQuestion;
         // 判断是否有分支问题集
         $option_ids = [];
-        foreach ($data as $collection) {
-            foreach ($collection['answer'] as $v) {
-                $option_ids = array_merge($option_ids, $v['option_id']);
-            }
+        foreach ($data as $v) {
+            $option_ids = array_merge($option_ids, ($v['option_id'] ?? []));
         }
         // 分支问题集id
-        $add_collection_id = QuesOpQuesCollect::whereIn('question_option_id', $option_ids)
-            ->get()->pluck('question_collection_id');
-        if (!empty($add_collection_id)) {
-            $temp = $paper->wait_question_collection_ids;
-            array_unshift($temp, $add_collection_id);
-            $paper->wait_question_collection_ids = $temp;
+        if (!empty($option_ids)) {
+            $add_collection_id = QuesOpQuesCollect::whereIn('question_option_id', $option_ids)
+                ->get()->pluck('question_collection_id')->all();
+            if (!empty($add_collection_id)) {
+                $temp = $paper->wait_question_collection_ids;
+                foreach ($add_collection_id as $collection_id) {
+                    array_unshift($temp, $collection_id);
+                }
+                $paper->wait_question_collection_ids = $temp;
+            }
         }
 
         // 如果是初始化题集 分析出是情感还是法规类型 填充待回答主线问题集
@@ -169,7 +171,7 @@ class UserAnswer extends Model
             $suggest = $this->matchSuggest($initCollec, $data);
             if (empty($suggest)) {
                 DB::rollBack();
-                return false;
+                throw new \Exception("初始化问题没有匹配到建议类型");
             }
             // 保存试卷类型
             $paper->type = $suggest['type'];
@@ -180,7 +182,7 @@ class UserAnswer extends Model
                 ->get(['id'])->pluck('id')->all();
             if (empty($collect_ids)) {
                 DB::rollBack();
-                return false;
+                throw new \Exception("没有找到主线问题集");
             }
             $paper->wait_question_collection_ids = $collect_ids;
         }

@@ -39,12 +39,11 @@ class QuestionController extends Controller
             'title' => 'required|max:255',
             'bgimage' => 'required',
             'type' => 'required|numeric',
-            'show_report' => 'required|numeric',
             'sort' => 'numeric',
-            'options' => 'required|array',
+            'options' => 'array',
             'options.*.name' => 'required',
             'options.*.weight' => 'numeric',
-            'options.*.keyword' => 'required|array',
+            'options.*.keyword' => 'array',
         ],[
             'title.required' => '标题不能为空',
             'title.max' => '标题不能超过255个字符',
@@ -52,12 +51,9 @@ class QuestionController extends Controller
             'question_collection_id.numeric' => '问题集id必须是数字',
             'bgimage.required' => '背景图片不能为空',
             'type.required' => '类型不能为空',
-            'show_report.required' => '类型不能为空',
-            'options.required' => '问题选项不能为空',
             'options.array' => '问题选项格式不对',
             'options.*.name.required' => '选项名称不能为空',
             'options.*.weight.numeric' => '选项权重必须是数字',
-            'options.*.keyword.required' => '选项关键词必填',
             'options.*.keyword.array' => '选项关键词必须是数组',
         ]);
         $question_collection_id = $request->input('question_collection_id');
@@ -129,14 +125,9 @@ class QuestionController extends Controller
     public function deleteQuestion($id)
     {
         $model = new Question();
-        $questionCollection = new QuestionCollection();
         DB::beginTransaction();
         $questionInfo = $model->deleteQuestion($id);
         if ($questionInfo) {
-            if (!$questionCollection->where('id', $id)->decrement('num', 1)){
-                DB::rollBack();
-                return api_error();
-            }
             DB::commit();
             return api_success();
         }
