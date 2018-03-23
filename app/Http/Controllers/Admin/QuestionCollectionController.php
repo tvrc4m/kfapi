@@ -118,7 +118,7 @@ class QuestionCollectionController extends Controller
         }
         $list = QuestionCollection::with('adminUser')->with('questionOption')->where($where)->select(['id','title', 'content', 'is_single_page', 'bgimage', 'is_trunk',
             'type', 'overdue', 'created_at', 'sort', 'create_user_id', 'num'])->paginate()->toArray();
-        $questionListData = Question::select()->get()->toArray();
+        $questionListData = Question::with('questionOption')->select()->get()->toArray();
         $questionList = [];
         if ($questionListData){
             foreach ($questionListData as $qu_key=>$qu_val) {
@@ -131,7 +131,7 @@ class QuestionCollectionController extends Controller
                 unset($list['data'][$key]['admin_user']);
                 if ($val['question_option']){
                     foreach ($val['question_option'] as $tt_key=>$tt_val){
-                        $list['data'][$key]['question_name'][$tt_key] = $questionList[$tt_val['question_id']]['title'];
+                        $list['data'][$key]['question_name'][$tt_key] = $questionList[$tt_val['question_id']]['title'].'-'.$tt_val['options'];
                     }
                     unset($list['data'][$key]['question_option']);
                 }else{
