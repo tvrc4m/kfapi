@@ -47,7 +47,7 @@ class QuestionCollectionController extends Controller
                 DB::commit();
                 return api_success();
             }
-            if(QuesOpQuesCollect::where('question_collection_id', $id)->delete()){
+            if(QuesOpQuesCollect::where('question_collection_id', $id)->forceDelete()){
                 DB::commit();
                 return api_success();
             }

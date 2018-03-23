@@ -117,7 +117,7 @@ class QuestionCollection extends Model
             if ($result) {
                 if (!empty($question_option_id)){
                     $quesOpList = QuesOpQuesCollect::where('question_collection_id', $id)->get()->toArray();
-                    if ($quesOpList && !QuesOpQuesCollect::where('question_collection_id', $id)->delete()) {
+                    if ($quesOpList && !QuesOpQuesCollect::where('question_collection_id', $id)->forceDelete()) {
                         DB::rollBack();
                         return false;
                     }
