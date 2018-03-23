@@ -135,7 +135,7 @@ class QuestionCollectionController extends Controller
                     }
                     unset($list['data'][$key]['question_option']);
                 }else{
-                    $list['data'][$key]['question_name'] = '';
+                    $list['data'][$key]['question_name'] = [];
                 }
             }
         }
