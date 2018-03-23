@@ -113,7 +113,6 @@ class UserAnswer extends Model
     /**
      * 保存答案
      * @param Request $request
-     * @return bool
      * @throws \Exception
      */
     public function saveAnswer(Request $request)
@@ -189,10 +188,9 @@ class UserAnswer extends Model
         // 保存修改
         if (!$paper->save()) {
             DB::rollBack();
-            return false;
+            throw new \Exception("保存数据库失败");
         }
         DB::commit();
-        return true;
     }
 
     /**
