@@ -66,6 +66,7 @@ class QuestionController extends Controller
     public function answer(Request $request)
     {
         Log::debug($request->all());
+        Log::debug($request->header());
         $this->validate($request, [
             'paper_id' => 'required|numeric',
             'question_collection_id' => 'required|numeric',
