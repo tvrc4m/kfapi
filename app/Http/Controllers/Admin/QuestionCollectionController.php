@@ -42,6 +42,11 @@ class QuestionCollectionController extends Controller
         //开启事务
         DB::beginTransaction();
         if (QuestionCollection::destroy(intval($id))) {
+            $quesOpList = QuesOpQuesCollect::where('id', $id)->get();
+            if (empty($quesOpList)){
+                DB::commit();
+                return api_success();
+            }
             if(QuesOpQuesCollect::where('question_collection_id', $id)->delete()){
                 DB::commit();
                 return api_success();
