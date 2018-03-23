@@ -165,4 +165,47 @@ class TopicController extends Controller
         }
         return api_error();
     }
+
+    //首页轮播图
+    public function getShuffling(Request $request)
+    {
+        //dd($request->header());
+        //file_put_contents('/tmp/topic.log',$request->header('device'));
+        $topics = DB::table('topics')
+            ->leftJoin('invitations', 'invitations.topic_id', '=', 'topics.id')
+            ->leftJoin('experts', 'experts.id', '=', 'invitations.expert_id')
+            ->select('topics.id','topics.content','experts.name','experts.job_id','experts.icon')
+            ->where('topics.top',1)
+            ->orderBy('topics.created_at','desc')
+            ->limit(4)
+            ->get()
+            ->toArray();
+        //dd($topics);
+
+        //配置文件获取专家职业
+        $config = require base_path('config/fieldDictionary.php');
+        //dd($config);
+        $jobs = $config['job'];
+        $jobs = array_values($jobs);
+        $newJobs = [];
+        foreach($jobs as $k=>$v){
+            $newJobs[$v['job_id']] = $v['name'];
+        }
+        if($topics){
+            foreach ($topics as $k=>&$v){
+                if($v->job_id){
+                    //var_dump($v['job_id']);
+                    //var_dump($newJobs[$v['job_id']]);
+                    $job = $newJobs[$v->job_id];
+                }else{
+                    $job = '';
+                }
+                $v->job = $job;
+            }
+        }
+        $data['data'] = $topics;
+        //dd($topics);
+        return api_success($data);
+    }
+
 }

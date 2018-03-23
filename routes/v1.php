@@ -38,10 +38,13 @@ $router->group(['prefix' => 'comment'], function () use ($router) {
 $router->group(['prefix' => 'topic'], function () use ($router) {
     // 获取大家在测列表
     $router->get('/', 'TopicController@getAllTopic');
-    // 获取问答详情页
-    $router->get('/{id}', 'TopicController@getOneTopic');
     // 用户提交问题
     $router->post('/', 'TopicController@addTopic');
+    // 获取问答详情页
+    $router->get('/{id}', 'TopicController@getOneTopic');
+    // 首页轮播图
+    $router->get('/shuffling', 'TopicController@getShuffling');
+
 });
 // 用户邀请
 $router->group(['prefix' => 'invitation'], function () use ($router) {
