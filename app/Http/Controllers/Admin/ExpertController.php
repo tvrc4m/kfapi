@@ -7,6 +7,7 @@ use App\Models\Experts;
 use App\Models\ExpertsServices;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 
 class ExpertController extends Controller
 {
@@ -132,7 +133,7 @@ class ExpertController extends Controller
 
         // 开启事务
         DB::beginTransaction();
-
+        $data['password'] = Hash::make($request->input('password'));
         $expert = Experts::create($data);
         //dd($expert->id);
         $service = $request->only('service')['service'];
