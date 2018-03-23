@@ -14,7 +14,7 @@ class AuthController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth:admin', ['except' => ['login']]);
+        $this->middleware('auth:expert', ['except' => ['login']]);
     }
 
     /**
@@ -25,11 +25,11 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         $credentials = [
-            'username' => $request->input('username'),
+            'account' => $request->input('account'),
             'password' => $request->input('password'),
             'stat' => 1,
         ];
-        if (! $token = Auth::guard("admin")->setTTL(60)->attempt($credentials)) {
+        if (! $token = Auth::guard("expert")->setTTL(60)->attempt($credentials)) {
             return api_error('用户名或密码错误');
         }
 
@@ -43,7 +43,7 @@ class AuthController extends Controller
      */
     public function me()
     {
-        return api_success(Auth::guard("admin")->user());
+        return api_success(Auth::guard("expert")->user());
     }
 
     /**
@@ -53,7 +53,7 @@ class AuthController extends Controller
      */
     public function logout()
     {
-        Auth::guard("admin")->logout();
+        Auth::guard("expert")->logout();
         return api_success();
     }
 
@@ -64,7 +64,7 @@ class AuthController extends Controller
      */
     public function refresh()
     {
-        return $this->respondWithToken(Auth::guard("admin")->refresh());
+        return $this->respondWithToken(Auth::guard("expert")->refresh());
     }
 
     /**
