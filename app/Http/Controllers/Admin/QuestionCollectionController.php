@@ -155,7 +155,7 @@ class QuestionCollectionController extends Controller
         if ($options){
             foreach ($options as $key=>$val){
                 $result2 = QuestionCollection::where('id', $val['question']['question_collection_id'])->get()->toArray();
-                if ($result2){
+                if ($result2 && empty($val['question']['deleted_at'])){
                     $relate_question[$key]['question_collection_id'] = $result2[0]['id'];
                     $relate_question[$key]['question_collection_name'] = $result2[0]['title'];
                     $relate_question[$key]['question_id'] = $val['question']['id'];
