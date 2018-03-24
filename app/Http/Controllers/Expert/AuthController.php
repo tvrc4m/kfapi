@@ -1,9 +1,12 @@
 <?php
 namespace App\Http\Controllers\Expert;
 
+use App\Models\AdminExpert;
+use App\Models\Experts;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
@@ -29,7 +32,16 @@ class AuthController extends Controller
             'password' => $request->input('password'),
             'stat' => 1,
         ];
+//        $pwd = Hash::make($credentials['password']);dd($pwd);
+//        print_sql();
+//        $aaa = AdminExpert::where('account', $credentials['account'])->first();
+//        dd($aaa->password);
+//        $res = Hash::check($credentials['account'], $aaa->password);
+//        dd($res);
+
+//dd($credentials);
         if (! $token = Auth::guard("expert")->setTTL(60)->attempt($credentials)) {
+            dd($token);
             return api_error('用户名或密码错误');
         }
 
@@ -79,7 +91,7 @@ class AuthController extends Controller
         return api_success([
             'access_token' => $token,
             'token_type' => 'bearer',
-            'expires_in' => Auth::guard("admin")->factory()->getTTL() * 60
+            'expires_in' => Auth::guard("expert")->factory()->getTTL() * 60
         ]);
     }
 }

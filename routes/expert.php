@@ -22,10 +22,12 @@ $router->group(['prefix' => 'auth'], function () use ($router) {
 //$router->group(['middleware' => 'auth:expert'], function () use ($router) {
 $router->group([], function () use ($router) {
     //
-    $router->group(['prefix' => 'template'], function () use ($router) {
-        //
-        $router->get('/', 'ReportTemplateController@getOne');
-        //
-        $router->put('/', 'ReportTemplateController@edit');
+    $router->group(['prefix' => 'topic'], function () use ($router) {
+        //用户提问列表
+        $router->get('/', 'TopicController@getAllTopics');
+        //问题详情
+        $router->get('/{id}', 'TopicController@getOneTopic');
+        //专家提交回复
+        $router->post('/', 'TopicController@addComment');
     });
 });

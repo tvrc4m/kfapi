@@ -75,6 +75,10 @@ return [
             'driver' => 'eloquent',
             'model'  => \App\Models\AdminUser::class,
         ],
+        'experts' => [
+            'driver' => 'eloquent',
+            'model'  => \App\Models\Experts::class,
+        ],
     ],
 
     /*
