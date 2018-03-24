@@ -65,6 +65,8 @@ class QuestionController extends Controller
      */
     public function answer(Request $request)
     {
+        Log::debug($request->all());
+        Log::debug($request->header());
         $this->validate($request, [
             'paper_id' => 'required|numeric',
             'question_collection_id' => 'required|numeric',
@@ -90,8 +92,10 @@ class QuestionController extends Controller
 
         // 保存答案
         $model = new UserAnswer();
-        if (!$model->saveAnswer($request)) {
-            return api_error('保存问题失败');
+        try {
+            $model->saveAnswer($request);
+        } catch (\Exception $e) {
+            return api_error($e->getMessage());
         }
         // 返回下一部分题集
         return $this->question($request);
