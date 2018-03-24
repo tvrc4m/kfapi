@@ -217,4 +217,18 @@ $router->group([], function () use ($router) {
         // 查看案例
         $router->get('/{id}', 'CaseController@getOneCase');
     });
+
+    // 后台服务
+    $router->group(['prefix' => 'service'], function () use ($router) {
+        // 获取服务列表
+        $router->get('/', 'ServiceController@getAllService');
+        // 新增服务
+        $router->post('/', 'ServiceController@addService');
+        // 查看服务
+        $router->get('/{id}', 'ServiceController@getOneService');
+        // 修改服务
+        $router->put('/{id}', 'ServiceController@editService');
+        // 删除服务
+        $router->delete('/{id}', 'ServiceController@deleteService');
+    });
 });
