@@ -103,18 +103,10 @@ class Question extends Model
             // 删除原来的关键词信息
             $ops = QuestionOption::where('question_id', $question->id)->with('keyword')->get();
             foreach ($ops as $op) {
-                $del = $op->keyword()->detach();
-                if (!$del) {
-                    DB::rollBack();
-                    throw new \Exception('删除原来的关键词信息失败');
-                }
+                $op->keyword()->detach();
             }
             // 删除原来的选项信息
-            $del = QuestionOption::where('question_id', $question->id)->delete();
-            if (!$del) {
-                DB::rollBack();
-                throw new \Exception('删除原来的选项信息失败');
-            }
+            QuestionOption::where('question_id', $question->id)->delete();
         }
 
         // 保存选项信息
