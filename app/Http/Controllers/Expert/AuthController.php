@@ -112,23 +112,45 @@ class AuthController extends Controller
         //dd($expert);
         //已回答问题数量、
         $num = DB::select('select count(topic_id) as answered_question_num from bu_comments where expert_id = ?', [$expertId]);
+        //dd($num);
+        $answered_question_num = $num[0]->answered_question_num ??0;
+        //dd($answered_question_num);
         //所有人回答问题数量、排名
         $userNum = DB::select('select expert_id,count(topic_id) as user_num from bu_comments group by expert_id');
-        foreach ($userNum as $k=>$v){
-            $userArr[] = $v->user_num;
+        if($userNum){
+            foreach ($userNum as $k=>$v){
+                $userArr[] = $v->user_num;
+            }
+            //dd($userNum);
+            array_multisort($userArr,SORT_DESC,$userNum);
+            //dd($userNum);
+            foreach ($userNum as $k=>$v){
+                $sort = $k+1;
+                $newNum[$v->expert_id]['sort'] = $sort;
+            }
         }
-        //dd($userArr);
-        array_multisort($userArr,SORT_DESC,$userNum);
-        //dd($userNum);
-        foreach ($userNum as $k=>$v){
-            $sort = $k+1;
-            $newNum[$v->expert_id]['sort'] = $sort;
-        }
+        //排名
         $expertSort = $newNum[$expertId]['sort'];
         //dd($expertSort);
         //未回答问题数量
         //问题总数量、
-        $totalNum = DB::select('select count(topic_id) as total_num from bu_invitations where expert_id = ?', [$expertId]);
-        dd($totalNum);
+        $totalNum = DB::select('select count(topic_id) as total_num,count(user_id) as ask_people_num from bu_invitations where expert_id = ?', [$expertId]);
+        //dd($totalNum);
+        if($totalNum[0]->total_num){
+            $unanswered_question_num = intval($totalNum[0]->total_num) - $answered_question_num;
+        }
+        if($totalNum[0]->ask_people_num){
+            $ask_people_num = $totalNum[0]->ask_people_num;
+        }
+
+        $data = array(
+            'name'=>$expert->name,
+            'last_login_time'=>$expert->last_login_time,
+            'answered_question_num'=>$answered_question_num,
+            'sort'=>$expertSort,
+            'unanswered_question_num'=>$unanswered_question_num,
+            'ask_people_num'=>$ask_people_num,
+        );
+        return api_success($data);
     }
 }

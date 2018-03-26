@@ -199,12 +199,20 @@ class QuestionSuggestController extends Controller
         if (!empty($question_collection_id)) {
             $where['question_collection_id'] = $question_collection_id;
         }
-        $questionSuggest = QuesCollectQuesSuggest::where($where)->select(['id', 'question_collection_id', 'question_suggest_id'])->paginate()->toArray();
+        $questionSuggest = QuesCollectQuesSuggest::where($where)->select(['id', 'question_collection_id', 'question_suggest_id','suggest_rule'])->paginate()->toArray();
         //$questionSuggest = QuestionSuggest::where('question_collection_id', $question_collection_id)->select(['id', 'question_collection_id', 'content', 'title', 'sort'])->paginate()->toArray();
         if ($questionSuggest['data']){
             foreach ($questionSuggest['data'] as $key=>$val){
-                $questionSuggest['data'][$key]['question'] = Question::where('question_collection_id', $val['question_collection_id'])->with('questionOption')->get()->toArray();
-                $questionSuggest['data'][$key]['suggestion'] = QuestionSuggest::where('id', $val['question_suggest_id'])->get()->toArray();
+                //$questionSuggest['data'][$key]['question'] = Question::where('question_collection_id', $val['question_collection_id'])->with('questionOption')->get()->toArray();
+                $questionInfo = QuestionSuggest::where('id', $val['question_suggest_id'])->get()->toArray();
+                $questionSuggest['data'][$key]['suggestion_title'] = $questionInfo[0]['title'] ?? '';
+                $questionSuggest['data'][$key]['suggestion_content'] = $questionInfo[0]['content'] ?? '';
+                if ($val['suggest_rule']){
+                    foreach ($val['suggest_rule'] as $ru_key=>$ru_val){
+                        $questionSuggest['data'][$key]['suggest_rule'][$ru_key]['question_title'] = Question::where('id', $ru_val['question_id'])->get()->toArray()[0]['title'] ?? '';
+                        $questionSuggest['data'][$key]['suggest_rule'][$ru_key]['option_name'] = QuestionOption::where('id', $ru_val['option_id'])->get()->toArray()[0]['options'] ?? '';
+                    }
+                }
             }
         }
         return api_success($questionSuggest);
