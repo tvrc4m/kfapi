@@ -25,10 +25,13 @@ class CommentController extends Controller
     public function getAllComments(Request $request)
     {
         $cate = $request->input('cate');
-
+        $hide_comment = $request->input('hide_comment');
         $where = [];
         if (!empty($cate)) {
             $where['cate'] = $cate;
+        }
+        if ($hide_comment) {
+            $where['comments.is_hide'] = 2;
         }
 
         $comments = DB::table('comments')
