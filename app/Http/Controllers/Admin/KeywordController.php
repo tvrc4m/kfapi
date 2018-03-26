@@ -57,4 +57,39 @@ class KeywordController extends Controller
 
         return api_success($data);
     }
+
+    /**
+     * 修改关键词
+     * @param $id
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function edit($id, Request $request)
+    {
+        $this->validate($request, [
+            'name' => 'required|max:255',
+        ],[
+            'name.required' => '名称不能为空',
+            'name.max' => '名称不能超过255个字符',
+        ]);
+
+        $key = Keyword::where('id', $id)->firstOrFail();
+        if (!$key->update($request->all())) {
+            return api_error();
+        }
+        return api_success($key);
+    }
+
+    /**
+     * 删除关键词
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function delete($id)
+    {
+        if (!Keyword::destroy($id)) {
+            return api_error();
+        }
+        return api_success();
+    }
 }

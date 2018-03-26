@@ -7,6 +7,7 @@ use App\Models\Experts;
 use App\Models\ExpertsServices;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 
 class ExpertController extends Controller
 {
@@ -132,7 +133,7 @@ class ExpertController extends Controller
 
         // 开启事务
         DB::beginTransaction();
-
+        $data['password'] = Hash::make($request->input('password'));
         $expert = Experts::create($data);
         //dd($expert->id);
         $service = $request->only('service')['service'];
@@ -183,6 +184,7 @@ class ExpertController extends Controller
             'service.*.price' => 'required',
             'service.*.limit_free' => 'required|numeric',
             'account' => 'required|max:255',
+            'type' => 'required|numeric'
         ],[
             'name.required' => '专家名不能为空',
             'name.max' => '专家名不能超过255个字符',
@@ -207,6 +209,8 @@ class ExpertController extends Controller
             'service.*.description.max' => '服务描述不能超过255个字符',
             'service.*.price.required' => '服务价格不能为空',
             'service.*.limit_free.required' => '限时免费不能为空',
+            'type.required' => '专家类型不能为空',
+            'type.numeric' => '专家类型不合法',
         ]);
 
         $expert = Experts::where('id',$id)->first();

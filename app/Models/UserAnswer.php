@@ -1,10 +1,12 @@
 <?php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class UserAnswer extends Model
 {
@@ -80,7 +82,7 @@ class UserAnswer extends Model
             'id' => $paper_id,
             'user_id' => $user_id,
             'stat' => self::STATUS_UNFINISH,
-        ])->orderByDesc('updated_at')->firstOrFail();
+        ])->orderByDesc('created_at')->firstOrFail();
         // 取得问题集
         $collect_id_arr = $paper->wait_question_collection_ids;
         if (empty($collect_id_arr)) {
@@ -91,9 +93,13 @@ class UserAnswer extends Model
             return ['paper_stat' => self::STATUS_FINISH];
         }
         $collect_id = $collect_id_arr[0];
-        $collect = QuestionCollection::where('id', $collect_id)->firstOrFail();
+        $collect    = QuestionCollection::where('id', $collect_id)->firstOrFail();
 
-        $questions = $collect->questions()->with('questionOption')->get()->toArray();
+        $questions = $collect->questions()
+            ->orderBy('sort')
+            ->orderBy('id')
+            ->with('questionOption')
+            ->get()->toArray();
         // 问题选项增加ABCD
         $letters = range('A', 'Z');
         foreach ($questions as $k => $q) {
@@ -102,9 +108,9 @@ class UserAnswer extends Model
             }
         }
 
-        $collect['paper_id'] = $paper->id;
+        $collect['paper_id']   = $paper->id;
         $collect['paper_stat'] = $paper->stat;
-        $collect['questions'] = $questions;
+        $collect['questions']  = $questions;
 
         return $collect;
     }
@@ -112,17 +118,17 @@ class UserAnswer extends Model
     /**
      * 保存答案
      * @param Request $request
-     * @return bool
      * @throws \Exception
      */
     public function saveAnswer(Request $request)
     {
-        $paper_id = $request->input('paper_id');
+        $paper_id               = $request->input('paper_id');
+        $data                   = $request->input('data');
         $question_collection_id = $request->input('question_collection_id');
-        $data = $request->input('data');
 
         // 开启事务
         DB::beginTransaction();
+
         // 验证试卷id是否正确
         $paper = $this->where([
             'id' => $paper_id,
@@ -130,29 +136,48 @@ class UserAnswer extends Model
         ])->firstOrFail();
 
         // 记录答案
-        $oldData = $paper->data ? $paper->data : [];
-        $newData = [
+        $oldData     = $paper->data ? $paper->data : [];
+        $newData     = [
             'question_collection_id' => $question_collection_id,
             'answer' => $data,
         ];
-        $oldData[] = $newData;
+        $oldData[]   = $newData;
         $paper->data = $oldData;
         // 删除待回答问题
         $oldQuestion = $paper->wait_question_collection_ids;
         if ($oldQuestion[0] != $question_collection_id) {
             DB::rollBack();
-            return false;
+            throw new \Exception("删除待回答问题不匹配");
         }
         array_shift($oldQuestion);
         $paper->wait_question_collection_ids = $oldQuestion;
+        // 判断是否有分支问题集
+        $option_ids = [];
+        foreach ($data as $v) {
+            $option_ids = array_merge($option_ids, ($v['option_id'] ?? []));
+        }
+        // 分支问题集id
+        if (!empty($option_ids)) {
+            $add_collection_id = QuesOpQuesCollect::whereIn('question_option_id', $option_ids)
+                ->get()->pluck('question_collection_id')->all();
+            if (!empty($add_collection_id)) {
+                $temp = $paper->wait_question_collection_ids;
+                foreach ($add_collection_id as $collection_id) {
+                    array_unshift($temp, $collection_id);
+                }
+                $paper->wait_question_collection_ids = $temp;
+            }
+        }
 
         // 如果是初始化题集 分析出是情感还是法规类型 填充待回答主线问题集
         $initCollec = QuestionCollection::where('type', QuestionCollection::TYPE_INIT)->firstOrFail();
         if ($initCollec->id == $question_collection_id) {
             $suggest = $this->matchSuggest($initCollec, $data);
+            Log::debug("匹配到的建议类型:");
+            Log::debug($suggest);
             if (empty($suggest)) {
                 DB::rollBack();
-                return false;
+                throw new \Exception("初始化问题没有匹配到建议类型");
             }
             // 保存试卷类型
             $paper->type = $suggest['type'];
@@ -160,24 +185,24 @@ class UserAnswer extends Model
             $collect_ids = QuestionCollection::where('is_trunk', 1)
                 ->where('type', $suggest['type'])
                 ->orderBy('sort')
+                ->orderByDesc("created_at")
                 ->get(['id'])->pluck('id')->all();
             if (empty($collect_ids)) {
                 DB::rollBack();
-                return false;
+                throw new \Exception("没有找到主线问题集");
             }
             $paper->wait_question_collection_ids = $collect_ids;
         }
         // 保存修改
         if (!$paper->save()) {
             DB::rollBack();
-            return false;
+            throw new \Exception("保存数据库失败");
         }
         DB::commit();
-        return true;
     }
 
     /**
-     * 匹配建议
+     * 匹配情感建议
      * @param QuestionCollection $qc
      * @param array $answer
      * @return null|array

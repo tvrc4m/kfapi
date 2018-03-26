@@ -51,4 +51,39 @@ class CommentController extends Controller
         return api_success($comments);
     }
 
+    //首页轮播
+    public function getShuffling(Request $request)
+    {
+
+        $comments = DB::table('comments')
+            ->leftJoin('experts', 'experts.id', '=', 'comments.expert_id')
+            ->select('experts.name as expertname','experts.icon','experts.job_id','comments.content')
+            ->where('comments.top',1)
+            ->orderBy('comments.created_at','desc')
+            ->limit(4)
+            ->get()
+            ->toArray();
+        //dd($comments);
+        $config = require base_path('config/fieldDictionary.php');
+        //dd($config['job']);
+
+        $jobs = $config['job'];
+        $jobs = array_values($jobs);
+        $newJob = [];
+        foreach($jobs as $k=>$v){
+            $newJob[$v['job_id']] = $v['name'];
+        }
+        if($comments){
+            foreach ($comments as $k=>&$v){
+                if($v->job_id){
+                    $v->job = $newJob[$v->job_id];
+                }else{
+                    $v->job = '';
+                }
+            }
+        }
+        $data['data'] = $comments;
+        //dd($comments);
+        return api_success($data);
+    }
 }

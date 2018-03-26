@@ -39,12 +39,11 @@ class QuestionController extends Controller
             'title' => 'required|max:255',
             'bgimage' => 'required',
             'type' => 'required|numeric',
-            'show_report' => 'required|numeric',
             'sort' => 'numeric',
-            'options' => 'required|array',
+            'options' => 'array',
             'options.*.name' => 'required',
             'options.*.weight' => 'numeric',
-            'options.*.keyword' => 'required|array',
+            'options.*.keyword' => 'array',
         ],[
             'title.required' => '标题不能为空',
             'title.max' => '标题不能超过255个字符',
@@ -52,28 +51,20 @@ class QuestionController extends Controller
             'question_collection_id.numeric' => '问题集id必须是数字',
             'bgimage.required' => '背景图片不能为空',
             'type.required' => '类型不能为空',
-            'show_report.required' => '类型不能为空',
-            'options.required' => '问题选项不能为空',
             'options.array' => '问题选项格式不对',
             'options.*.name.required' => '选项名称不能为空',
             'options.*.weight.numeric' => '选项权重必须是数字',
-            'options.*.keyword.required' => '选项关键词必填',
             'options.*.keyword.array' => '选项关键词必须是数组',
         ]);
-        $question_collection_id = $request->input('question_collection_id');
-        DB::beginTransaction();
+
         $question = new Question();
-        $questionCollection = new QuestionCollection();
-        if ($question->saveQuestion($request)) {
-            if(!$questionCollection->where('id', $question_collection_id)->increment('num', 1)){
-                DB::rollBack();
-                return api_error();
-            }
-            DB::commit();
+
+        try {
+            $question->saveQuestion($request);
             return api_success();
+        } catch (\Exception $e) {
+            return api_error($e->getMessage());
         }
-        DB::rollBack();
-        return api_error();
     }
 
     /**
@@ -113,11 +104,12 @@ class QuestionController extends Controller
         ]);
 
         $question = new Question();
-        if ($question->saveQuestion($request, $id)) {
+        try {
+            $question->saveQuestion($request, $id);
             return api_success();
+        } catch (\Exception $e) {
+            return api_error($e->getMessage());
         }
-
-        return api_error();
     }
 
     /**
@@ -129,14 +121,9 @@ class QuestionController extends Controller
     public function deleteQuestion($id)
     {
         $model = new Question();
-        $questionCollection = new QuestionCollection();
         DB::beginTransaction();
         $questionInfo = $model->deleteQuestion($id);
         if ($questionInfo) {
-            if (!$questionCollection->where('id', $questionInfo->question_collection_id)->decrement('num', 1)){
-                DB::rollBack();
-                return api_error();
-            }
             DB::commit();
             return api_success();
         }
@@ -163,6 +150,7 @@ class QuestionController extends Controller
             ->where('question_collection_id', $question_collection_id)
             ->select(['id', 'title', 'sort', 'show_report'])
             ->orderBy('sort')
+            ->orderBy('id')
             ->paginate()->toArray();
 
 
@@ -188,10 +176,16 @@ class QuestionController extends Controller
     public function getOneQuestion($id)
     {
         $question = Question::where('id', $id)->firstOrFail();
-        $options = $question->questionOption()->with('keyword')->get();
+        $options = $question->questionOption()
+            ->select('id', 'options as name', 'weight')
+            ->with('keyword')->get();
 
         $data = $question->toArray();
         $data['options'] = $options->toArray();
+        foreach ($data['options'] as $k => $op) {
+            $keywordArr = collect($op['keyword'])->pluck('id')->all();
+            $data['options'][$k]['keyword'] = $keywordArr;
+        }
 
         return api_success($data);
     }

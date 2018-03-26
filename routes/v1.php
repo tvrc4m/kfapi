@@ -11,8 +11,6 @@ $router->post('test', 'TestController@post');
 
 // 问题相关
 $router->group(['prefix' => 'question'], function () use ($router) {
-    // 查看报告书
-    $router->get('/report', 'QuestionController@getReport');
     // 生成报告书
     $router->post('/report', 'QuestionController@makeReport');
     // 开始答题
@@ -34,16 +32,19 @@ $router->group(['prefix' => 'expert'], function () use ($router) {
 $router->group(['prefix' => 'comment'], function () use ($router) {
     // 获取专家回复列表
     $router->get('/', 'CommentController@getAllComments');
+    // 首页轮播图
+    $router->get('/shuffling', 'CommentController@getShuffling');
 });
 
 // 获取用户问题组
 $router->group(['prefix' => 'topic'], function () use ($router) {
     // 获取大家在测列表
     $router->get('/', 'TopicController@getAllTopic');
-    // 获取问答详情页
-    $router->get('/{id}', 'TopicController@getOneTopic');
     // 用户提交问题
     $router->post('/', 'TopicController@addTopic');
+    // 获取问答详情页
+    $router->get('/{id}', 'TopicController@getOneTopic');
+
 });
 // 用户邀请
 $router->group(['prefix' => 'invitation'], function () use ($router) {
@@ -63,12 +64,14 @@ $router->group(['prefix' => 'order'], function () use ($router) {
 // 评测记录
 $router->group(['prefix' => 'record'], function () use ($router) {
 
-    // 评测记录列表
+    // 我的提问列表
     $router->get('/', 'RecordController@getAllRecord');
-    // 删除评测记录
+    // 删除我的提问记录
     $router->delete('/', 'RecordController@deleteRecord');
-    // 评测列表
-    $router->get('/', 'RecordController@getAllOpinion');
-    // 删除评测记录
-    $router->delete('/', 'RecordController@deleteOpinion');
+    // 我的评测列表
+    $router->get('/opinion', 'RecordController@getAllOpinion');
+    // 删除我的评测记录
+    $router->delete('/opinion', 'RecordController@deleteOpinion');
+    // 查看我的评测记录详情
+    $router->get('/opinion/{id}', 'RecordController@getOneOpinion');
 });

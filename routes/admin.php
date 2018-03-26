@@ -21,6 +21,13 @@ $router->group(['prefix' => 'auth'], function () use ($router) {
 // 需要登录才能使用的api组 使用了auth验证中间件
 //$router->group(['middleware' => 'auth:admin'], function () use ($router) {
 $router->group([], function () use ($router) {
+    // 报告书模板
+    $router->group(['prefix' => 'template'], function () use ($router) {
+        // 查看模板
+        $router->get('/', 'ReportTemplateController@getOne');
+        // 更新模板
+        $router->put('/', 'ReportTemplateController@edit');
+    });
     // 问题
     $router->group(['prefix' => 'question'], function () use ($router) {
         // 新增情感建议匹配关系
@@ -49,10 +56,10 @@ $router->group([], function () use ($router) {
 
         // 新增问题集
         $router->post('/collection', 'QuestionCollectionController@create');
-        // 删除问题集
-        $router->delete('/collection', 'QuestionCollectionController@delete');
         // 问题集列表
         $router->get('/collection', 'QuestionCollectionController@getList');
+        // 删除问题集
+        $router->delete('/collection/{id}', 'QuestionCollectionController@delete');
         // 修改问题集
         $router->put('/collection/{id}', 'QuestionCollectionController@edit');
         // 问题集详情
@@ -107,6 +114,10 @@ $router->group([], function () use ($router) {
         $router->get('/getFactorList', 'KeywordController@getFactorList');
         // 某个要素下的关键词列表
         $router->get('/getKeywordList/{id}', 'KeywordController@getKeywordList');
+        // 修改关键词
+        $router->put('/{id}', 'KeywordController@edit');
+        // 删除关键词
+        $router->delete('/{id}', 'KeywordController@delete');
     });
 
     //上传
@@ -205,5 +216,19 @@ $router->group([], function () use ($router) {
         $router->get('/', 'CaseController@getAllCase');
         // 查看案例
         $router->get('/{id}', 'CaseController@getOneCase');
+    });
+
+    // 后台服务
+    $router->group(['prefix' => 'service'], function () use ($router) {
+        // 获取服务列表
+        $router->get('/', 'ServiceController@getAllService');
+        // 新增服务
+        $router->post('/', 'ServiceController@addService');
+        // 查看服务
+        $router->get('/{id}', 'ServiceController@getOneService');
+        // 修改服务
+        $router->put('/{id}', 'ServiceController@editService');
+        // 删除服务
+        $router->delete('/{id}', 'ServiceController@deleteService');
     });
 });

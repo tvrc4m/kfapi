@@ -13,6 +13,7 @@ use App\Models\QuestionCollection;
 use App\Models\QuesOpQuesCollect;
 use App\Models\QuestionOption;
 use App\Models\Question;
+use App\Models\QuestionSuggest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -33,6 +34,30 @@ class QuestionCollectionController extends Controller
     }
 
     /**
+     * 删除问题集
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function delete($id)
+    {
+        //开启事务
+        DB::beginTransaction();
+        if (QuestionCollection::destroy(intval($id))) {
+            $quesOpList = QuesOpQuesCollect::where('id', $id)->get()->toArray();
+            if (empty($quesOpList)){
+                DB::commit();
+                return api_success();
+            }
+            if(QuesOpQuesCollect::where('question_collection_id', $id)->forceDelete()){
+                DB::commit();
+                return api_success();
+            }
+        }
+        DB::rollBack();
+        return api_error();
+    }
+
+    /**
      * 新增问题集
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
@@ -47,7 +72,8 @@ class QuestionCollectionController extends Controller
             'bgimage' => 'required',
             'is_single_page' => 'required',
             'overdue' => 'required|max:255',
-            'question_option_id' => 'required|max:255',
+            'sort' => 'numeric',
+            'question_option_id' => 'array',
         ],[
             'type.required' => '类型不能为空',
             'is_trunk.required' => '分支不能为空',
@@ -59,11 +85,16 @@ class QuestionCollectionController extends Controller
             'is_single_page.required' => '是否单页不能为空',
             'overdue.required' => '过渡页不能为空',
             'overdue.max' => '过渡页不能超过255个字符',
-            'question_option_id.required' => '前置问题集ID不能为空',
+            //'question_option_id.required' => '前置问题集ID不能为空',
             'question_option_id.array' => '前置问题集ID是数组',
         ]);
         if (!Auth::guard("admin")->user()){
             return api_error('未登录');
+        }
+        $is_trunk = $request->input('is_trunk');
+        $question_option_id = $request->input('question_option_id');
+        if (0==intval($is_trunk) && !empty($question_option_id)){
+            return api_error('分支问题集不能关联问题');
         }
         $questionCollection = new QuestionCollection();
         if ($questionCollection->saveQuestionCollection($request,0)) {
@@ -87,18 +118,23 @@ class QuestionCollectionController extends Controller
         ]);
 
         $type = $request->input('type');
-
         $where = [];
         if (!empty($type)) {
             $where['type'] = intval($type);
         }
-        $list = QuestionCollection::with('adminUser')->with('questionOption')->where($where)->select(['id','title', 'content', 'is_single_page', 'bgimage', 'is_trunk',
-            'type', 'overdue', 'created_at', 'sort', 'create_user_id', 'num'])->paginate()->toArray();
-        $questionList = Question::select()->get()->toArray();
-        if ($questionList){
-            foreach ($questionList as $qu_key=>$qu_val) {
+        $list = QuestionCollection::with('adminUser')
+            ->with('questionOption')
+            ->where($where)->select(['id','title', 'content', 'is_single_page', 'bgimage', 'is_trunk',
+            'type', 'overdue', 'created_at', 'sort', 'create_user_id', 'num'])
+            ->orderBy('sort')
+            ->orderByDesc('created_at')
+            ->paginate()
+            ->toArray();
+        $questionListData = Question::with('questionOption')->select()->get()->toArray();
+        $questionList = [];
+        if ($questionListData){
+            foreach ($questionListData as $qu_key=>$qu_val) {
                 $questionList[$qu_val['id']] = $qu_val;
-                unset($questionList[$qu_key]);
             }
         }
         if ($list){
@@ -107,11 +143,11 @@ class QuestionCollectionController extends Controller
                 unset($list['data'][$key]['admin_user']);
                 if ($val['question_option']){
                     foreach ($val['question_option'] as $tt_key=>$tt_val){
-                        $list['data'][$key]['question_name'][$tt_key] = $questionList[$tt_val['question_id']]['title'];
+                        $list['data'][$key]['question_name'][$tt_key] = $questionList[$tt_val['question_id']]['title'].'-'.$tt_val['options'];
                     }
                     unset($list['data'][$key]['question_option']);
                 }else{
-                    $list['data'][$key]['question_name'] = '';
+                    $list['data'][$key]['question_name'] = [];
                 }
             }
         }
@@ -130,10 +166,10 @@ class QuestionCollectionController extends Controller
         $relate_question = [];
         if ($options){
             foreach ($options as $key=>$val){
-                $result2 = QuestionCollection::where('id', $val['question']['question_collection_id'])->firstOrFail()->toArray();
-                if ($result2){
-                    $relate_question[$key]['question_collection_id'] = $result2['id'];
-                    $relate_question[$key]['question_collection_name'] = $result2['title'];
+                $result2 = QuestionCollection::where('id', $val['question']['question_collection_id'])->get()->toArray();
+                if ($result2 && empty($val['question']['deleted_at'])){
+                    $relate_question[$key]['question_collection_id'] = $result2[0]['id'];
+                    $relate_question[$key]['question_collection_name'] = $result2[0]['title'];
                     $relate_question[$key]['question_id'] = $val['question']['id'];
                     $relate_question[$key]['question_name'] = $val['question']['title'];
                     $relate_question[$key]['option_id'] = $val['id'];
@@ -160,7 +196,8 @@ class QuestionCollectionController extends Controller
             'bgimage' => 'required',
             'is_single_page' => 'required',
             'overdue' => 'required|max:255',
-            'question_option_id' => 'required|array',
+            'question_option_id' => 'array',
+            'sort' => 'numeric',
         ],[
             'type.required' => '类型不能为空',
             'is_trunk.required' => '分支不能为空',
@@ -172,11 +209,16 @@ class QuestionCollectionController extends Controller
             'is_single_page.required' => '是否单页不能为空',
             'overdue.required' => '过渡页不能为空',
             'overdue.max' => '过渡页不能超过255个字符',
-            'question_option_id.required' => '前置问题集ID不能为空',
+            //'question_option_id.required' => '前置问题集ID不能为空',
             'question_option_id.array' => '前置问题集ID是数组',
         ]);
         if (!Auth::guard("admin")->user()){
             return api_error('未登录');
+        }
+        $is_trunk = $request->input('is_trunk');
+        $question_option_id = $request->input('question_option_id');
+        if (0==intval($is_trunk) && !empty($question_option_id)){
+            return api_error('分支问题集不能关联问题');
         }
         $questionCollection = new QuestionCollection();
         if ($questionCollection->saveQuestionCollection($request, $id)) {
@@ -205,6 +247,7 @@ class QuestionCollectionController extends Controller
         if (!empty($type)) {
             $where['type'] = intval($type);
         }
+        $where['is_trunk'] = 0;
         $list = QuestionCollection::where($where)->select(['id','title', 'content', 'is_single_page', 'bgimage', 'is_trunk',
             'type', 'overdue'])->get();
 
@@ -225,7 +268,7 @@ class QuestionCollectionController extends Controller
         ]);
 
         $question_collection_id = $request->input('question_collection_id');
-        $backData = Question::where('question_collection_id', $question_collection_id)->with('questionOption')->get()->toArray();
+        $backData = Question::where('question_collection_id', $question_collection_id)->with('questionOption')->get();
 
         return api_success($backData);
     }

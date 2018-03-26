@@ -87,11 +87,19 @@ class QuestionCollection extends Model
     {
         $data = $request->except('question_option_id');
         $question_option_id = $request->only('question_option_id');
+        $type = $request->only('type');
         //开启事务
         $data['create_user_id'] = Auth::guard("admin")->user()->id;
         DB::beginTransaction();
         if (empty($id)){
-            $result = QuestionCollection::create($data);
+            if (3==intval($type)){
+                $quesType = $this->where('type', $type)->firstOrFail();
+                if ($quesType->id && !$quesType->delete() && !QuesOpQuesCollect::where('question_collection_id', $quesType->id)->delete()){
+                    DB::rollBack();
+                    return false;
+                }
+            }
+            $result = $this->create($data);
             if ($result) {
                 if (!empty($question_option_id)){
                     foreach ($question_option_id['question_option_id'] as $key=>$val){
@@ -104,11 +112,12 @@ class QuestionCollection extends Model
                 }
             }
         }else{
-            $quesCollect = QuestionCollection::where('id', $id)->firstOrFail();
+            $quesCollect = $this->where('id', $id)->firstOrFail();
             $result = $quesCollect->update($data);
             if ($result) {
                 if (!empty($question_option_id)){
-                    if (!QuesOpQuesCollect::where('question_collection_id', $id)->delete()) {
+                    $quesOpList = QuesOpQuesCollect::where('question_collection_id', $id)->get()->toArray();
+                    if ($quesOpList && !QuesOpQuesCollect::where('question_collection_id', $id)->forceDelete()) {
                         DB::rollBack();
                         return false;
                     }
@@ -168,7 +177,13 @@ class QuestionCollection extends Model
      */
     public function setBgimageAttribute($value)
     {
-
-        return parse_url($value, PHP_URL_PATH);
+        if (strpos($value, "http") === 0) {
+            $host = parse_url($value, PHP_URL_HOST);
+            if (strtoupper($host) == strtoupper($_SERVER['HTTP_HOST'])) {
+                $this->attributes['bgimage'] = parse_url($value, PHP_URL_PATH);
+                return;
+            }
+        }
+        $this->attributes['bgimage'] = $value;
     }
 }

@@ -30,4 +30,9 @@ $router->group(['prefix' => 'api'], function () use ($router) {
     $router->group(['prefix' => 'common', 'namespace'=>'Common'], function () use ($router) {
         require __DIR__.'/common.php';
     });
+
+    // 专家后端接口定义
+    $router->group(['prefix' => 'expert', 'namespace'=>'Expert'], function () use ($router) {
+        require __DIR__.'/expert.php';
+    });
 });

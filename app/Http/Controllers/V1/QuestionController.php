@@ -7,6 +7,7 @@ use App\Models\UserAnswer;
 use App\Models\UserQuestionReport;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 /**
  * 问题控制器
@@ -64,13 +65,18 @@ class QuestionController extends Controller
      */
     public function answer(Request $request)
     {
+        Log::debug($request->all());
+        Log::debug($request->header());
         $this->validate($request, [
             'paper_id' => 'required|numeric',
             'question_collection_id' => 'required|numeric',
             'data' => 'required|array',
             'data.*.type' => 'required',
             'data.*.question_id' => 'required|numeric',
-            'data.*.option_id' => 'required|array',
+            'data.*.option_id' => 'array',
+            'data.*.date' => 'string',
+            'data.*.province' => 'numeric',
+            'data.*.city' => 'numeric',
         ], [
             'paper_id.required' => '试卷id不能为空',
             'paper_id.numeric' => '试卷id必须是数字',
@@ -81,14 +87,15 @@ class QuestionController extends Controller
             'data.*.type.required' => '问题类型不能为空',
             'data.*.question_id.required' => '问题id不能为空',
             'data.*.question_id.numeric' => '问题id必须是数字',
-            'data.*.option_id.required' => '答案id不能为空',
             'data.*.option_id.array' => '答案id必须是数组',
         ]);
 
         // 保存答案
         $model = new UserAnswer();
-        if (!$model->saveAnswer($request)) {
-            return api_error('保存问题失败');
+        try {
+            $model->saveAnswer($request);
+        } catch (\Exception $e) {
+            return api_error($e->getMessage());
         }
         // 返回下一部分题集
         return $this->question($request);
@@ -98,16 +105,23 @@ class QuestionController extends Controller
      * 生成报告书
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
+     * @throws \Exception
      */
     public function makeReport(Request $request)
     {
+        Log::debug($request->all());
         $this->validate($request, [
             'paper_id' => 'required|numeric',
         ], [
             'paper_id.required' => '试卷id不能为空',
             'paper_id.numeric' => '试卷id必须是数字',
         ]);
-        $paper = UserAnswer::where('id', $request->input('paper_id'))->firstOrFail();
+        $paper_id = $request->input('paper_id');
+        $paper = UserAnswer::where([
+            'id' => $paper_id,
+            'user_id' => $this->user->id,
+            'stat' => UserAnswer::STATUS_FINISH,
+        ])->firstOrFail();
 
         // 生成报告书
         $report = new UserQuestionReport();
@@ -118,20 +132,5 @@ class QuestionController extends Controller
         }
 
         return api_success();
-    }
-
-    /**
-     * 查看报告书
-     * @param Request $request
-     */
-    public function getReport(Request $request)
-    {
-        $this->validate($request, [
-            'report_id' => 'required|numeric',
-        ], [
-            'report_id.required' => '报告书id不能为空',
-            'report_id.numeric' => '报告书id必须是数字',
-        ]);
-        // $report_id = $request->input('report_id');
     }
 }

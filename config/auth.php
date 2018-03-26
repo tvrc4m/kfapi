@@ -43,6 +43,10 @@ return [
             'driver' => 'jwt',
             'provider' => 'admin_users'
         ],
+        'expert' => [
+            'driver' => 'jwt',
+            'provider' => 'experts'
+        ],
     ],
 
     /*
@@ -70,6 +74,10 @@ return [
         'admin_users' => [
             'driver' => 'eloquent',
             'model'  => \App\Models\AdminUser::class,
+        ],
+        'experts' => [
+            'driver' => 'eloquent',
+            'model'  => \App\Models\Experts::class,
         ],
     ],
 

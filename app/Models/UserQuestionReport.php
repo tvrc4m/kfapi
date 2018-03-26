@@ -29,9 +29,21 @@ class UserQuestionReport extends Model
     protected $dates = ['deleted_at'];
 
     /**
+     * 应该被转换成原生类型的属性。
+     *
+     * @var array
+     */
+    protected $casts = [
+        'law_rule_ids' => 'array',
+        'case_ids' => 'array',
+        'suggest_ids' => 'array',
+    ];
+
+    /**
      * 生成报告书
      * @param UserAnswer $paper
-     * @return Model
+     * @return bool|Model
+     * @throws \Exception
      */
     public function makeReport(UserAnswer $paper)
     {
@@ -45,7 +57,8 @@ class UserQuestionReport extends Model
     /**
      * 生成情感报告
      * @param UserAnswer $paper
-     * @return Model
+     * @return bool
+     * @throws \Exception
      */
     private function makeEmotionReport(UserAnswer $paper)
     {
@@ -54,7 +67,7 @@ class UserQuestionReport extends Model
         $collect_ids = [];
         // 键名为问题集id 键值为答案
         $collect_id_answer = [];
-        // 提起数据
+        // 提取数据
         foreach ($answers as $v) {
             $collect_ids[] = $v['question_collection_id'];
             $collect_id_answer[$v['question_collection_id']] = $v['answer'];
@@ -77,17 +90,46 @@ class UserQuestionReport extends Model
             }
         }
         // 保存情感建议
-        return $this->updateOrCreate(['user_answer_id' => $paper->id], [
+        DB::beginTransaction();
+        $report = $this->updateOrCreate(['user_answer_id' => $paper->id], [
             'user_id' => Auth::id(),
-            'suggest_ids' => json_encode($suggest_ids),
+            'suggest_ids' => $suggest_ids,
             'type' => QuestionCollection::TYPE_EMOTION,
         ]);
+        if (!$report) {
+            DB::rollBack();
+            return false;
+        }
+        if (! $this->relationTopic($report->id, $paper->id)) {
+            DB::rollBack();
+            return false;
+        }
+        DB::commit();
+        return true;
+    }
+
+    /**
+     * 关联问题
+     * @param $report_id
+     * @param $paper_id
+     * @return bool
+     */
+    private function relationTopic($report_id, $paper_id)
+    {
+        $topic = Topics::where([
+            'user_id' => Auth::id(),
+            'user_answer_id' => $paper_id,
+        ])->firstOrFail();
+
+        $topic->opinion_id = $report_id;
+        return $topic->save();
     }
 
     /**
      * 生成法规报告
      * @param UserAnswer $paper
-     * @return Model
+     * @return bool
+     * @throws \Exception
      */
     private function makeLawReport(UserAnswer $paper)
     {
@@ -97,7 +139,7 @@ class UserQuestionReport extends Model
         $question_ids = [];
         foreach ($answers as $collection) {
             foreach ($collection['answer'] as $v) {
-                if (in_array($v['type'], [1,2,3])) {
+                if (in_array($v['type'], [1,2,3])) { // 只有单选 多选 下拉列表 有关键词
                     $option_ids = array_merge($option_ids, $v['option_id']);
                 }
 
@@ -107,32 +149,53 @@ class UserQuestionReport extends Model
         $user_keyword_ids = QuestionOptionKeyword::whereIn('question_option_id', $option_ids)
             ->get()
             ->pluck('keyword_id')->all();
-        $keyword_ids = array_unique($user_keyword_ids);
-        sort($keyword_ids, SORT_NUMERIC);
+        $user_keyword_ids = array_unique($user_keyword_ids);
         // 根据关键词匹配案例  获得建议
         $case_ids = $this->matchCase($user_keyword_ids);
 
         // 根据关键词匹配法规
         $law_rule_ids = $this->matchLaw($user_keyword_ids);
 
-        // 组合经调查了解的内容
-        $questionTitleArr = Question::whereIn('id', $question_ids)->get(['id,title'])->pluck('title', 'id')->all();
+        // 组合经调查了解的内容 替换模板中的内容
+        $template = ReportTemplates::first()->content;
         $optionTitleArr = QuestionOption::whereIn('id', $option_ids)->get(['id', 'options'])->pluck('options', 'id')->all();
-        $understand = "";
+        $replaceKey = [];
+        $replaceVal = [];
         foreach ($answers as $collection) {
             foreach ($collection['answer'] as $v) {
-                $str = $questionTitleArr[$v['question_id']] . " " . $optionTitleArr[$v['option_id']];
-                $understand .= $str;
+                $key = '{'.$v['question_id'].'}';
+                $value = "";
+                foreach ($v['option_id'] as $option_id) {
+                    $value .= $optionTitleArr[$option_id] . ",";
+                }
+                $value = rtrim($value, ',');
+                if (!empty($value)) {
+                    $replaceKey[] = $key;
+                    $replaceVal[] = $value;
+                }
             }
         }
+        $understand = str_replace($replaceKey, $replaceVal, $template);
+
         // 保存结果
-        return $this->updateOrCreate(['user_answer_id' => $paper->id], [
+        DB::beginTransaction();
+        $report = $this->updateOrCreate(['user_answer_id' => $paper->id], [
             'user_id' => Auth::id(),
-            'case_ids' => json_encode($case_ids),
-            'law_rule_ids' => json_encode($law_rule_ids),
+            'case_ids' => $case_ids,
+            'law_rule_ids' => $law_rule_ids,
             'understand' => $understand,
             'type' => QuestionCollection::TYPE_LAW,
         ]);
+        if (!$report) {
+            DB::rollBack();
+            return false;
+        }
+        if (! $this->relationTopic($report->id, $paper->id)) {
+            DB::rollBack();
+            return false;
+        }
+        DB::commit();
+        return true;
     }
 
     /**
@@ -150,7 +213,6 @@ class UserQuestionReport extends Model
             }
             if (!in_array($v['keyword_id'], $caseKeywordArr[$v['case_id']])) {
                 $caseKeywordArr[$v['case_id']][] = $v['keyword_id'];
-                sort($caseKeywordArr[$v['case_id']], SORT_NUMERIC);
             }
         }
         // 最大相似度
@@ -164,8 +226,14 @@ class UserQuestionReport extends Model
         }
         // 相似度倒序
         $percentArrSorted = arraySort($percentArr, 'percent');
+        $case_ids = [];
+        foreach ($percentArrSorted as $v) {
+            if (count($case_ids) < 3) { // 只取得相似度前三
+                $case_ids[] = $v['case_id'];
+            }
+        }
 
-        return collect($percentArrSorted)->pluck('case_id')->all();
+        return $case_ids;
     }
 
     /**
@@ -183,7 +251,6 @@ class UserQuestionReport extends Model
             }
             if (!in_array($v['keyword_id'], $lawKeywordArr[$v['law_rule_id']])) {
                 $lawKeywordArr[$v['law_rule_id']][] = $v['keyword_id'];
-                sort($lawKeywordArr[$v['law_rule_id']], SORT_NUMERIC);
             }
         }
         // 最大相似度
@@ -197,7 +264,13 @@ class UserQuestionReport extends Model
         }
         // 相似度倒序
         $percentArrSorted = arraySort($percentArr, 'percent');
+        $law_rule_ids = [];
+        foreach ($percentArrSorted as $v) {
+            if (count($law_rule_ids) < 3) { // 只取得相似度前三
+                $law_rule_ids[] = $v['law_rule_id'];
+            }
+        }
 
-        return collect($percentArrSorted)->pluck('law_rule_id')->all();
+        return $law_rule_ids;
     }
 }

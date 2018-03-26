@@ -53,7 +53,11 @@ class TopicController extends Controller
         if($topics['data']){
             foreach ($topics['data'] as $k=>&$v){
                 //$v->area = $config['job'][$v->job_id];
-                $v->area = $pArr[$v->province_id].$cArr[$v->city_id];
+                if($v->province_id && $v->city_id){
+                    $v->area = $pArr[$v->province_id].$cArr[$v->city_id];
+                }else{
+                    $v->area = '';
+                }
                 if($v->cate == 1){
                     $v->cate = '法律';
                 }elseif($v->cate == 2){
@@ -115,7 +119,9 @@ class TopicController extends Controller
         $topic->opinion_content = substr($newSuggest,0,20);
 
         $city = DB::select('select p.name as provincename,c.name as cityname from bu_provinces as p left join bu_citys as c on c.provinceid= p.id where c.provinceid =? and c.cityid=?',[$topic->province_id,$topic->city_id]);
-        $topic->area = $city[0]->provincename.$city[0]->cityname;
+        if($city){
+            $topic->area = $city[0]->provincename.$city[0]->cityname;
+        }
 
         if($topic->cate == 1){
             $topic->cate = '法律';
@@ -134,22 +140,72 @@ class TopicController extends Controller
     public function addTopic(Request $request)
     {
         $this->validate($request, [
-            'user_id' => 'required|numeric',
+            'paper_id' => 'required|numeric',
             'content' => 'required|max:255',
             'description' => 'required|max:500',
         ],[
-            'user_id.required' => '用户ID不能为空',
-            'user_id.numeric' => '用户ID不合法',
+            'paper_id.required' => '用户ID不能为空',
+            'paper_id.numeric' => '用户ID不合法',
             'content.required' => '问题id不能为空',
             'content.max' => '问题不超过255个字符',
             'description.required' => '情感描述不能为空',
             'description.max' => '情感描述不超过500个字符',
         ]);
 
-        $result = Topics::create($request->all());
+        $userid = \Auth::user()['id'];
+        $data = array(
+            'user_id'=>$userid,
+            'user_answer_id'=>$request->input('paper_id'),
+            'content'=>$request->input('content'),
+            'description'=>$request->input('description'),
+        );
+        $result = Topics::create($data);
         if ($result) {
             return api_success();
         }
         return api_error();
     }
+
+    //首页轮播图
+    public function getShuffling(Request $request)
+    {
+        //dd($request->header());
+        //file_put_contents('/tmp/topic.log',$request->header('device'));
+        $topics = DB::table('topics')
+            ->leftJoin('invitations', 'invitations.topic_id', '=', 'topics.id')
+            ->leftJoin('experts', 'experts.id', '=', 'invitations.expert_id')
+            ->select('topics.id','topics.content','experts.name','experts.job_id','experts.icon')
+            ->where('topics.top',1)
+            ->orderBy('topics.created_at','desc')
+            ->limit(4)
+            ->get()
+            ->toArray();
+        //dd($topics);
+
+        //配置文件获取专家职业
+        $config = require base_path('config/fieldDictionary.php');
+        //dd($config);
+        $jobs = $config['job'];
+        $jobs = array_values($jobs);
+        $newJobs = [];
+        foreach($jobs as $k=>$v){
+            $newJobs[$v['job_id']] = $v['name'];
+        }
+        if($topics){
+            foreach ($topics as $k=>&$v){
+                if($v->job_id){
+                    //var_dump($v['job_id']);
+                    //var_dump($newJobs[$v['job_id']]);
+                    $job = $newJobs[$v->job_id];
+                }else{
+                    $job = '';
+                }
+                $v->job = $job;
+            }
+        }
+        $data['data'] = $topics;
+        //dd($topics);
+        return api_success($data);
+    }
+
 }
