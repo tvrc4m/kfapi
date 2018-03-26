@@ -105,7 +105,7 @@ class UserQuestionReport extends Model
             return false;
         }
         DB::commit();
-        return true;
+        return $report->id;
     }
 
     /**
@@ -195,7 +195,7 @@ class UserQuestionReport extends Model
             return false;
         }
         DB::commit();
-        return true;
+        return $report->id;
     }
 
     /**
