@@ -176,12 +176,14 @@ $router->group([], function () use ($router) {
 
     // 后台回复组
     $router->group(['prefix' => 'comment'], function () use ($router) {
-        // 获取帖子列表
+        // 获取回复列表
         $router->get('/', 'CommentController@getAllComments');
         // 点击隐藏
         $router->post('/hide', 'CommentController@changeHide');
         // 点击推荐
         $router->post('/top', 'CommentController@changeTop');
+        // 回复搜索
+        $router->get('/search', 'CommentController@searchComment');
     });
 
     // 案例库
