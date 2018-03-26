@@ -210,7 +210,7 @@ class UserAnswer extends Model
      * @param array $answer
      * @return null|array
      */
-    private function matchSuggest(QuestionCollection $qc, array $answer)
+    public function matchSuggest(QuestionCollection $qc, array $answer)
     {
         $suggests = $qc->suggests()->get()->toArray();
         foreach ($suggests as $k => $v) {
