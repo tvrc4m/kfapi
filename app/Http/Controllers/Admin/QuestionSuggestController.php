@@ -13,6 +13,7 @@ use App\Models\Question;
 use App\Models\QuestionCollection;
 use App\Models\QuestionOption;
 use App\Models\QuestionSuggest;
+use App\Models\UserAnswer;
 use Illuminate\Http\Request;
 
 class QuestionSuggestController extends Controller
@@ -169,10 +170,13 @@ class QuestionSuggestController extends Controller
             'suggest_rule.array' => '建议规则必须是数组',
         ]);
         $question_collection_id = $request->input('question_collection_id');
-        $question_suggest_id = $request->input('question_suggest_id');
         $suggest_rule = $request->input('suggest_rule');
-
-        $result = QuesCollectQuesSuggest::updateOrCreate(['question_collection_id' => $question_collection_id, 'suggest_rule' => $suggest_rule], ['question_suggest_id' => $question_suggest_id]);
+        $questionCollection = QuestionCollection::where(['id'=>$question_collection_id])->first();
+        $true = (new UserAnswer())->matchSuggest($questionCollection, $suggest_rule);
+        if ($true){
+            return api_error('此问题集已匹配了此关系!');
+        }
+        $result = QuesCollectQuesSuggest::create($request->all());
         if ($result) {
             return api_success();
         }
@@ -247,14 +251,17 @@ class QuestionSuggestController extends Controller
             'suggest_rule.array' => '建议规则必须是数组',
         ]);
         $question_collection_id = $request->input('question_collection_id');
-        $question_suggest_id = $request->input('question_suggest_id');
         $suggest_rule = $request->input('suggest_rule');
-
-        $result = QuesCollectQuesSuggest::updateOrCreate(['question_collection_id' => $question_collection_id, 'suggest_rule' => $suggest_rule], ['question_suggest_id' => $question_suggest_id]);
-        //$questionSuggest = QuesCollectQuesSuggest::where('id', $id)->firstOrFail();
-        if ($result) {
+        $questionCollection = QuestionCollection::where(['id'=>$question_collection_id])->first();
+        $true = (new UserAnswer())->matchSuggest($questionCollection, $suggest_rule);
+        if ($true){
+            return api_error('此问题集已匹配了此关系!');
+        }
+        $result = QuesCollectQuesSuggest::where('id', $id)->firstOrFail();
+        if ($result->update($request->all())) {
             return api_success();
         }
+
         return api_error();
     }
 
