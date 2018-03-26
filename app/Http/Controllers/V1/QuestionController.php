@@ -109,12 +109,14 @@ class QuestionController extends Controller
      */
     public function makeReport(Request $request)
     {
+        Log::debug("生成报告书");
         Log::debug($request->all());
         $this->validate($request, [
-            'paper_id' => 'required|numeric',
+            'paper_id' => 'required|numeric|min:1',
         ], [
             'paper_id.required' => '试卷id不能为空',
             'paper_id.numeric' => '试卷id必须是数字',
+            'paper_id.min' => '试卷id必须大于0'
         ]);
         $paper_id = $request->input('paper_id');
         $paper = UserAnswer::where([
@@ -125,12 +127,12 @@ class QuestionController extends Controller
 
         // 生成报告书
         $report = new UserQuestionReport();
-        $res = $report->makeReport($paper);
+        $report_id = $report->makeReport($paper);
 
-        if ($res === false) {
+        if ($report_id === false) {
             return api_error('生成结果失败');
         }
 
-        return api_success();
+        return api_success(['report_id' => $report_id]);
     }
 }
