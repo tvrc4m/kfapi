@@ -72,6 +72,7 @@ class QuestionCollectionController extends Controller
             'bgimage' => 'required',
             'is_single_page' => 'required',
             'overdue' => 'required|max:255',
+            'sort' => 'numeric',
             'question_option_id' => 'array',
         ],[
             'type.required' => '类型不能为空',
@@ -196,6 +197,7 @@ class QuestionCollectionController extends Controller
             'is_single_page' => 'required',
             'overdue' => 'required|max:255',
             'question_option_id' => 'array',
+            'sort' => 'numeric',
         ],[
             'type.required' => '类型不能为空',
             'is_trunk.required' => '分支不能为空',
