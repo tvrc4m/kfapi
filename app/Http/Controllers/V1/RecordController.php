@@ -237,20 +237,20 @@ class RecordController extends Controller
                 ->whereIn('id',$caseIds)
                 ->get()
                 ->toArray();
-            $newAdvice = '';
-            $judgment = '';
-            foreach($advice as $k=>$v){
-                $newAdvice .= $v->suggest;
-                $judgment .= $v->judgment;
+            if($advice){
+                foreach($advice as $k=>$v){
+                    $suggest[] = $v->suggest;
+                    $judgment[]= $v->judgment;
+                }
             }
-            //dd($newAdvice);
+            //dd($suggest);
             $data = array(
                 'id'=>$opinion->id,
                 'type'=>$opinion->type,
                 'remark'=>$opinion->remark,
                 'law_rule'=>['name'=>'一、可参考法规','content'=>$rule],
                 'understand'=>['name'=>'二、经调查了解','content'=>$opinion->understand],
-                'suggest'=>['name'=>'三、本地建议如下','content'=>$newAdvice],
+                'suggest'=>['name'=>'三、本地建议如下','content'=>$suggest],
                 'judgment'=>['name'=>'四、综上所述','content'=>$judgment]
             );
         }else{
@@ -260,16 +260,12 @@ class RecordController extends Controller
                 ->whereIn('id',$suggestIds)
                 ->get()
                 ->toArray();
-            $newSuggest = '';
-            foreach($suggest as $k=>$v){
-                $newSuggest .= $v->content;
-            }
             //dd($suggest);
             $data = array(
                 'id'=>$opinion->id,
                 'type'=>$opinion->type,
                 'remark'=>$opinion->remark,
-                'suggest'=>['name'=>'经调查了解','content'=>$newSuggest],
+                'suggest'=>['name'=>'经调查了解','content'=>$suggest],
             );
            // dd($data);
         }
