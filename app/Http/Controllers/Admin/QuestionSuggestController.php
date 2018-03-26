@@ -252,7 +252,7 @@ class QuestionSuggestController extends Controller
 
         $result = QuesCollectQuesSuggest::updateOrCreate(['question_collection_id' => $question_collection_id, 'question_suggest_id' => $question_suggest_id, 'suggest_rule' => $suggest_rule]);
         //$questionSuggest = QuesCollectQuesSuggest::where('id', $id)->firstOrFail();
-        if ($result)) {
+        if ($result) {
             return api_success();
         }
         return api_error();
