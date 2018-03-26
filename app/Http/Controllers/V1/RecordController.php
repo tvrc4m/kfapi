@@ -261,9 +261,9 @@ class RecordController extends Controller
                 ->whereIn('id',$suggestIds)
                 ->get()
                 ->toArray();
-            $newSuggest = '';
+            //dd($suggest);
             foreach($suggest as $k=>$v){
-                $newSuggest .= $v->content;
+                $newSuggest[] = $v->content;
             }
             //dd($suggest);
             $data = array(
