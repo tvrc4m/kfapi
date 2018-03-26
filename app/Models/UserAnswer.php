@@ -181,6 +181,7 @@ class UserAnswer extends Model
             $collect_ids = QuestionCollection::where('is_trunk', 1)
                 ->where('type', $suggest['type'])
                 ->orderBy('sort')
+                ->orderByDesc("created_at")
                 ->get(['id'])->pluck('id')->all();
             if (empty($collect_ids)) {
                 DB::rollBack();
