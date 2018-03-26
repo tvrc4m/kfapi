@@ -125,12 +125,12 @@ class QuestionController extends Controller
 
         // 生成报告书
         $report = new UserQuestionReport();
-        $res = $report->makeReport($paper);
+        $report_id = $report->makeReport($paper);
 
-        if ($res === false) {
+        if ($report_id === false) {
             return api_error('生成结果失败');
         }
 
-        return api_success();
+        return api_success(['report_id' => $report_id]);
     }
 }
