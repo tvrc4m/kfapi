@@ -172,8 +172,7 @@ class QuestionSuggestController extends Controller
         $question_suggest_id = $request->input('question_suggest_id');
         $suggest_rule = $request->input('suggest_rule');
 
-        $result = QuesCollectQuesSuggest::updateOrCreate(['question_collection_id' => $question_collection_id, 'question_suggest_id' => $question_suggest_id],
-            ['suggest_rule' => $suggest_rule]);
+        $result = QuesCollectQuesSuggest::updateOrCreate(['question_collection_id' => $question_collection_id, 'suggest_rule' => $suggest_rule], ['question_suggest_id' => $question_suggest_id]);
         if ($result) {
             return api_success();
         }
@@ -247,9 +246,13 @@ class QuestionSuggestController extends Controller
             'suggest_rule.required' => '建议规则不能为空',
             'suggest_rule.array' => '建议规则必须是数组',
         ]);
+        $question_collection_id = $request->input('question_collection_id');
+        $question_suggest_id = $request->input('question_suggest_id');
+        $suggest_rule = $request->input('suggest_rule');
 
-        $questionSuggest = QuesCollectQuesSuggest::where('id', $id)->firstOrFail();
-        if ($questionSuggest->update($request->all())) {
+        $result = QuesCollectQuesSuggest::updateOrCreate(['question_collection_id' => $question_collection_id, 'suggest_rule' => $suggest_rule], ['question_suggest_id' => $question_suggest_id]);
+        //$questionSuggest = QuesCollectQuesSuggest::where('id', $id)->firstOrFail();
+        if ($result) {
             return api_success();
         }
         return api_error();
