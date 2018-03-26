@@ -240,9 +240,10 @@ class RecordController extends Controller
             if($advice){
                 foreach($advice as $k=>$v){
                     $suggest[] = $v->suggest;
-                    $judgment[]= $v->judgment;
+                    $judgment[] = $v->judgment;
                 }
             }
+
             //dd($suggest);
             $data = array(
                 'id'=>$opinion->id,
@@ -260,12 +261,16 @@ class RecordController extends Controller
                 ->whereIn('id',$suggestIds)
                 ->get()
                 ->toArray();
+            $newSuggest = '';
+            foreach($suggest as $k=>$v){
+                $newSuggest .= $v->content;
+            }
             //dd($suggest);
             $data = array(
                 'id'=>$opinion->id,
                 'type'=>$opinion->type,
                 'remark'=>$opinion->remark,
-                'suggest'=>['name'=>'经调查了解','content'=>$suggest],
+                'suggest'=>['name'=>'经调查了解','content'=>$newSuggest],
             );
            // dd($data);
         }
