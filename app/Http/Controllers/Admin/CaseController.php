@@ -261,14 +261,14 @@ class CaseController extends Controller
         $res = [];
         foreach ($caseKeyword as $v) {
             if (!isset($res[$v->case_factor_id])) {
-                $res[$v->case_factor_id]['case_factor_name'] = $v->factor->name;
+                $res[$v->case_factor_id]['case_factor_name'] = $v->factor->name ?? '';
                 $res[$v->case_factor_id]['case_factor_id'] = $v->case_factor_id;
                 $res[$v->case_factor_id]['keywords'] = [];
             }
             $res[$v->case_factor_id]['keywords'][] = [
                 'case_factor_id' => $v->case_factor_id,
                 'keyword_id' => $v->keyword_id,
-                'keyword_name' => $v->keyword->name,
+                'keyword_name' => $v->keyword->name ?? '',
             ];
         }
         return api_success(array_values($res));

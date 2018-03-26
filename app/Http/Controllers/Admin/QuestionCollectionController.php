@@ -93,7 +93,7 @@ class QuestionCollectionController extends Controller
         }
         $is_trunk = $request->input('is_trunk');
         $question_option_id = $request->input('question_option_id');
-        if (0==intval($is_trunk) && !empty($question_option_id)){
+        if (1==intval($is_trunk) && !empty($question_option_id)){
             return api_error('分支问题集不能关联问题');
         }
         $questionCollection = new QuestionCollection();
@@ -217,7 +217,7 @@ class QuestionCollectionController extends Controller
         }
         $is_trunk = $request->input('is_trunk');
         $question_option_id = $request->input('question_option_id');
-        if (0==intval($is_trunk) && !empty($question_option_id)){
+        if (1==intval($is_trunk) && !empty($question_option_id)){
             return api_error('分支问题集不能关联问题');
         }
         $questionCollection = new QuestionCollection();
@@ -247,7 +247,6 @@ class QuestionCollectionController extends Controller
         if (!empty($type)) {
             $where['type'] = intval($type);
         }
-        $where['is_trunk'] = 0;
         $list = QuestionCollection::where($where)->select(['id','title', 'content', 'is_single_page', 'bgimage', 'is_trunk',
             'type', 'overdue'])->get();
 
