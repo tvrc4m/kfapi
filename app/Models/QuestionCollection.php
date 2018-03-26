@@ -141,8 +141,7 @@ class QuestionCollection extends Model
      */
     public function questions()
     {
-        return $this->hasMany(\App\Models\Question::class, 'question_collection_id', 'id')
-            ->orderBy('asc')->orderBy('id');
+        return $this->hasMany(\App\Models\Question::class, 'question_collection_id', 'id');
     }
 
     /**
