@@ -81,7 +81,7 @@ class UserAnswer extends Model
             'id' => $paper_id,
             'user_id' => $user_id,
             'stat' => self::STATUS_UNFINISH,
-        ])->orderByDesc('updated_at')->firstOrFail();
+        ])->orderByDesc('created_at')->firstOrFail();
         // 取得问题集
         $collect_id_arr = $paper->wait_question_collection_ids;
         if (empty($collect_id_arr)) {
