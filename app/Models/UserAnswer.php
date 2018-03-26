@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class UserAnswer extends Model
 {
@@ -168,6 +169,8 @@ class UserAnswer extends Model
         $initCollec = QuestionCollection::where('type', QuestionCollection::TYPE_INIT)->firstOrFail();
         if ($initCollec->id == $question_collection_id) {
             $suggest = $this->matchSuggest($initCollec, $data);
+            Log::debug("匹配到的建议类型:");
+            Log::debug($suggest);
             if (empty($suggest)) {
                 DB::rollBack();
                 throw new \Exception("初始化问题没有匹配到建议类型");
