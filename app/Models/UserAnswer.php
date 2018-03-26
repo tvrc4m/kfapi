@@ -90,7 +90,10 @@ class UserAnswer extends Model
             $paper->stat = self::STATUS_FINISH;
             $paper->save();
 
-            return ['paper_stat' => self::STATUS_FINISH];
+            return [
+                'paper_stat' => self::STATUS_FINISH,
+                'paper_id' => $paper_id
+            ];
         }
         $collect_id = $collect_id_arr[0];
         $collect    = QuestionCollection::where('id', $collect_id)->firstOrFail();
