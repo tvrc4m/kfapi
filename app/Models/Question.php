@@ -83,11 +83,13 @@ class Question extends Model
         $baseData = $request->except('options');
         // 选项信息
         $options = $request->only('options');
+        $question_collection_id = $request->input('question_collection_id');
 
         // 开启事务
         DB::beginTransaction();
         if (empty($id)) { // 新增
             $question = $this->create($baseData);
+            QuestionCollection::where('id', $question_collection_id)->increment('num', 1);
             if (!$question) {
                 DB::rollBack();
                 throw new \Exception('新增失败');

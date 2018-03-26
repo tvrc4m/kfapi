@@ -56,18 +56,13 @@ class QuestionController extends Controller
             'options.*.weight.numeric' => '选项权重必须是数字',
             'options.*.keyword.array' => '选项关键词必须是数组',
         ]);
-        $question_collection_id = $request->input('question_collection_id');
-        DB::beginTransaction();
+
         $question = new Question();
-        $questionCollection = new QuestionCollection();
 
         try {
             $question->saveQuestion($request);
-            $questionCollection->where('id', $question_collection_id)->increment('num', 1);
-            DB::commit();
             return api_success();
         } catch (\Exception $e) {
-            DB::rollBack();
             return api_error($e->getMessage());
         }
     }
