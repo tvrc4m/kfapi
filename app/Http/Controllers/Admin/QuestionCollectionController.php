@@ -121,8 +121,14 @@ class QuestionCollectionController extends Controller
         if (!empty($type)) {
             $where['type'] = intval($type);
         }
-        $list = QuestionCollection::with('adminUser')->with('questionOption')->where($where)->select(['id','title', 'content', 'is_single_page', 'bgimage', 'is_trunk',
-            'type', 'overdue', 'created_at', 'sort', 'create_user_id', 'num'])->paginate()->toArray();
+        $list = QuestionCollection::with('adminUser')
+            ->with('questionOption')
+            ->where($where)->select(['id','title', 'content', 'is_single_page', 'bgimage', 'is_trunk',
+            'type', 'overdue', 'created_at', 'sort', 'create_user_id', 'num'])
+            ->orderBy('sort')
+            ->orderByDesc('created_at')
+            ->paginate()
+            ->toArray();
         $questionListData = Question::with('questionOption')->select()->get()->toArray();
         $questionList = [];
         if ($questionListData){

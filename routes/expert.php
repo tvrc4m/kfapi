@@ -16,6 +16,8 @@ $router->group(['prefix' => 'auth'], function () use ($router) {
     $router->post('refresh', 'AuthController@refresh');
     // 查看个人信息
     $router->post('me', 'AuthController@me');
+    // 欢迎
+    $router->get('welcome', 'AuthController@welcome');
 });
 
 // 需要登录才能使用的api组 使用了auth验证中间件
@@ -25,9 +27,9 @@ $router->group([], function () use ($router) {
     $router->group(['prefix' => 'topic'], function () use ($router) {
         //用户提问列表
         $router->get('/', 'TopicController@getAllTopics');
-        //问题详情
-        $router->get('/{id}', 'TopicController@getOneTopic');
         //专家提交回复
         $router->post('/', 'TopicController@addComment');
+        //问题详情
+        $router->get('/{id}', 'TopicController@getOneTopic');
     });
 });

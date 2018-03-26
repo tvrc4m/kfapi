@@ -1,12 +1,12 @@
 <?php
 namespace App\Http\Controllers\Expert;
 
-use App\Models\AdminExpert;
 use App\Models\Experts;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
 
 class AuthController extends Controller
 {
@@ -41,7 +41,7 @@ class AuthController extends Controller
 
 //dd($credentials);
         if (! $token = Auth::guard("expert")->setTTL(60)->attempt($credentials)) {
-            dd($token);
+            //dd($token);
             return api_error('用户名或密码错误');
         }
 
@@ -93,5 +93,42 @@ class AuthController extends Controller
             'token_type' => 'bearer',
             'expires_in' => Auth::guard("expert")->factory()->getTTL() * 60
         ]);
+    }
+
+    /**
+     * 欢迎页
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function welcome()
+    {
+        $expertId = Auth::guard("expert")->user()['id'];
+//sdd($expertId);
+        //专家名称、上次登录时间
+        $expert = DB::table('experts')
+            ->select('name','last_login_time')
+            ->where('id',$expertId)
+            ->first();
+        //dd($expert);
+        //已回答问题数量、
+        $num = DB::select('select count(topic_id) as answered_question_num from bu_comments where expert_id = ?', [$expertId]);
+        //所有人回答问题数量、排名
+        $userNum = DB::select('select expert_id,count(topic_id) as user_num from bu_comments group by expert_id');
+        foreach ($userNum as $k=>$v){
+            $userArr[] = $v->user_num;
+        }
+        //dd($userArr);
+        array_multisort($userArr,SORT_DESC,$userNum);
+        //dd($userNum);
+        foreach ($userNum as $k=>$v){
+            $sort = $k+1;
+            $newNum[$v->expert_id]['sort'] = $sort;
+        }
+        $expertSort = $newNum[$expertId]['sort'];
+        //dd($expertSort);
+        //未回答问题数量
+        //问题总数量、
+        $totalNum = DB::select('select count(topic_id) as total_num from bu_invitations where expert_id = ?', [$expertId]);
+        dd($totalNum);
     }
 }

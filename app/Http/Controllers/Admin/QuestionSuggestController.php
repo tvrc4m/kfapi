@@ -253,7 +253,7 @@ class QuestionSuggestController extends Controller
      */
     public function deleteRule($id)
     {
-        if (QuesCollectQuesSuggest::destroy(intval($id))) {
+        if (QuesCollectQuesSuggest::where('id', $id)->forceDelete()) {
             return api_success();
         }
         return api_error();
