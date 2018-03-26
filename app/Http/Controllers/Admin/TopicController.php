@@ -25,35 +25,22 @@ class TopicController extends Controller
     public function getAllTopics(Request $request)
     {
         $cate = $request->input('cate');
-        $sort = $request->input('sort');
         $hide_question = $request->input('hide_topic');
-        $hide_comment = $request->input('hide_comment');
 
         $where = [];
         if (!empty($cate)) {
             $where['cate'] = $cate;
         }
 
-        if (!empty($sort) && $sort==2) {
-            $sortfield = 'comments.created_at';
-        }else{
-            $sortfield = 'topics.created_at';
-        }
-
         if ($hide_question) {
-            $where['topics.is_hide'] = $hide_question;
-        }
-
-        if ($hide_comment) {
-            $where['comments.is_hide'] = $hide_comment;
+            $where['topics.is_hide'] = 2;
         }
 
         $topics = DB::table('topics')
-            ->leftJoin('comments', 'comments.topic_id', '=', 'topics.id')
             ->select('topics.id','topics.content','topics.comments','topics.created_at as question_time','topics.user_id','topics.is_hide','topics.top')
             ->where($where)
             ->groupBy('topics.id')
-            ->orderBy($sortfield,'desc')
+            ->orderBy('topics.created_at','desc')
             ->paginate(20)
             ->toArray();
         //dd($topics);
