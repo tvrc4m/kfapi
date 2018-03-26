@@ -95,7 +95,11 @@ class UserAnswer extends Model
         $collect_id = $collect_id_arr[0];
         $collect    = QuestionCollection::where('id', $collect_id)->firstOrFail();
 
-        $questions = $collect->questions()->with('questionOption')->get()->toArray();
+        $questions = $collect->questions()
+            ->orderBy('sort')
+            ->orderBy('id')
+            ->with('questionOption')
+            ->get()->toArray();
         // 问题选项增加ABCD
         $letters = range('A', 'Z');
         foreach ($questions as $k => $q) {
