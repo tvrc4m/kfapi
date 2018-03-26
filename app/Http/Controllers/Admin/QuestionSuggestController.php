@@ -10,6 +10,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\QuesCollectQuesSuggest;
 use App\Models\Question;
+use App\Models\QuestionCollection;
 use App\Models\QuestionOption;
 use App\Models\QuestionSuggest;
 use Illuminate\Http\Request;
@@ -51,7 +52,12 @@ class QuestionSuggestController extends Controller
             'type.required' => '类型不能为空',
             'type.numeric' => '类型传入参数不合法',
         ]);
-
+        $question_collection_id = $request->input('question_collection_id');
+        $info = QuestionCollection::where(['id'=>$question_collection_id])->select(['id', 'type'])->get()->toArray();
+        $count = QuestionSuggest::where(['question_collection_id'=>$question_collection_id])->count();
+        if ($info && (3==intval($info[0]['type'])) && (2 == intval($count))){
+            return api_error('首页问题集最多只能加两个建议!');
+        }
         $result = QuestionSuggest::create($request->all());
         if ($result) {
             return api_success();
@@ -233,7 +239,7 @@ class QuestionSuggestController extends Controller
      */
     public function deleteRule($id)
     {
-        if (QuesCollectQuesSuggest::destroy(intval($id))) {
+        if (QuesCollectQuesSuggest::where('id', $id)->forceDelete()) {
             return api_success();
         }
         return api_error();

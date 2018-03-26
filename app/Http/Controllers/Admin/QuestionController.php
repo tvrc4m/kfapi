@@ -56,20 +56,15 @@ class QuestionController extends Controller
             'options.*.weight.numeric' => '选项权重必须是数字',
             'options.*.keyword.array' => '选项关键词必须是数组',
         ]);
-        $question_collection_id = $request->input('question_collection_id');
-        DB::beginTransaction();
+
         $question = new Question();
-        $questionCollection = new QuestionCollection();
-        if ($question->saveQuestion($request)) {
-            if(!$questionCollection->where('id', $question_collection_id)->increment('num', 1)){
-                DB::rollBack();
-                return api_error();
-            }
-            DB::commit();
+
+        try {
+            $question->saveQuestion($request);
             return api_success();
+        } catch (\Exception $e) {
+            return api_error($e->getMessage());
         }
-        DB::rollBack();
-        return api_error();
     }
 
     /**
@@ -109,11 +104,12 @@ class QuestionController extends Controller
         ]);
 
         $question = new Question();
-        if ($question->saveQuestion($request, $id)) {
+        try {
+            $question->saveQuestion($request, $id);
             return api_success();
+        } catch (\Exception $e) {
+            return api_error($e->getMessage());
         }
-
-        return api_error();
     }
 
     /**

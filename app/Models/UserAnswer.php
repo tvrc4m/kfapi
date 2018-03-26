@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class UserAnswer extends Model
 {
@@ -81,7 +82,7 @@ class UserAnswer extends Model
             'id' => $paper_id,
             'user_id' => $user_id,
             'stat' => self::STATUS_UNFINISH,
-        ])->orderByDesc('updated_at')->firstOrFail();
+        ])->orderByDesc('created_at')->firstOrFail();
         // 取得问题集
         $collect_id_arr = $paper->wait_question_collection_ids;
         if (empty($collect_id_arr)) {
@@ -168,6 +169,8 @@ class UserAnswer extends Model
         $initCollec = QuestionCollection::where('type', QuestionCollection::TYPE_INIT)->firstOrFail();
         if ($initCollec->id == $question_collection_id) {
             $suggest = $this->matchSuggest($initCollec, $data);
+            Log::debug("匹配到的建议类型:");
+            Log::debug($suggest);
             if (empty($suggest)) {
                 DB::rollBack();
                 throw new \Exception("初始化问题没有匹配到建议类型");
@@ -178,6 +181,7 @@ class UserAnswer extends Model
             $collect_ids = QuestionCollection::where('is_trunk', 1)
                 ->where('type', $suggest['type'])
                 ->orderBy('sort')
+                ->orderByDesc("created_at")
                 ->get(['id'])->pluck('id')->all();
             if (empty($collect_ids)) {
                 DB::rollBack();

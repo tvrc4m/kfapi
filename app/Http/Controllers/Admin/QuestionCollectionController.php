@@ -13,6 +13,7 @@ use App\Models\QuestionCollection;
 use App\Models\QuesOpQuesCollect;
 use App\Models\QuestionOption;
 use App\Models\Question;
+use App\Models\QuestionSuggest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -89,6 +90,11 @@ class QuestionCollectionController extends Controller
         if (!Auth::guard("admin")->user()){
             return api_error('未登录');
         }
+        $is_trunk = $request->input('is_trunk');
+        $question_option_id = $request->input('question_option_id');
+        if (0==intval($is_trunk) && !empty($question_option_id)){
+            return api_error('分支问题集不能关联问题');
+        }
         $questionCollection = new QuestionCollection();
         if ($questionCollection->saveQuestionCollection($request,0)) {
             return api_success();
@@ -111,13 +117,18 @@ class QuestionCollectionController extends Controller
         ]);
 
         $type = $request->input('type');
-
         $where = [];
         if (!empty($type)) {
             $where['type'] = intval($type);
         }
-        $list = QuestionCollection::with('adminUser')->with('questionOption')->where($where)->select(['id','title', 'content', 'is_single_page', 'bgimage', 'is_trunk',
-            'type', 'overdue', 'created_at', 'sort', 'create_user_id', 'num'])->paginate()->toArray();
+        $list = QuestionCollection::with('adminUser')
+            ->with('questionOption')
+            ->where($where)->select(['id','title', 'content', 'is_single_page', 'bgimage', 'is_trunk',
+            'type', 'overdue', 'created_at', 'sort', 'create_user_id', 'num'])
+            ->orderBy('sort')
+            ->orderByDesc('created_at')
+            ->paginate()
+            ->toArray();
         $questionListData = Question::with('questionOption')->select()->get()->toArray();
         $questionList = [];
         if ($questionListData){
@@ -202,6 +213,11 @@ class QuestionCollectionController extends Controller
         if (!Auth::guard("admin")->user()){
             return api_error('未登录');
         }
+        $is_trunk = $request->input('is_trunk');
+        $question_option_id = $request->input('question_option_id');
+        if (0==intval($is_trunk) && !empty($question_option_id)){
+            return api_error('分支问题集不能关联问题');
+        }
         $questionCollection = new QuestionCollection();
         if ($questionCollection->saveQuestionCollection($request, $id)) {
             return api_success();
@@ -229,6 +245,7 @@ class QuestionCollectionController extends Controller
         if (!empty($type)) {
             $where['type'] = intval($type);
         }
+        $where['is_trunk'] = 0;
         $list = QuestionCollection::where($where)->select(['id','title', 'content', 'is_single_page', 'bgimage', 'is_trunk',
             'type', 'overdue'])->get();
 
