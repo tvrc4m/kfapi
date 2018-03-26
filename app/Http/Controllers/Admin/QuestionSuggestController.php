@@ -172,7 +172,7 @@ class QuestionSuggestController extends Controller
         $question_suggest_id = $request->input('question_suggest_id');
         $suggest_rule = $request->input('suggest_rule');
 
-        $result = QuesCollectQuesSuggest::updateOrCreate(['question_collection_id' => $question_collection_id, 'question_suggest_id' => $question_suggest_id, 'suggest_rule' => $suggest_rule]);
+        $result = QuesCollectQuesSuggest::updateOrCreate(['question_collection_id' => $question_collection_id, 'suggest_rule' => $suggest_rule], ['question_suggest_id' => $question_suggest_id]);
         if ($result) {
             return api_success();
         }
@@ -250,7 +250,7 @@ class QuestionSuggestController extends Controller
         $question_suggest_id = $request->input('question_suggest_id');
         $suggest_rule = $request->input('suggest_rule');
 
-        $result = QuesCollectQuesSuggest::updateOrCreate(['question_collection_id' => $question_collection_id, 'question_suggest_id' => $question_suggest_id, 'suggest_rule' => $suggest_rule]);
+        $result = QuesCollectQuesSuggest::updateOrCreate(['question_collection_id' => $question_collection_id, 'suggest_rule' => $suggest_rule], ['question_suggest_id' => $question_suggest_id]);
         //$questionSuggest = QuesCollectQuesSuggest::where('id', $id)->firstOrFail();
         if ($result) {
             return api_success();
