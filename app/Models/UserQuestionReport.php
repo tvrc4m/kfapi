@@ -63,14 +63,18 @@ class UserQuestionReport extends Model
     private function makeEmotionReport(UserAnswer $paper)
     {
         $answers = $paper->data;
+        // 初始化问题集
+        $collect_id_init = QuestionCollection::where('type', QuestionCollection::TYPE_INIT)->first();
         // 所有问题集ids
         $collect_ids = [];
         // 键名为问题集id 键值为答案
         $collect_id_answer = [];
         // 提取数据
         foreach ($answers as $v) {
-            $collect_ids[] = $v['question_collection_id'];
-            $collect_id_answer[$v['question_collection_id']] = $v['answer'];
+            if ($v['question_collection_id'] != $collect_id_init) {
+                $collect_ids[] = $v['question_collection_id'];
+                $collect_id_answer[$v['question_collection_id']] = $v['answer'];
+            }
         }
         // 获得所有建议
         $relations = DB::table('question_collection_question_suggests')

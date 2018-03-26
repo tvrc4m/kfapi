@@ -28,7 +28,7 @@ class TopicController extends Controller
 
         $topics = DB::table('topics')
             ->leftJoin('users', 'users.id', '=', 'topics.user_id')
-            ->select('topics.id','topics.cate','topics.content','topics.comments','topics.created_at','users.user_name','users.province_id','users.city_id')
+            ->select('topics.id','topics.cate','topics.content','topics.comments','topics.created_at','users.user_name','users.id','users.province_id','users.city_id')
             ->paginate($perpage)
             ->toArray();
         //dd($topics);
@@ -83,7 +83,7 @@ class TopicController extends Controller
         $topic = DB::table('topics')
             ->leftJoin('users', 'users.id', '=', 'topics.user_id')
             ->leftJoin('user_question_report', 'user_question_report.id', '=', 'topics.opinion_id')
-            ->select('topics.id','topics.cate','topics.content','topics.comments','topics.created_at','users.user_name','users.province_id','users.city_id','topics.opinion_id','user_question_report.suggest_ids','user_question_report.case_ids')
+            ->select('topics.id','topics.cate','topics.content','topics.comments','topics.created_at','users.user_name','users.id','users.province_id','users.city_id','topics.opinion_id','user_question_report.suggest_ids','user_question_report.case_ids')
             ->where('topics.id',$id)
             ->first();
         //dd($topic);
@@ -164,48 +164,6 @@ class TopicController extends Controller
             return api_success();
         }
         return api_error();
-    }
-
-    //首页轮播图
-    public function getShuffling(Request $request)
-    {
-        //dd($request->header());
-        //file_put_contents('/tmp/topic.log',$request->header('device'));
-        $topics = DB::table('topics')
-            ->leftJoin('invitations', 'invitations.topic_id', '=', 'topics.id')
-            ->leftJoin('experts', 'experts.id', '=', 'invitations.expert_id')
-            ->select('topics.id','topics.content','experts.name','experts.job_id','experts.icon')
-            ->where('topics.top',1)
-            ->orderBy('topics.created_at','desc')
-            ->limit(4)
-            ->get()
-            ->toArray();
-        //dd($topics);
-
-        //配置文件获取专家职业
-        $config = require base_path('config/fieldDictionary.php');
-        //dd($config);
-        $jobs = $config['job'];
-        $jobs = array_values($jobs);
-        $newJobs = [];
-        foreach($jobs as $k=>$v){
-            $newJobs[$v['job_id']] = $v['name'];
-        }
-        if($topics){
-            foreach ($topics as $k=>&$v){
-                if($v->job_id){
-                    //var_dump($v['job_id']);
-                    //var_dump($newJobs[$v['job_id']]);
-                    $job = $newJobs[$v->job_id];
-                }else{
-                    $job = '';
-                }
-                $v->job = $job;
-            }
-        }
-        $data['data'] = $topics;
-        //dd($topics);
-        return api_success($data);
     }
 
 }
