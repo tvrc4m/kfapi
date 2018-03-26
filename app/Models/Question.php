@@ -90,13 +90,13 @@ class Question extends Model
             $question = $this->create($baseData);
             if (!$question) {
                 DB::rollBack();
-                return false;
+                throw new \Exception('新增失败');
             }
         } else { // 更新
             $question = $this->where('id', $id)->firstOrFail();
             if (!$question->update($baseData)) {
                 DB::rollBack();
-                return false;
+                throw new \Exception('更新失败');
             }
             // 删除原来的关键词信息
             $ops = QuestionOption::where('question_id', $question->id)->with('keyword')->get();
@@ -104,14 +104,14 @@ class Question extends Model
                 $del = $op->keyword()->detach();
                 if (!$del) {
                     DB::rollBack();
-                    return false;
+                    throw new \Exception('删除原来的关键词信息失败');
                 }
             }
             // 删除原来的选项信息
             $del = QuestionOption::where('question_id', $question->id)->delete();
             if (!$del) {
                 DB::rollBack();
-                return false;
+                throw new \Exception('删除原来的选项信息失败');
             }
         }
 
@@ -125,7 +125,7 @@ class Question extends Model
                 ]);
                 if (!$questionOption) {
                     DB::rollBack();
-                    return false;
+                    throw new \Exception('保存选项信息失败');
                 }
                 if (!empty($option['keyword'])) {
                     foreach ($option['keyword'] as $keyword_id) {
@@ -136,7 +136,7 @@ class Question extends Model
                         ]);
                         if (!$keyword) {
                             DB::rollBack();
-                            return false;
+                            throw new \Exception('保存关键词信息失败');
                         }
                     }
                 }
