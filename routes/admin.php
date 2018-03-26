@@ -174,6 +174,15 @@ $router->group([], function () use ($router) {
         $router->get('/search', 'TopicController@searchTopic');
     });
 
+    // 后台回复组
+    $router->group(['prefix' => 'comment'], function () use ($router) {
+        // 获取帖子列表
+        $router->get('/', 'CommentController@getAllComments');
+        // 点击隐藏
+        $router->post('/hide', 'CommentController@changeHide');
+        // 点击推荐
+        $router->post('/top', 'CommentController@changeTop');
+    });
 
     // 案例库
     $router->group(['prefix' => 'case'], function () use ($router) {
