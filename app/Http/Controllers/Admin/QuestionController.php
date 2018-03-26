@@ -150,6 +150,7 @@ class QuestionController extends Controller
             ->where('question_collection_id', $question_collection_id)
             ->select(['id', 'title', 'sort', 'show_report'])
             ->orderBy('sort')
+            ->orderBy('id')
             ->paginate()->toArray();
 
 
