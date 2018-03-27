@@ -24,7 +24,7 @@ class ReportTemplateController extends Controller
      */
     public function getOne()
     {
-        $temp = ReportTemplates::firstOrFail();
+        $temp = ReportTemplates::first();
         return api_success($temp);
     }
 
@@ -36,9 +36,15 @@ class ReportTemplateController extends Controller
      */
     public function edit(Request $request)
     {
-        $temp = ReportTemplates::firstOrFail();
-        $temp->content = $request->input('content');
-        $temp->saveOrFail();
+        $temp = ReportTemplates::first();
+        if ($temp->id > 0) {
+            $temp->content = $request->input('content');
+            $temp->saveOrFail();
+        } else {
+            ReportTemplates::create([
+                'content' => $request->input('content')
+            ]);
+        }
 
         return api_success();
     }
