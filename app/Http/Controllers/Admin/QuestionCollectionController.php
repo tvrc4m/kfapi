@@ -143,7 +143,8 @@ class QuestionCollectionController extends Controller
                 unset($list['data'][$key]['admin_user']);
                 if ($val['question_option']){
                     foreach ($val['question_option'] as $tt_key=>$tt_val){
-                        $list['data'][$key]['question_name'][$tt_key] = $questionList[$tt_val['question_id']]['title'].'-'.$tt_val['options'];
+                        $list['data'][$key]['question_name'][$tt_key]['question_title'] = $questionList[$tt_val['question_id']]['title'];
+                        $list['data'][$key]['question_name'][$tt_key]['option_title'] = $tt_val['options'];
                     }
                     unset($list['data'][$key]['question_option']);
                 }else{
