@@ -85,7 +85,7 @@ class QuestionCollectionController extends Controller
             'is_single_page.required' => '是否单页不能为空',
             'overdue.required' => '过渡页不能为空',
             'overdue.max' => '过渡页不能超过255个字符',
-            //'question_option_id.required' => '前置问题集ID不能为空',
+            'question_option_id.required' => '前置问题集ID不能为空',
             'question_option_id.array' => '前置问题集ID是数组',
         ]);
         if (!Auth::guard("admin")->user()){
@@ -209,7 +209,7 @@ class QuestionCollectionController extends Controller
             'is_single_page.required' => '是否单页不能为空',
             'overdue.required' => '过渡页不能为空',
             'overdue.max' => '过渡页不能超过255个字符',
-            //'question_option_id.required' => '前置问题集ID不能为空',
+            'question_option_id.required' => '前置问题集ID不能为空',
             'question_option_id.array' => '前置问题集ID是数组',
         ]);
         if (!Auth::guard("admin")->user()){
@@ -247,6 +247,7 @@ class QuestionCollectionController extends Controller
         if (!empty($type)) {
             $where['type'] = intval($type);
         }
+        $where['is_trunk'] = 1;
         $list = QuestionCollection::where($where)->select(['id','title', 'content', 'is_single_page', 'bgimage', 'is_trunk',
             'type', 'overdue'])->get();
 
