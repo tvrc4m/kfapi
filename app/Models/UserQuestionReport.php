@@ -47,6 +47,15 @@ class UserQuestionReport extends Model
      */
     public function makeReport(UserAnswer $paper)
     {
+        // 判断是否已经生成过
+        $exists = UserQuestionReport::where([
+            'user_id' => Auth::id(),
+            'user_answer_id' => $paper->id,
+        ])->exists();
+        if ($exists) {
+            throw new \Exception('请不要重复生成报告书');
+        }
+
         if ($paper->type == QuestionCollection::TYPE_EMOTION) { // 情感
             return $this->makeEmotionReport($paper);
         } elseif ($paper->type == QuestionCollection::TYPE_LAW) { // 法规
