@@ -76,7 +76,7 @@
                         html+='</h3>';
                         html+='<article class="content">';
                         for(index in data.law_rule.content){
-                            html+='<p>'+(index+1)+'、《'+data.law_rule.content[index].fullname+'》'+data.law_rule.content[index].title+"</p>";
+                            html+='<p>'+(parseInt(index)+1)+'、《'+data.law_rule.content[index].fullname+'》'+data.law_rule.content[index].title+"</p>";
                             html+='<p>'+data.law_rule.content[index].content+'</p>';
                         }
                         html+='</article>';
