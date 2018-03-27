@@ -161,7 +161,7 @@ class TopicController extends Controller
         );
         $result = Topics::create($data);
         if ($result) {
-            return api_success();
+            return api_success($result);
         }
         return api_error();
     }
