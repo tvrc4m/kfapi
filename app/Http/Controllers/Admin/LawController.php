@@ -108,12 +108,23 @@ class LawController extends Controller
      */
     public function delete($id)
     {
-        // 删除法规条目
-        // 删除法规条目关键词
-        if (Law::destroy(intval($id))) {
+        DB::beginTransaction();
+        try {
+            $law = Law::where('id', $id)->firstOrFail();
+            $lawRulesId = $law->rules()->pluck('id')->all();
+            // 删除法规条目关键词
+            LawRuleKeyword::whereIn('law_rule_id', $lawRulesId)->forceDelete();
+            // 删除法规条目
+            $law->rules()->delete();
+            // 删除法规
+            Law::destroy(intval($id));
+
+            DB::commit();
             return api_success();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return api_error();
         }
-        return api_error();
     }
 
     /*********************************************法规条目***************************************************/

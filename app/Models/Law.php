@@ -25,4 +25,9 @@ class Law extends Model
      * @var array
      */
     protected $dates = ['deleted_at'];
+
+    public function rules()
+    {
+        return $this->hasMany(\App\Models\LawRule::class, 'law_id', 'id');
+    }
 }

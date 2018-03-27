@@ -74,11 +74,16 @@ class CaseController extends Controller
     public function deleteCase($id)
     {
         DB::beginTransaction();
-        CaseKeyword::where('case_id', $id)->delete();
-        Cases::destroy(intval($id));
+        try {
+            CaseKeyword::where('case_id', $id)->delete();
+            Cases::destroy(intval($id));
 
-        DB::commit();
-        return api_success();
+            DB::commit();
+            return api_success();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return api_error();
+        }
     }
 
     /**
