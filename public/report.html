@@ -24,6 +24,7 @@
     <!-- loading end -->
     <main id="opinionBook"></main>
     <script type="text/javascript">
+        var API="http://fdev.vrcdkj.cn/api"
         function getUrlParam(name) {
             var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); //构造一个含有目标参数的正则表达式对象
             var r = window.location.search.substr(1).match(reg);  //匹配目标参数
@@ -41,7 +42,7 @@
             // 测试loading
             // setTimeout(function(){
             $.ajax({  
-                url: 'http://fdev.vrcdkj.cn/api/v1/record/opinion/'+opinion_id,  
+                url: API+'/v1/record/opinion/'+opinion_id,  
                 type: 'GET',  
                 dataType: 'json',  
                 timeout: 5000,
@@ -55,6 +56,12 @@
                     $(".remind").fadeIn()
                 },  //错误执行方法    
                 success: function(response){
+                    if(response.error_no!=0){
+                        $(".load-container").remove()
+                        $(".remind .re-box").html('<p>加载失败...</p><div class="btn"><a class="download" href="location.reload">刷新</a></div>');
+                        $(".remind").fadeIn()
+                        return false
+                    }
                     $(".load-container").remove()
                     var data=response.data;
                     var html=""
@@ -69,7 +76,7 @@
                         html+='</h3>';
                         html+='<article class="content">';
                         for(index in data.law_rule.content){
-                            html+='<p>'+index+'、《'+data.law_rule.content[index].fullname+'》'+data.law_rule.content[index].title+"</p>";
+                            html+='<p>'+(parseInt(index)+1)+'、《'+data.law_rule.content[index].fullname+'》'+data.law_rule.content[index].title+"</p>";
                             html+='<p>'+data.law_rule.content[index].content+'</p>';
                         }
                         html+='</article>';
