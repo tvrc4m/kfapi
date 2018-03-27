@@ -262,6 +262,7 @@ class RecordController extends Controller
                 ->get()
                 ->toArray();
             //dd($suggest);
+            $newSuggest = array();
             foreach($suggest as $k=>$v){
                 $newSuggest[] = $v->content;
             }
@@ -270,7 +271,7 @@ class RecordController extends Controller
                 'id'=>$opinion->id,
                 'type'=>$opinion->type,
                 'remark'=>$opinion->remark,
-                'suggest'=>['name'=>'经调查了解','content'=>$newSuggest],
+                'suggest'=>['name'=>'本地建议如下','content'=>$newSuggest],
             );
            // dd($data);
         }
