@@ -24,11 +24,11 @@ class CommentController extends Controller
     //回复列表
     public function getAllComments(Request $request)
     {
-        $cate = $request->input('cate');
+        $type = $request->input('type');
         $hide_comment = $request->input('hide_comment');
         $where = [];
-        if (!empty($cate)) {
-            $where['experts.type'] = $cate;
+        if (!empty($type)) {
+            $where['type'] = $type;
         }
         if ($hide_comment) {
             $where['comments.is_hide'] = 2;
@@ -36,7 +36,7 @@ class CommentController extends Controller
 
         $comments = DB::table('comments')
             ->leftJoin('experts', 'comments.expert_id', '=', 'experts.id')
-            ->select('comments.id','comments.content','comments.created_at','comments.is_hide','comments.top','comments.expert_id','experts.name')
+            ->select('comments.id','comments.content','comments.topic_id','comments.created_at','comments.is_hide','comments.top','comments.expert_id','experts.name')
             ->where($where)
             ->orderBy('comments.created_at','desc')
             ->paginate(20)
