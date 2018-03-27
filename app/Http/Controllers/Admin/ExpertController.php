@@ -189,6 +189,7 @@ class ExpertController extends Controller
             'service.*.price' => 'required',
             'service.*.limit_free' => 'required|numeric',
             'account' => 'required|max:255',
+            'password' => 'required|max:255',
             'type' => 'required|numeric'
         ],[
             'name.required' => '专家名不能为空',
@@ -208,6 +209,8 @@ class ExpertController extends Controller
             'intro.max' => '介绍不能超过255个字符',
             'account.required' => '账号不能为空',
             'account.max' => '账号不超过255个字符',
+            'password.required' => '密码不能为空',
+            'password.max' => '密码不超过255个字符',
             'service.*.service_id.required' => '服务id不能为空',
             'service.*.service_id.numeric' => '服务id不合法',
             'service.*.description.required' => '服务描述不能为空',
@@ -225,7 +228,7 @@ class ExpertController extends Controller
         $data=$request->except('service');
         $data['certification'] = implode(',',$request->input('certification'));
         $data['good_at'] = implode(',',$request->input('good_at'));
-
+        $data['password'] = Hash::make($request->input('password'));
         // 开启事务
         DB::beginTransaction();
 
