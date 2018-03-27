@@ -24,9 +24,9 @@ class TopicController extends Controller
     //用户问题列表
     public function getAllTopics(Request $request)
     {
-//        $expertId = Auth::guard('expert')->user();
-        $expertId = 30;
-
+        $expertId = Auth::guard('expert')->user()['id'];
+        //$expertId = 30;
+//dd($expertId);
         $topics = DB::table('topics')
             ->leftJoin('invitations', 'invitations.topic_id', '=', 'topics.id')
             ->leftJoin('users', 'users.id', '=', 'topics.user_id')
@@ -96,5 +96,22 @@ class TopicController extends Controller
         return api_error();
     }
 
+    //专家回复列表
+    public function getComments(Request $request)
+    {
+        $topic_id = $request->input('topic_id');
+        $where = [];
+        if (!empty($topic_id)) {
+            $where['comments.topic_id'] = $topic_id;
+        }
+
+        $comments = DB::table('comments')
+            ->select('comments.id','comments.content','comments.topic_id','comments.created_at','comments.is_hide','comments.top')
+            ->where($where)
+            ->orderBy('comments.created_at','desc')
+            ->paginate(20)
+            ->toArray();
+        return api_success($comments);
+    }
 
 }

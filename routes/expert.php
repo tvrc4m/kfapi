@@ -29,6 +29,8 @@ $router->group([], function () use ($router) {
         $router->get('/', 'TopicController@getAllTopics');
         //专家提交回复
         $router->post('/', 'TopicController@addComment');
+        //回复列表
+        $router->get('/comment', 'TopicController@getComments');
         //问题详情
         $router->get('/{id}', 'TopicController@getOneTopic');
     });
