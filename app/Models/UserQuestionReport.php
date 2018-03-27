@@ -167,15 +167,17 @@ class UserQuestionReport extends Model
         $replaceVal = [];
         foreach ($answers as $collection) {
             foreach ($collection['answer'] as $v) {
-                $key = '{'.$v['question_id'].'}';
-                $value = "";
-                foreach ($v['option_id'] as $option_id) {
-                    $value .= $optionTitleArr[$option_id] . ",";
-                }
-                $value = rtrim($value, ',');
-                if (!empty($value)) {
-                    $replaceKey[] = $key;
-                    $replaceVal[] = $value;
+                if (!empty($v['option_id'])) {
+                    $key = '{'.$v['question_id'].'}';
+                    $value = "";
+                    foreach ($v['option_id'] as $option_id) {
+                        $value .= $optionTitleArr[$option_id] . ",";
+                    }
+                    $value = rtrim($value, ',');
+                    if (!empty($value)) {
+                        $replaceKey[] = $key;
+                        $replaceVal[] = $value;
+                    }
                 }
             }
         }

@@ -241,7 +241,7 @@ class UserAnswer extends Model
         foreach ($arr1 as $k => $v) {
             foreach ($arr2 as $kk => $vv) {
                 $opArr1 = is_numeric($v['option_id']) ? [$v['option_id']] : $v['option_id'];
-                $opArr2 = is_numeric($v['option_id']) ? [$v['option_id']] : $v['option_id'];
+                $opArr2 = is_numeric($vv['option_id']) ? [$vv['option_id']] : $vv['option_id'];
                 sort($opArr1);
                 sort($opArr2);
                 if ($opArr1 == $opArr2 && $vv['question_id'] == $v['question_id']) {

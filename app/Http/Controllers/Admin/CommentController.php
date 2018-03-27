@@ -41,7 +41,7 @@ class CommentController extends Controller
             ->orderBy('comments.created_at','desc')
             ->paginate(20)
             ->toArray();
-        dd($comments);
+        //dd($comments);
         return api_success($comments);
     }
 
