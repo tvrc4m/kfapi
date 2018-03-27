@@ -129,8 +129,14 @@ class AuthController extends Controller
                 $newNum[$v->expert_id]['sort'] = $sort;
             }
         }
+        dd($newNum[$expertId]);
         //排名
-        $expertSort = $newNum[$expertId]['sort'];
+        if($newNum[$expertId]){
+            $expertSort = $newNum[$expertId]['sort'];
+        }else{
+            $expertSort = 0;
+        }
+
         //dd($expertSort);
         //未回答问题数量
         //问题总数量、
