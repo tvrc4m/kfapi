@@ -108,6 +108,8 @@ class LawController extends Controller
      */
     public function delete($id)
     {
+        // 删除法规条目
+        // 删除法规条目关键词
         if (Law::destroy(intval($id))) {
             return api_success();
         }

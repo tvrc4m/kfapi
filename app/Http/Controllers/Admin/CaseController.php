@@ -69,13 +69,16 @@ class CaseController extends Controller
      * 删除案例
      * @param $id
      * @return \Illuminate\Http\JsonResponse
+     * @throws \Exception
      */
     public function deleteCase($id)
     {
-        if (Cases::destroy(intval($id))) {
-            return api_success();
-        }
-        return api_error();
+        DB::beginTransaction();
+        CaseKeyword::where('case_id', $id)->delete();
+        Cases::destroy(intval($id));
+
+        DB::commit();
+        return api_success();
     }
 
     /**
