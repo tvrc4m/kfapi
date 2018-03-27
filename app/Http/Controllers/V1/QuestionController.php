@@ -65,8 +65,8 @@ class QuestionController extends Controller
      */
     public function answer(Request $request)
     {
-        Log::debug($request->all());
-        Log::debug($request->header());
+        // Log::debug($request->all());
+        // Log::debug($request->header());
         $this->validate($request, [
             'paper_id' => 'required|numeric',
             'question_collection_id' => 'required|numeric',
@@ -109,8 +109,8 @@ class QuestionController extends Controller
      */
     public function makeReport(Request $request)
     {
-        Log::debug("生成报告书");
-        Log::debug($request->all());
+        // Log::debug("生成报告书");
+        // Log::debug($request->all());
         $this->validate($request, [
             'paper_id' => 'required|numeric|min:1',
         ], [
