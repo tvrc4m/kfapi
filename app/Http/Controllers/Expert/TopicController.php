@@ -100,11 +100,14 @@ class TopicController extends Controller
     public function getComments(Request $request)
     {
         $topic_id = $request->input('topic_id');
+        $expertId = Auth::guard('expert')->user()['id'];
         $where = [];
         if (!empty($topic_id)) {
             $where['comments.topic_id'] = $topic_id;
         }
-
+        if (!empty($expertId)) {
+            $where['comments.expert_id'] = $expertId;
+        }
         $comments = DB::table('comments')
             ->select('comments.id','comments.content','comments.topic_id','comments.created_at','comments.is_hide','comments.top')
             ->where($where)
