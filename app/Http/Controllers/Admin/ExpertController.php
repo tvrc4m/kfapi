@@ -41,7 +41,12 @@ class ExpertController extends Controller
                 foreach($goodAt as $k=>$vv){
                     //dd($vv);
                     //dd('asdsdaasdad');
-                    $v['good_at'][] = $config['good_at'][$vv];
+                    //dd($config['good_at'][$vv]['name']);
+                    if($vv){
+                        $v['good_at'][] = $config['good_at'][$vv];
+                    }else{
+                        $v['good_at'] = [];
+                    }
                 }
             }
         }

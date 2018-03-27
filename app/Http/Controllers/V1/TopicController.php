@@ -29,6 +29,7 @@ class TopicController extends Controller
         $topics = DB::table('topics')
             ->leftJoin('users', 'users.id', '=', 'topics.user_id')
             ->select('topics.id','topics.cate','topics.content','topics.comments','topics.created_at','users.user_name','users.id','users.province_id','users.city_id')
+            ->where('topics.is_hide',1)
             ->paginate($perpage)
             ->toArray();
         //dd($topics);
@@ -161,9 +162,27 @@ class TopicController extends Controller
         );
         $result = Topics::create($data);
         if ($result) {
-            return api_success();
+            return api_success($result);
         }
         return api_error();
     }
 
+    //修改问题状态
+    public function editStatus(Request $request)
+    {
+        $status = $request->input('is_hide');
+        $topic_id = $request->input('topic_id');
+
+        $topic = Topics::where('id',$topic_id)->first();
+
+        $data = array(
+            'is_hide'=>$status,
+        );
+
+        $result = $topic->update($data);
+        if(!$result){
+            return api_error('修改状态失败');
+        }
+        return api_success();
+    }
 }

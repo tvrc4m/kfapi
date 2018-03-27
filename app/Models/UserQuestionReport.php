@@ -47,6 +47,15 @@ class UserQuestionReport extends Model
      */
     public function makeReport(UserAnswer $paper)
     {
+        // 判断是否已经生成过
+        $exists = UserQuestionReport::where([
+            'user_id' => Auth::id(),
+            'user_answer_id' => $paper->id,
+        ])->exists();
+        if ($exists) {
+            throw new \Exception('请不要重复生成报告书');
+        }
+
         if ($paper->type == QuestionCollection::TYPE_EMOTION) { // 情感
             return $this->makeEmotionReport($paper);
         } elseif ($paper->type == QuestionCollection::TYPE_LAW) { // 法规
@@ -71,7 +80,7 @@ class UserQuestionReport extends Model
         $collect_id_answer = [];
         // 提取数据
         foreach ($answers as $v) {
-            if ($v['question_collection_id'] != $collect_id_init) {
+            if ($v['question_collection_id'] != $collect_id_init->id) {
                 $collect_ids[] = $v['question_collection_id'];
                 $collect_id_answer[$v['question_collection_id']] = $v['answer'];
             }
@@ -167,15 +176,17 @@ class UserQuestionReport extends Model
         $replaceVal = [];
         foreach ($answers as $collection) {
             foreach ($collection['answer'] as $v) {
-                $key = '{'.$v['question_id'].'}';
-                $value = "";
-                foreach ($v['option_id'] as $option_id) {
-                    $value .= $optionTitleArr[$option_id] . ",";
-                }
-                $value = rtrim($value, ',');
-                if (!empty($value)) {
-                    $replaceKey[] = $key;
-                    $replaceVal[] = $value;
+                if (!empty($v['option_id'])) {
+                    $key = '{'.$v['question_id'].'}';
+                    $value = "";
+                    foreach ($v['option_id'] as $option_id) {
+                        $value .= $optionTitleArr[$option_id] . ",";
+                    }
+                    $value = rtrim($value, ',');
+                    if (!empty($value)) {
+                        $replaceKey[] = $key;
+                        $replaceVal[] = $value;
+                    }
                 }
             }
         }
