@@ -28,7 +28,7 @@ class CommentController extends Controller
         $hide_comment = $request->input('hide_comment');
         $where = [];
         if (!empty($cate)) {
-            $where['cate'] = $cate;
+            $where['experts.type'] = $cate;
         }
         if ($hide_comment) {
             $where['comments.is_hide'] = 2;
