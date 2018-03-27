@@ -219,7 +219,7 @@ class ExpertController extends Controller
         ]);
 
         $expert = Experts::where('id',$id)->first();
-        $service = ExpertsServices::where('expert_id',$id)->first();
+        $service = ExpertsServices::where('expert_id',$id)->delete();
         //dd($service);
         $data=$request->except('service');
         $data['certification'] = implode(',',$request->input('certification'));
@@ -231,8 +231,9 @@ class ExpertController extends Controller
         $expert->update($data);
         $newService = $request->only('service')['service'];
         //dd($newService);
-        foreach($newService as $v){
-            $expert_service = $service->update($v);
+        foreach($newService as $k=>$v){
+            $v['expert_id'] = $id;
+            $expert_service = ExpertsServices::create($v);
             if(!$expert_service){
                 DB::rollBack();
                 return api_error();
