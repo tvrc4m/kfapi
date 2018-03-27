@@ -80,7 +80,7 @@ class UserQuestionReport extends Model
         $collect_id_answer = [];
         // 提取数据
         foreach ($answers as $v) {
-            if ($v['question_collection_id'] != $collect_id_init) {
+            if ($v['question_collection_id'] != $collect_id_init->id) {
                 $collect_ids[] = $v['question_collection_id'];
                 $collect_id_answer[$v['question_collection_id']] = $v['answer'];
             }
