@@ -44,6 +44,8 @@ class ExpertController extends Controller
                     //dd($config['good_at'][$vv]['name']);
                     if($vv){
                         $v['good_at'][] = $config['good_at'][$vv];
+                    }else{
+                        $v['good_at'] = [];
                     }
                 }
             }
