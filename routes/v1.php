@@ -44,7 +44,8 @@ $router->group(['prefix' => 'topic'], function () use ($router) {
     $router->post('/', 'TopicController@addTopic');
     // 获取问答详情页
     $router->get('/{id}', 'TopicController@getOneTopic');
-
+    // 修改问题状态
+    $router->put('/status', 'TopicController@editStatus');
 });
 // 用户邀请
 $router->group(['prefix' => 'invitation'], function () use ($router) {
