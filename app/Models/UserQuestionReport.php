@@ -191,17 +191,17 @@ class UserQuestionReport extends Model
                 }
             }
         }
-        Log::debug("用户的答案");
-        Log::debug($answers);
-        Log::debug("模板");
-        Log::debug($template);
-        Log::debug("模板key");
-        Log::debug($replaceKey);
-        Log::debug("模板val");
-        Log::debug($replaceVal);
+        // Log::debug("用户的答案");
+        // Log::debug($answers);
+        // Log::debug("模板");
+        // Log::debug($template);
+        // Log::debug("模板key");
+        // Log::debug($replaceKey);
+        // Log::debug("模板val");
+        // Log::debug($replaceVal);
         $understand = str_replace($replaceKey, $replaceVal, $template);
-        Log::debug("模板结果");
-        Log::debug($understand);
+        // Log::debug("模板结果");
+        // Log::debug($understand);
 
         // 保存结果
         DB::beginTransaction();
