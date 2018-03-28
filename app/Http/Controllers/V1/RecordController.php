@@ -33,6 +33,7 @@ class RecordController extends Controller
             ->leftJoin('users', 'users.id', '=', 'topics.user_id')
             ->select('topics.id','topics.cate','topics.content','topics.created_at','users.user_name','users.province_id','users.city_id')
             ->where('topics.user_id',$userid)
+            ->orderBy('topics.created_at','desc')
             ->paginate($perpage)
             ->toArray();
 //dd($record);
@@ -122,6 +123,7 @@ class RecordController extends Controller
             ->leftJoin('topics','topics.opinion_id','=','user_question_report.id')
             ->select('topics.id as topic_id','user_question_report.id','user_question_report.case_ids','user_question_report.suggest_ids','user_question_report.type','user_question_report.created_at','user_question_report.updated_at')
             ->where('user_question_report.user_id',$userid)
+            ->orderBy('topics.created_at','desc')
             ->paginate($perpage)
             ->toArray();
 //dd($record);
