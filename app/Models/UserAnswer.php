@@ -139,6 +139,7 @@ class UserAnswer extends Model
             'id' => $paper_id,
             'stat' => self::STATUS_UNFINISH,
         ])->firstOrFail();
+        Log::debug("paper_id ok");
 
         // 记录答案
         $oldData     = $paper->data ? $paper->data : [];
