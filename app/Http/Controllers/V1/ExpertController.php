@@ -123,13 +123,20 @@ class ExpertController extends Controller
             $certification = explode(',',$data->certification);
 
             unset($data->good_at,$data->certification,$data->province_id,$data->city_id,$data->name,$data->price,$data->description,$data->stat,$data->limit_free);
-            foreach ($goodAt as $k=>$v){
-                $data->good_at[$k] = $config['good_at'][$v];
+            if($goodAt){
+                foreach ($goodAt as $k=>$v){
+                    $data->good_at[$k] = $config['good_at'][$v];
+                }
+            }else{
+                $data->good_at = [];
             }
             //dd($data['good_at']);
-
-            foreach ($certification as $k=>$v){
-                $data->certification[$k] = $config['certification'][$v];
+            if($certification){
+                foreach ($certification as $k=>$v){
+                    $data->certification[$k] = $config['certification'][$v];
+                }
+            }else{
+                $data->certification = [];
             }
         }
         //dd($data);

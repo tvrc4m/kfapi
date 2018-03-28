@@ -92,6 +92,7 @@ class TopicController extends Controller
         if($topic->cate==1){
             //dd(json_decode($topic->case_ids));
             if(!empty($topic->case_ids)){
+
                 $case_ids = json_decode($topic->case_ids);
                 $suggest = DB::table('cases')
                     ->select('cases.suggest')
@@ -117,7 +118,7 @@ class TopicController extends Controller
             }
         }
 //dd($newSuggest);
-        $topic->opinion_content = substr($newSuggest,0,20);
+        $topic->opinion_content = mb_substr($newSuggest,0,20);
 
         $city = DB::select('select p.name as provincename,c.name as cityname from bu_provinces as p left join bu_citys as c on c.provinceid= p.id where c.provinceid =? and c.cityid=?',[$topic->province_id,$topic->city_id]);
         if($city){
@@ -184,7 +185,7 @@ class TopicController extends Controller
                 return api_error('修改状态失败');
             }
         }else{
-            return api_error('没有此ID');
+            return api_error('');
         }
         return api_success();
     }
