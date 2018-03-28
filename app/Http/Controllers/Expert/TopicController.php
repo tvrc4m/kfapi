@@ -74,6 +74,7 @@ class TopicController extends Controller
      */
     public function addComment(Request $request)
     {
+
         $this->validate($request, [
             'topic_id' => 'required|numeric',
             'content' => 'required|max:1000',
@@ -87,9 +88,9 @@ class TopicController extends Controller
         if(!$expert){
             return api_error('请登录');
         }
-        //dd($expert);
+
         $data = array(
-            'topic_id'=>$request->input('topic'),
+            'topic_id'=>$request->input('topic_id'),
             'content'=>$request->input('content'),
             'expert_id'=>$expert['id'],
         );
