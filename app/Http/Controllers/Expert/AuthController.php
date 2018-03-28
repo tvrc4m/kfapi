@@ -103,7 +103,7 @@ class AuthController extends Controller
     public function welcome()
     {
         $expertId = Auth::guard("expert")->user()['id'];
-//sdd($expertId);
+//dd($expertId);
         //专家名称、上次登录时间
         $expert = DB::table('experts')
             ->select('name','last_login_time')
@@ -111,12 +111,13 @@ class AuthController extends Controller
             ->first();
         //dd($expert);
         //已回答问题数量、
-        $num = DB::select('select count(topic_id) as answered_question_num from bu_comments where expert_id = ?', [$expertId]);
+        $num = DB::select('select count(DISTINCT(topic_id)) as answered_question_num from bu_comments where expert_id = ?', [$expertId]);
         //dd($num);
         $answered_question_num = $num[0]->answered_question_num ??0;
         //dd($answered_question_num);
         //所有人回答问题数量、排名
-        $userNum = DB::select('select expert_id,count(topic_id) as user_num from bu_comments group by expert_id');
+        $userNum = DB::select('select expert_id,count(DISTINCT(topic_id)) as user_num from bu_comments group by expert_id');
+        //dd($userNum);
         $expertSort = 0;
         if($userNum){
             foreach ($userNum as $k=>$v){
@@ -137,7 +138,7 @@ class AuthController extends Controller
         //dd($expertSort);
         //未回答问题数量
         //问题总数量、
-        $totalNum = DB::select('select count(topic_id) as total_num,count(user_id) as ask_people_num from bu_invitations where expert_id = ?', [$expertId]);
+        $totalNum = DB::select('select count(DISTINCT(topic_id)) as total_num,count(DISTINCT(user_id)) as ask_people_num from bu_invitations where expert_id = ?', [$expertId]);
         //dd($totalNum);
         //dd($totalNum);
         $unanswered_question_num = 0;
