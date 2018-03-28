@@ -135,10 +135,10 @@
         });
         $(function(){
             $(document).on('click','.list-show',function(){
-                var other=$(".section").not(parent)
-                other.find('article').slideUp()
-                other.find('.list-show').fadeIn();
-                other.find('.list-hide').fadeOut();
+                // var other=$(".section").not(parent)
+                // other.find('article').slideUp()
+                // other.find('.list-show').fadeIn();
+                // other.find('.list-hide').fadeOut();
 
                 var parent=$(this).parents('.section')
                 parent.find('article').slideDown();
