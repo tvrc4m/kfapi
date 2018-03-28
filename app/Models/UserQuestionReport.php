@@ -103,8 +103,7 @@ class UserQuestionReport extends Model
                 $suggest_ids[] = $v['question_suggest_id'];
             }
         }
-        Log::debug("匹配建议");
-        Log::debug($suggest_ids);
+
         // 保存情感建议
         DB::beginTransaction();
         $report = $this->updateOrCreate(['user_answer_id' => $paper->id], [
@@ -193,17 +192,7 @@ class UserQuestionReport extends Model
                 }
             }
         }
-        // Log::debug("用户的答案");
-        // Log::debug($answers);
-        // Log::debug("模板");
-        // Log::debug($template);
-        // Log::debug("模板key");
-        // Log::debug($replaceKey);
-        // Log::debug("模板val");
-        // Log::debug($replaceVal);
         $understand = str_replace($replaceKey, $replaceVal, $template);
-        // Log::debug("模板结果");
-        // Log::debug($understand);
 
         // 保存结果
         DB::beginTransaction();
@@ -254,15 +243,12 @@ class UserQuestionReport extends Model
                 ];
             }
         }
-        Log::debug("案例相似度");
-        Log::debug($percentArr);
+
         // 相似度倒序
         $percentArrSorted = arraySort($percentArr, 'percent');
         $case_ids = [];
         foreach ($percentArrSorted as $v) {
             if (count($case_ids) < 3) { // 只取得相似度前三
-                Log::debug("案例相似度");
-                Log::debug($v['percent']);
                 $case_ids[] = $v['case_id'];
             }
         }
@@ -298,15 +284,12 @@ class UserQuestionReport extends Model
                 ];
             }
         }
-        Log::debug("法规相似度");
-        Log::debug($percentArr);
+
         // 相似度倒序
         $percentArrSorted = arraySort($percentArr, 'percent');
         $law_rule_ids = [];
         foreach ($percentArrSorted as $v) {
             if (count($law_rule_ids) < 3) { // 只取得相似度前三
-                Log::debug("法规相似度");
-                Log::debug($v['percent']);
                 $law_rule_ids[] = $v['law_rule_id'];
             }
         }
