@@ -191,11 +191,11 @@ class UserQuestionReport extends Model
                 }
             }
         }
-        Log::debug("模板", $template);
-        Log::debug("替换的key", $replaceKey);
-        Log::debug("替换的val", $replaceVal);
+        // Log::debug("模板", $template);
+        // Log::debug("替换的key", $replaceKey);
+        // Log::debug("替换的val", $replaceVal);
         $understand = str_replace($replaceKey, $replaceVal, $template);
-        Log::debug("替换结果", $understand);
+        // Log::debug("替换结果", $understand);
 
         // 保存结果
         DB::beginTransaction();
