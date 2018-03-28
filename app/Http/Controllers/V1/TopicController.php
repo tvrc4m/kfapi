@@ -89,56 +89,51 @@ class TopicController extends Controller
             ->first();
         //dd($topic);
         $newSuggest = '';
-        if($topic) {
-            if ($topic->cate == 1) {
-                //dd(json_decode($topic->case_ids));
-                if (!empty($topic->case_ids)) {
-                    $case_ids = json_decode($topic->case_ids);
-                    $suggest = DB::table('cases')
-                        ->select('cases.suggest')
-                        ->whereIn('cases.id', $case_ids)
-                        ->get()
-                        ->toArray();
-                    foreach ($suggest as $k => $v) {
-                        $newSuggest .= $v->suggest . ',';
-                    }
-                }
-                //dd($suggest);
-            } else {
-                if (!empty($topic->suggest_ids)) {
-                    $suggest_ids = json_decode($topic->suggest_ids);
-                    $suggest = DB::table('question_suggests')
-                        ->select('question_suggests.content')
-                        ->whereIn('question_suggests.id', $suggest_ids)
-                        ->get()
-                        ->toArray();
-                    foreach ($suggest as $k => $v) {
-                        $newSuggest .= $v->content . ',';
-                    }
+        if($topic->cate==1){
+            //dd(json_decode($topic->case_ids));
+            if(!empty($topic->case_ids)){
+
+                $case_ids = json_decode($topic->case_ids);
+                $suggest = DB::table('cases')
+                    ->select('cases.suggest')
+                    ->whereIn('cases.id',$case_ids)
+                    ->get()
+                    ->toArray();
+                foreach ($suggest as $k=>$v){
+                    $newSuggest .= $v->suggest.',';
                 }
             }
-
-            $topic->opinion_content = substr($newSuggest,0,20);
-
-            $city = DB::select('select p.name as provincename,c.name as cityname from bu_provinces as p left join bu_citys as c on c.provinceid= p.id where c.provinceid =? and c.cityid=?',[$topic->province_id,$topic->city_id]);
-            if($city){
-                $topic->area = $city[0]->provincename.$city[0]->cityname;
-            }
-
-            if($topic->cate == 1){
-                $topic->cate = '法律';
-            }elseif($topic->cate == 2){
-                $topic->cate = '情感';
-            }else{
-                $topic->cate = '';
-            }
-
-            unset($topic->province_id,$topic->city_id,$topic->suggest_ids,$topic->case_ids);
+            //dd($suggest);
         }else{
-            return api_error('数据为空');
+            if(!empty($topic->suggest_ids)){
+                $suggest_ids = json_decode($topic->suggest_ids);
+                $suggest = DB::table('question_suggests')
+                    ->select('question_suggests.content')
+                    ->whereIn('question_suggests.id',$suggest_ids)
+                    ->get()
+                    ->toArray();
+                foreach ($suggest as $k=>$v){
+                    $newSuggest .= $v->content.',';
+                }
+            }
+        }
+//dd($newSuggest);
+        $topic->opinion_content = mb_substr($newSuggest,0,20);
+
+        $city = DB::select('select p.name as provincename,c.name as cityname from bu_provinces as p left join bu_citys as c on c.provinceid= p.id where c.provinceid =? and c.cityid=?',[$topic->province_id,$topic->city_id]);
+        if($city){
+            $topic->area = $city[0]->provincename.$city[0]->cityname;
         }
 
-//dd($newSuggest);
+        if($topic->cate == 1){
+            $topic->cate = '法律';
+        }elseif($topic->cate == 2){
+            $topic->cate = '情感';
+        }else{
+            $topic->cate = '';
+        }
+
+        unset($topic->province_id,$topic->city_id,$topic->suggest_ids,$topic->case_ids);
         //dd($topic);
         return api_success($topic);
     }
@@ -190,7 +185,7 @@ class TopicController extends Controller
                 return api_error('修改状态失败');
             }
         }else{
-            return api_error('没有此ID');
+            return api_error('');
         }
         return api_success();
     }
