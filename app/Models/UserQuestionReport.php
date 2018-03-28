@@ -236,7 +236,7 @@ class UserQuestionReport extends Model
         $percentArr = [];
         foreach ($caseKeywordArr as $case_id => $v) {
             $percent = similar_array($user_keyword_ids, $v);
-            if ($percent > 60) {
+            if ($percent >= 50) {
                 $percentArr[] = [
                     'percent' => $percent,
                     'case_id' => $case_id,
@@ -277,7 +277,7 @@ class UserQuestionReport extends Model
         $percentArr = [];
         foreach ($lawKeywordArr as $law_rule_id => $v) {
             $percent = similar_array($user_keyword_ids, $v);
-            if ($percent > 60) {
+            if ($percent >= 50) {
                 $percentArr[] = [
                     'percent' => $percent,
                     'law_rule_id' => $law_rule_id,
