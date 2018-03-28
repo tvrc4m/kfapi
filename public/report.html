@@ -71,7 +71,7 @@
                     html+='</header>';
                     html+='<hr>';
                     // 法规栏
-                    if(data.law_rule.content && data.law_rule.content.length){
+                    if(data.law_rule && data.law_rule.content && data.law_rule.content.length){
                         html+='<section id="section" class="section">';
                         html+='<h3>';
                         html+=line.shift()+data.law_rule.name+'<i class="list-show">展开<img src="img/show.png"></i>';
@@ -87,7 +87,7 @@
                         html+='<hr>';
                     }
                     // 经调查了解
-                    if(data.understand.content && data.understand.content.length){
+                    if(data.understand && data.understand.content && data.understand.content.length){
                         html+='<section id="section" class="section">';
                         html+='<h3>';
                         html+=line.shift()+data.understand.name+'<i class="list-show">展开<img src="img/show.png"></i>';
@@ -100,7 +100,7 @@
                         html+='<hr>';
                     }
                     // 本次建议如下
-                    if(data.suggest.content && data.suggest.content.length){
+                    if(data.suggest && data.suggest.content && data.suggest.content.length){
                         html+='<section id="section" class="section">';
                         html+='<h3>';
                         html+=line.shift()+data.suggest.name+'<i class="list-show">展开<img src="img/show.png"></i>';
@@ -115,7 +115,7 @@
                         html+='<hr>';
                     }
                     // 四、综上所述
-                    if(data.judgment.content && data.judgment.content.length){
+                    if(data.judgment && data.judgment.content && data.judgment.content.length){
                         html+='<section id="section" class="section">';
                         html+='<h3>';
                         html+=line.shift()+data.judgment.name+'<i class="list-show">展开<img src="img/show.png"></i>';
