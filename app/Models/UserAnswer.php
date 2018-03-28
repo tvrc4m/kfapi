@@ -133,6 +133,8 @@ class UserAnswer extends Model
         DB::beginTransaction();
 
         // 验证试卷id是否正确
+        Log::debug("提交问题的paper_id");
+        Log::debug($paper_id);
         $paper = $this->where([
             'id' => $paper_id,
             'stat' => self::STATUS_UNFINISH,
