@@ -55,6 +55,7 @@ class RecordController extends Controller
         if($record['data']){
             foreach ($record['data'] as $k=>&$v){
                 //dd($city);
+                $v->created_at = date('m-d H:i:s',strtotime($v->created_at));
                 if($v->province_id && $v->city_id){
                     $v->area = $pArr[$v->province_id].$cArr[$v->city_id];
                 }else{
@@ -156,6 +157,8 @@ class RecordController extends Controller
                         }
                     }
                 }
+                $opinion->created_at = date('m-d H:i:s',strtotime($opinion->created_at));
+                $opinion->updated_at = date('m-d H:i:s',strtotime($opinion->created_at));
                 $opinion->opinion_content = mb_substr($newSuggest,0,100);
                 //dd($city);
                 unset($opinion->case_ids,$opinion->suggest_ids);
