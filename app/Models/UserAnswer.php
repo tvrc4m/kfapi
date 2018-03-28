@@ -193,6 +193,8 @@ class UserAnswer extends Model
                 ->orderBy('sort')
                 ->orderByDesc("created_at")
                 ->get(['id'])->pluck('id')->all();
+            Log::debug("主线题集");
+            Log::debug($collect_ids);
             if (empty($collect_ids)) {
                 DB::rollBack();
                 throw new \Exception("没有找到主线问题集");
