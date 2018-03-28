@@ -105,7 +105,7 @@ class TopicController extends Controller
     {
         $topic_id = $request->input('topic_id');
         $expertId = Auth::guard('expert')->user()['id'];
-        dd($expertId);
+        //dd($expertId);
         $where = [];
         if (!empty($topic_id)) {
             $where['comments.topic_id'] = $topic_id;
