@@ -32,7 +32,6 @@ class TopicController extends Controller
             ->leftJoin('users', 'users.id', '=', 'topics.user_id')
             ->select('topics.id','topics.content','topics.created_at','users.user_name')
             ->where('invitations.expert_id',$expertId)
-            ->groupBy('topics.id')
             ->orderBy('topics.created_at','desc')
             ->paginate(20)
             ->toArray();
