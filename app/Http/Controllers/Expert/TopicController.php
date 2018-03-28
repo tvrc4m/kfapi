@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\expert;
 use App\Http\Controllers\Controller;
 
+use App\Models\Experts;
 use App\Models\Topics;
 use App\Models\Comments;
 use Illuminate\Http\Request;
@@ -93,7 +94,14 @@ class TopicController extends Controller
             'content'=>$request->input('content'),
             'expert_id'=>$expert['id'],
         );
+        $comments['comments'] += 1;
+        // 开启事务
+        DB::beginTransaction();
         $comment = Comments::create($data);
+        Experts::update();
+
+        DB::commit();
+
         if ($comment) {
             return api_success($comment);
         }

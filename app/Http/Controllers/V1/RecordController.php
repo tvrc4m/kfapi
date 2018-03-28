@@ -252,7 +252,7 @@ class RecordController extends Controller
                 'remark'=>$opinion->remark,
                 'law_rule'=>['name'=>'可参考法规','content'=>$rule],
                 'understand'=>['name'=>'经调查了解','content'=>$opinion->understand],
-                'suggest'=>['name'=>'本地建议如下','content'=>$suggest],
+                'suggest'=>['name'=>'本次建议如下','content'=>$suggest],
                 'judgment'=>['name'=>'综上所述','content'=>$judgment]
             );
         }else{
@@ -262,16 +262,16 @@ class RecordController extends Controller
                 ->whereIn('id',$suggestIds)
                 ->get()
                 ->toArray();
-            $newSuggest = '';
+            $newSuggest = array();
             foreach($suggest as $k=>$v){
-                $newSuggest .= $v->content;
+                $newSuggest[]= $v->content;
             }
             //dd($suggest);
             $data = array(
                 'id'=>$opinion->id,
                 'type'=>$opinion->type,
                 'remark'=>$opinion->remark,
-                'suggest'=>['name'=>'经调查了解','content'=>$newSuggest],
+                'suggest'=>['name'=>'本次建议如下','content'=>$newSuggest],
             );
            // dd($data);
         }

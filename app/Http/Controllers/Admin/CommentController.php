@@ -24,7 +24,7 @@ class CommentController extends Controller
     //回复列表
     public function getAllComments(Request $request)
     {
-        $type = $request->input('type');
+        $type = $request->input('cate');
         $hide_comment = $request->input('hide_comment');
         $where = [];
         if (!empty($type)) {

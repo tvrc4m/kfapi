@@ -146,9 +146,9 @@ class TopicController extends Controller
             'content' => 'required|max:255',
             'description' => 'required|max:500',
         ],[
-            'paper_id.required' => '用户ID不能为空',
-            'paper_id.numeric' => '用户ID不合法',
-            'content.required' => '问题id不能为空',
+            'paper_id.required' => '答卷ID不能为空',
+            'paper_id.numeric' => '答卷ID不合法',
+            'content.required' => '问题不能为空',
             'content.max' => '问题不超过255个字符',
             'description.required' => '情感描述不能为空',
             'description.max' => '情感描述不超过500个字符',
