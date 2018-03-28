@@ -44,6 +44,12 @@ class AuthController extends Controller
             //dd($token);
             return api_error('用户名或密码错误');
         }
+        $expertId = Auth::guard("expert")->user()['id'];
+        //dd($expertId);
+        $expert = Experts::where('id',$expertId)->firstOrFail();
+        //dd($expert);
+        $data['last_login_time'] = date('Y-m-d H:i:s',time());
+        $expert->update($data);
 
         return $this->respondWithToken($token);
     }
