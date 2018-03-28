@@ -72,7 +72,7 @@ if (! function_exists('similar_array')) {
             return 0;
         }
         $temp = array_intersect($arr1, $arr2);
-        $percent = count($temp)/count($arr2);
+        $percent = count($temp)/count($arr2)*100;
         return intval($percent);
         // sort($arr1);
         // sort($arr2);
