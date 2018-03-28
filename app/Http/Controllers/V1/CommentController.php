@@ -57,7 +57,8 @@ class CommentController extends Controller
 
         $comments = DB::table('comments')
             ->leftJoin('experts', 'experts.id', '=', 'comments.expert_id')
-            ->select('experts.name as expertname','experts.icon','experts.job_id','comments.content')
+            ->leftJoin('topics','comments.topic_id','=','topics.id')
+            ->select('topics.id as topic_id','experts.name as expertname','experts.icon','experts.job_id','comments.content')
             ->where('comments.top',1)
             ->orderBy('comments.created_at','desc')
             ->limit(4)
