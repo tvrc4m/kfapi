@@ -189,4 +189,38 @@ class QuestionController extends Controller
 
         return api_success($data);
     }
+
+    /**
+     * 问题排序
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function sortQuestion(Request $request)
+    {
+        $this->validate($request, [
+            'question_sort' => 'required|array',
+        ],[
+            'question_sort.required' => '问题不能为空',
+            'question_sort.numeric' => '问题必须是数组',
+        ]);
+
+        $question_sort = $request->input('question_sort');
+        if (!empty($question_sort)){
+            //开启事务
+            DB::beginTransaction();
+            foreach ($question_sort as $key => $value) {
+                $question = Question::find($value['question_id']);
+                $question->sort = $value['sort'];
+                $result = $question->save();
+                if (!$result){
+                    DB::rollBack();
+                    return api_error();
+                }
+            }
+            DB::commit();
+            return api_success();
+        }
+
+        return api_success();
+    }
 }
