@@ -133,10 +133,13 @@ class UserAnswer extends Model
         DB::beginTransaction();
 
         // 验证试卷id是否正确
+        Log::debug("提交问题的paper_id");
+        Log::debug($paper_id);
         $paper = $this->where([
             'id' => $paper_id,
             'stat' => self::STATUS_UNFINISH,
         ])->firstOrFail();
+        Log::debug("paper_id ok");
 
         // 记录答案
         $oldData     = $paper->data ? $paper->data : [];
@@ -190,6 +193,8 @@ class UserAnswer extends Model
                 ->orderBy('sort')
                 ->orderByDesc("created_at")
                 ->get(['id'])->pluck('id')->all();
+            Log::debug("主线题集");
+            Log::debug($collect_ids);
             if (empty($collect_ids)) {
                 DB::rollBack();
                 throw new \Exception("没有找到主线问题集");
