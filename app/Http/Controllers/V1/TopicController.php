@@ -185,7 +185,7 @@ class TopicController extends Controller
                 return api_error('修改状态失败');
             }
         }else{
-            return api_error('');
+            return api_error('没有此问题');
         }
         return api_success();
     }
