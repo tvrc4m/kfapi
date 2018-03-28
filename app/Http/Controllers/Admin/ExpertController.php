@@ -218,21 +218,26 @@ class ExpertController extends Controller
             'type.numeric' => '专家类型不合法',
         ]);
 
-        $expert = Experts::where('id',$id)->first();
-        $service = ExpertsServices::where('expert_id',$id)->first();
+        $expert = Experts::where('id',$id)->firstOrFail();
+        //dd($expert);
+        $service = ExpertsServices::where('expert_id',$id)->delete();
         //dd($service);
         $data=$request->except('service');
         $data['certification'] = implode(',',$request->input('certification'));
         $data['good_at'] = implode(',',$request->input('good_at'));
-
+        $data['password'] = Hash::make($request->input('password'));
         // 开启事务
         DB::beginTransaction();
 
-        $expert->update($data);
+        //dd($data);
+        $res = $expert->update($data);
+        //dd($res);
         $newService = $request->only('service')['service'];
         //dd($newService);
-        foreach($newService as $v){
-            $expert_service = $service->update($v);
+        foreach($newService as $k=>$v){
+            $v['expert_id'] = $id;
+            $expert_service = ExpertsServices::create($v);
+            //dd($expert_service);
             if(!$expert_service){
                 DB::rollBack();
                 return api_error();

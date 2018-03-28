@@ -178,10 +178,13 @@ class TopicController extends Controller
         $data = array(
             'is_hide'=>$status,
         );
-
-        $result = $topic->update($data);
-        if(!$result){
-            return api_error('修改状态失败');
+        if($topic){
+            $result = $topic->update($data);
+            if(!$result){
+                return api_error('修改状态失败');
+            }
+        }else{
+            return api_error('没有此ID');
         }
         return api_success();
     }

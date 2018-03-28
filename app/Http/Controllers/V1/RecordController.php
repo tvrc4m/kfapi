@@ -118,8 +118,9 @@ class RecordController extends Controller
         //dd($userid);
         $perpage = $request->input('per_page');
         $record = DB::table('user_question_report')
-            ->select('id','user_question_report.case_ids','user_question_report.suggest_ids','user_question_report.type','created_at','updated_at')
-            ->where('user_id',$userid)
+            ->leftJoin('topics','topics.opinion_id','=','user_question_report.id')
+            ->select('topics.id as topic_id','user_question_report.id','user_question_report.case_ids','user_question_report.suggest_ids','user_question_report.type','user_question_report.created_at','user_question_report.updated_at')
+            ->where('user_question_report.user_id',$userid)
             ->paginate($perpage)
             ->toArray();
 //dd($record);
@@ -237,13 +238,10 @@ class RecordController extends Controller
                 ->whereIn('id',$caseIds)
                 ->get()
                 ->toArray();
-            if($advice){
-                foreach($advice as $k=>$v){
-                    $suggest[] = $v->suggest;
-                    $judgment[] = $v->judgment;
-                }
+            foreach($advice as $k=>$v){
+                $suggest[] = $v->suggest;
+                $judgment[]= $v->judgment;
             }
-
             //dd($suggest);
             $data = array(
                 'id'=>$opinion->id,
@@ -261,9 +259,9 @@ class RecordController extends Controller
                 ->whereIn('id',$suggestIds)
                 ->get()
                 ->toArray();
-            //dd($suggest);
+            $newSuggest = '';
             foreach($suggest as $k=>$v){
-                $newSuggest[] = $v->content;
+                $newSuggest .= $v->content;
             }
             //dd($suggest);
             $data = array(

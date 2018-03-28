@@ -117,6 +117,7 @@ class AuthController extends Controller
         //dd($answered_question_num);
         //所有人回答问题数量、排名
         $userNum = DB::select('select expert_id,count(topic_id) as user_num from bu_comments group by expert_id');
+        $newNum = array();
         if($userNum){
             foreach ($userNum as $k=>$v){
                 $userArr[] = $v->user_num;
@@ -126,11 +127,15 @@ class AuthController extends Controller
             //dd($userNum);
             foreach ($userNum as $k=>$v){
                 $sort = $k+1;
-                $newNum[$v->expert_id]['sort'] = $sort;
+                //$newNum[$v->expert_id]['sort'] = $sort;
+                if($expertId==$v->expert_id){
+                    $expertSort = $sort;
+                }else{
+                    $expertSort = 0;
+                }
             }
         }
-        //排名
-        $expertSort = $newNum[$expertId]['sort'];
+
         //dd($expertSort);
         //未回答问题数量
         //问题总数量、

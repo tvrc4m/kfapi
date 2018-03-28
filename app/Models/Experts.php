@@ -29,9 +29,6 @@ class Experts extends Model implements AuthenticatableContract,JWTSubject
      */
     protected $dates = ['', ''];
 
-    protected $fillable = [
-        'account', 'password', 'stat'
-    ];
 
     protected $hidden = [
         'password',

@@ -94,7 +94,7 @@ class ExpertController extends Controller
         $data = DB::table('experts')
             ->leftJoin('experts_services', 'experts.id', '=', 'experts_services.expert_id')
             ->leftJoin('services','services.id','=','experts_services.service_id')
-            ->select('experts.name as expertname','experts.icon','experts.certification','experts.good_at','experts.intro','experts.province_id','experts.city_id',
+            ->select('experts.name as expertname','experts.certification_img','experts.icon','experts.certification','experts.good_at','experts.intro','experts.province_id','experts.city_id',
                 'experts_services.expert_id','experts_services.service_id','experts_services.price','experts_services.description','experts_services.limit_free','services.name','services.stat')
             ->where('experts.id',$id)
             ->first();
