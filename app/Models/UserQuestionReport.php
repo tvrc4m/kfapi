@@ -103,6 +103,8 @@ class UserQuestionReport extends Model
                 $suggest_ids[] = $v['question_suggest_id'];
             }
         }
+        Log::debug("匹配建议");
+        Log::debug($suggest_ids);
         // 保存情感建议
         DB::beginTransaction();
         $report = $this->updateOrCreate(['user_answer_id' => $paper->id], [
