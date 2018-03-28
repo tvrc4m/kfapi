@@ -238,6 +238,8 @@ class RecordController extends Controller
                 ->whereIn('id',$caseIds)
                 ->get()
                 ->toArray();
+            $suggest = array();
+            $judgment = array();
             foreach($advice as $k=>$v){
                 $suggest[] = $v->suggest;
                 $judgment[]= $v->judgment;

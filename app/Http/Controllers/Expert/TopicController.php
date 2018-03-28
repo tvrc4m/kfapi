@@ -30,7 +30,7 @@ class TopicController extends Controller
         $topics = DB::table('topics')
             ->leftJoin('invitations', 'invitations.topic_id', '=', 'topics.id')
             ->leftJoin('users', 'users.id', '=', 'topics.user_id')
-            ->select('topics.id','topics.content','topics.created_at','users.user_name')
+            ->select('invitations.id as invi_id','topics.id','topics.content','topics.created_at','users.user_name')
             ->where('invitations.expert_id',$expertId)
             ->orderBy('topics.created_at','desc')
             ->paginate(20)
