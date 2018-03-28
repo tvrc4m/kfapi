@@ -74,6 +74,7 @@ class TopicController extends Controller
      */
     public function addComment(Request $request)
     {
+
         $this->validate($request, [
             'topic_id' => 'required|numeric',
             'content' => 'required|max:1000',
@@ -84,13 +85,16 @@ class TopicController extends Controller
             'content.max' => '回复不能超过1000字符',
         ]);
         $expert = Auth::guard('expert')->user()->toArray();
-        //dd($expert);
+        if(!$expert){
+            return api_error('请登录');
+        }
+
         $data = array(
-            'topic_id'=>$request->input('topic'),
+            'topic_id'=>$request->input('topic_id'),
             'content'=>$request->input('content'),
             'expert_id'=>$expert['id'],
         );
-        $comment = Comments::create($request->all());
+        $comment = Comments::create($data);
         if ($comment) {
             return api_success($comment);
         }
@@ -102,12 +106,15 @@ class TopicController extends Controller
     {
         $topic_id = $request->input('topic_id');
         $expertId = Auth::guard('expert')->user()['id'];
+        //dd($expertId);
         $where = [];
         if (!empty($topic_id)) {
             $where['comments.topic_id'] = $topic_id;
         }
         if (!empty($expertId)) {
             $where['comments.expert_id'] = $expertId;
+        }else{
+            return api_error('请登录');
         }
         $comments = DB::table('comments')
             ->select('comments.id','comments.content','comments.topic_id','comments.created_at','comments.is_hide','comments.top')
