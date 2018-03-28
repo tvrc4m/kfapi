@@ -83,6 +83,8 @@ class UserAnswer extends Model
             'user_id' => $user_id,
             'stat' => self::STATUS_UNFINISH,
         ])->orderByDesc('created_at')->firstOrFail();
+        Log::debug("取出试卷");
+        Log::debug($paper);
         // 取得问题集
         $collect_id_arr = $paper->wait_question_collection_ids;
         if (empty($collect_id_arr)) {
@@ -97,7 +99,8 @@ class UserAnswer extends Model
         }
         $collect_id = $collect_id_arr[0];
         $collect    = QuestionCollection::where('id', $collect_id)->firstOrFail();
-
+        Log::debug("取出题集");
+        Log::debug($collect);
         $questions = $collect->questions()
             ->orderBy('sort')
             ->orderBy('id')
