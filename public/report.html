@@ -68,6 +68,7 @@
                     html+='<header id="header">';
                     html+='<h1>（2018）第'+opinion_id+'号</h1>';
                     html+='</header>';
+                    html+='<hr>';
                     // 法规栏
                     if(data.law_rule){
                         html+='<section id="section" class="section">';
@@ -82,6 +83,7 @@
                         html+='</article>';
                         html+='<i class="list-hide">收起<img src="img/hide.png"></i>';
                         html+='</section>';
+                        html+='<hr>';
                     }
                     // 经调查了解
                     if(data.understand){
@@ -89,11 +91,12 @@
                         html+='<h3>';
                         html+=data.understand.name+'<i class="list-show">展开<img src="img/show.png"></i>';
                         html+='</h3>';
-                        html+='<article class="content">';
+                        html+='<article class="special">';
                         html+='<p>'+data.understand.content+'</p>'
                         html+='</article>';
                         html+='<i class="list-hide">收起<img src="img/hide.png"></i>';
                         html+='</section>';
+                        html+='<hr>';
                     }
                     // 本次建议如下
                     if(data.suggest){
@@ -108,6 +111,7 @@
                         html+='</article>';
                         html+='<i class="list-hide">收起<img src="img/hide.png"></i>';
                         html+='</section>';
+                        html+='<hr>';
                     }
                     // 四、综上所述
                     if(data.judgment){
@@ -122,6 +126,7 @@
                         html+='</article>';
                         html+='<i class="list-hide">收起<img src="img/hide.png"></i>';
                         html+='</section>';
+                        html+='<hr>';
                     }
                     $("#opinionBook").html(html)
                 }   
