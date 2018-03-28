@@ -5,6 +5,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class UserQuestionReport extends Model
 {
@@ -190,7 +191,11 @@ class UserQuestionReport extends Model
                 }
             }
         }
+        // Log::debug("模板", $template);
+        // Log::debug("替换的key", $replaceKey);
+        // Log::debug("替换的val", $replaceVal);
         $understand = str_replace($replaceKey, $replaceVal, $template);
+        // Log::debug("替换结果", $understand);
 
         // 保存结果
         DB::beginTransaction();
