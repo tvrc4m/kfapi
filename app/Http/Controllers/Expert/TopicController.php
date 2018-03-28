@@ -84,6 +84,8 @@ class TopicController extends Controller
             'content.required' => '回复不能为空',
             'content.max' => '回复不能超过1000字符',
         ]);
+        $topicId = $request->input('topic_id');
+        //dd($topicId);
         $expert = Auth::guard('expert')->user()->toArray();
         if(!$expert){
             return api_error('请登录');
@@ -94,18 +96,17 @@ class TopicController extends Controller
             'content'=>$request->input('content'),
             'expert_id'=>$expert['id'],
         );
-        $comments['comments'] += 1;
+
         // 开启事务
         DB::beginTransaction();
         $comment = Comments::create($data);
-        Experts::update();
-
-        DB::commit();
-
-        if ($comment) {
-            return api_success($comment);
+        $comments = DB::update('update bu_topics set comments=comments+1 where id = ?', [$topicId]);
+        if(!$comments || !$comment){
+            DB::rollBack();
+            return api_error();
         }
-        return api_error();
+        DB::commit();
+        return api_success();
     }
 
     //专家回复列表
