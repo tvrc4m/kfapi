@@ -245,16 +245,22 @@ class UserQuestionReport extends Model
         $percentArr = [];
         foreach ($caseKeywordArr as $case_id => $v) {
             $percent = similar_array($user_keyword_ids, $v);
-            $percentArr[] = [
-                'percent' => $percent,
-                'case_id' => $case_id,
-            ];
+            if ($percent > 60) {
+                $percentArr[] = [
+                    'percent' => $percent,
+                    'case_id' => $case_id,
+                ];
+            }
         }
+        Log::debug("案例相似度");
+        Log::debug($percentArr);
         // 相似度倒序
         $percentArrSorted = arraySort($percentArr, 'percent');
         $case_ids = [];
         foreach ($percentArrSorted as $v) {
-            if (count($case_ids) < 3 && $v['percent'] > 30) { // 只取得相似度前三 相似度大于30
+            if (count($case_ids) < 3) { // 只取得相似度前三
+                Log::debug("案例相似度");
+                Log::debug($v['percent']);
                 $case_ids[] = $v['case_id'];
             }
         }
@@ -283,16 +289,22 @@ class UserQuestionReport extends Model
         $percentArr = [];
         foreach ($lawKeywordArr as $law_rule_id => $v) {
             $percent = similar_array($user_keyword_ids, $v);
-            $percentArr[] = [
-                'percent' => $percent,
-                'law_rule_id' => $law_rule_id,
-            ];
+            if ($percent > 60) {
+                $percentArr[] = [
+                    'percent' => $percent,
+                    'law_rule_id' => $law_rule_id,
+                ];
+            }
         }
+        Log::debug("法规相似度");
+        Log::debug($percentArr);
         // 相似度倒序
         $percentArrSorted = arraySort($percentArr, 'percent');
         $law_rule_ids = [];
         foreach ($percentArrSorted as $v) {
-            if (count($law_rule_ids) < 3 && $v['percent'] > 30) { // 只取得相似度前三 相似度大于30
+            if (count($law_rule_ids) < 3) { // 只取得相似度前三
+                Log::debug("法规相似度");
+                Log::debug($v['percent']);
                 $law_rule_ids[] = $v['law_rule_id'];
             }
         }

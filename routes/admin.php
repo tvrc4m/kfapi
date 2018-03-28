@@ -69,6 +69,8 @@ $router->group([], function () use ($router) {
         // 所有问题列表
         $router->get('/allquestion', 'QuestionCollectionController@getAllQuestionList');
 
+        // 排序问题
+        $router->post('/sort', 'QuestionController@sortQuestion');
         // 新增问题
         $router->post('/', 'QuestionController@createQuestion');
         // 问题列表
