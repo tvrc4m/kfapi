@@ -93,7 +93,7 @@ class TopicController extends Controller
             'content'=>$request->input('content'),
             'expert_id'=>$expert['id'],
         );
-        $comment = Comments::create($request->all());
+        $comment = Comments::create($data);
         if ($comment) {
             return api_success($comment);
         }
