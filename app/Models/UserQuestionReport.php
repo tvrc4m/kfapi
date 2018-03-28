@@ -191,6 +191,8 @@ class UserQuestionReport extends Model
                 }
             }
         }
+        Log::debug("用户的答案");
+        Log::debug($answers);
         Log::debug("模板");
         Log::debug($template);
         Log::debug("模板key");
