@@ -139,6 +139,7 @@ class AuthController extends Controller
         //问题总数量、
         $totalNum = DB::select('select count(topic_id) as total_num,count(user_id) as ask_people_num from bu_invitations where expert_id = ?', [$expertId]);
         //dd($totalNum);
+        //dd($totalNum);
         $unanswered_question_num = 0;
         if($totalNum[0]->total_num){
             $unanswered_question_num = intval($totalNum[0]->total_num) - $answered_question_num;
