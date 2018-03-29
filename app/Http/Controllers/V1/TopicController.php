@@ -124,6 +124,8 @@ class TopicController extends Controller
         $city = DB::select('select p.name as provincename,c.name as cityname from bu_provinces as p left join bu_citys as c on c.provinceid= p.id where c.provinceid =? and c.cityid=?',[$topic->province_id,$topic->city_id]);
         if($city){
             $topic->area = $city[0]->provincename.$city[0]->cityname;
+        }else{
+            $topic->area = '';
         }
 
         if($topic->cate == 1){
@@ -174,20 +176,32 @@ class TopicController extends Controller
     {
         $status = $request->input('is_hide');
         $topic_id = $request->input('topic_id');
-
+        $userId = \Auth::user()['id'];
+        //dd($userId);
         $topic = Topics::where('id',$topic_id)->first();
+        //dd($topic);
 
+        if(!$topic){
+            return api_error('没有此问题');
+        }
         $data = array(
             'is_hide'=>$status,
         );
-        if($topic){
-            $result = $topic->update($data);
-            if(!$result){
-                return api_error('修改状态失败');
-            }
-        }else{
-            return api_error('没有此问题');
+        // 开启事务
+        DB::beginTransaction();
+        $result1 = $topic->update($data);
+        $opinionId = $topic->opinion_id??0;
+        //dd($opinionId);
+        if($opinionId){
+            $result2 = DB::table('user_question_report')->where(['user_id'=>$userId,'id'=>$opinionId])->update($data);
         }
+        if (!$result1) {
+            DB::rollBack();
+            return api_error('修改问题状态失败');
+        }
+        DB::commit();
+
+
         return api_success();
     }
 }
