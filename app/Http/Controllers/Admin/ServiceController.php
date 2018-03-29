@@ -22,7 +22,8 @@ class ServiceController extends Controller
     public function getAllService(Request $request)
     {
         $cate = $request->input('cate');
-        $services = Services::paginate(20)->where('cate',$cate)->toArray();
+        $services = Services::where('cate',$cate)->paginate(20)->toArray();
+        //dd($services);
         return api_success($services);
     }
 
