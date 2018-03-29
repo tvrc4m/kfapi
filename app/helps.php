@@ -63,17 +63,23 @@ if (! function_exists('print_sql')) {
 if (! function_exists('similar_array')) {
     /**
      * 获得两个数组的相似度
-     * @param $arr1
-     * @param $arr2
+     * @param $arr1 用户的关键词id
+     * @param $arr2 案例或者法规的关键词id
      * @return int
      */
     function similar_array($arr1, $arr2) {
-        sort($arr1);
-        sort($arr2);
-        $str1 = implode("-", $arr1);
-        $str2 = implode("-", $arr2);
-        similar_text($str1, $str2, $percent);
+        if (empty($arr1) || empty($arr2)) {
+            return 0;
+        }
+        $temp = array_intersect($arr1, $arr2);
+        $percent = count($temp)/count($arr2)*100;
         return intval($percent);
+        // sort($arr1);
+        // sort($arr2);
+        // $str1 = implode("-", $arr1);
+        // $str2 = implode("-", $arr2);
+        // similar_text($str1, $str2, $percent);
+        // return intval($percent);
     }
 }
 

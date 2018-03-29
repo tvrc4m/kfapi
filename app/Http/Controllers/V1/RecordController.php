@@ -33,6 +33,7 @@ class RecordController extends Controller
             ->leftJoin('users', 'users.id', '=', 'topics.user_id')
             ->select('topics.id','topics.cate','topics.content','topics.created_at','users.user_name','users.province_id','users.city_id')
             ->where('topics.user_id',$userid)
+            ->orderBy('topics.created_at','desc')
             ->paginate($perpage)
             ->toArray();
 //dd($record);
@@ -55,6 +56,7 @@ class RecordController extends Controller
         if($record['data']){
             foreach ($record['data'] as $k=>&$v){
                 //dd($city);
+                $v->created_at = date('m-d H:i:s',strtotime($v->created_at));
                 if($v->province_id && $v->city_id){
                     $v->area = $pArr[$v->province_id].$cArr[$v->city_id];
                 }else{
@@ -121,6 +123,7 @@ class RecordController extends Controller
             ->leftJoin('topics','topics.opinion_id','=','user_question_report.id')
             ->select('topics.id as topic_id','user_question_report.id','user_question_report.case_ids','user_question_report.suggest_ids','user_question_report.type','user_question_report.created_at','user_question_report.updated_at')
             ->where('user_question_report.user_id',$userid)
+            ->orderBy('topics.created_at','desc')
             ->paginate($perpage)
             ->toArray();
 //dd($record);
@@ -156,6 +159,8 @@ class RecordController extends Controller
                         }
                     }
                 }
+                $opinion->created_at = date('m-d H:i:s',strtotime($opinion->created_at));
+                $opinion->updated_at = date('m-d H:i:s',strtotime($opinion->created_at));
                 $opinion->opinion_content = mb_substr($newSuggest,0,100);
                 //dd($city);
                 unset($opinion->case_ids,$opinion->suggest_ids);
@@ -214,10 +219,24 @@ class RecordController extends Controller
      * @param $id
      * @return \Illuminate\Http\JsonResponse
      */
-    public function getOneOpinion($opinionId)
+    public function getOneOpinion(Request $request)
     {
         //dd($user_id);
         //dd($topicIds);
+        $opinionId = $request->input('opinion_id');
+        $topicId = $request->input('topic_id');
+        $myDevice = Auth::user()['device'];
+        $device = $request->header('device');
+        //dd($device);
+        //dd($topicId);
+        $topic = Topics::select('is_hide')->where('id',$topicId)->first()->toArray();
+        //dd($topic);
+        if($topic['is_hide']==2){
+            if($device = '' || $device !==$myDevice){
+                return api_error('您没有权限查看');
+            }
+        }
+
         $opinion = DB::table('user_question_report')
             ->select('id','law_rule_ids','user_question_report.case_ids','user_question_report.suggest_ids','user_question_report.type','understand','remark')
             ->where('id',$opinionId)
@@ -252,7 +271,7 @@ class RecordController extends Controller
                 'remark'=>$opinion->remark,
                 'law_rule'=>['name'=>'可参考法规','content'=>$rule],
                 'understand'=>['name'=>'经调查了解','content'=>$opinion->understand],
-                'suggest'=>['name'=>'本地建议如下','content'=>$suggest],
+                'suggest'=>['name'=>'本次建议如下','content'=>$suggest],
                 'judgment'=>['name'=>'综上所述','content'=>$judgment]
             );
         }else{
@@ -262,16 +281,16 @@ class RecordController extends Controller
                 ->whereIn('id',$suggestIds)
                 ->get()
                 ->toArray();
-            $newSuggest = '';
+            $newSuggest = array();
             foreach($suggest as $k=>$v){
-                $newSuggest .= $v->content;
+                $newSuggest[]= $v->content;
             }
             //dd($suggest);
             $data = array(
                 'id'=>$opinion->id,
                 'type'=>$opinion->type,
                 'remark'=>$opinion->remark,
-                'suggest'=>['name'=>'经调查了解','content'=>$newSuggest],
+                'suggest'=>['name'=>'本次建议如下','content'=>$newSuggest],
             );
            // dd($data);
         }

@@ -97,49 +97,46 @@ class ExpertController extends Controller
             ->select('experts.name as expertname','experts.certification_img','experts.icon','experts.certification','experts.good_at','experts.intro','experts.province_id','experts.city_id',
                 'experts_services.expert_id','experts_services.service_id','experts_services.price','experts_services.description','experts_services.limit_free','services.name','services.stat')
             ->where('experts.id',$id)
-            ->first();
+            ->get();
         //dd($data);
         if($data){
             //组装城市
-            $city = DB::select('select p.name as provincename,c.name as cityname from bu_provinces as p left join bu_citys as c on c.provinceid= p.id where c.provinceid =? and c.cityid=?',[$data->province_id,$data->city_id]);
+            $city = DB::select('select p.name as provincename,c.name as cityname from bu_provinces as p left join bu_citys as c on c.provinceid= p.id where c.provinceid =? and c.cityid=?',[$data[0]->province_id,$data[0]->city_id]);
             //dd($city);
 
-            $data->area = $city ? $city[0]->provincename.$city[0]->cityname : '';
+            $data[0]->area = $city ? $city[0]->provincename.$city[0]->cityname : '';
             $config = require base_path('config/fieldDictionary.php');
-
-            $data->service =
-                array(
-                array(
-                'id'=>$data->service_id,
-                'name'=>$data->name,
-                'price'=>$data->price,
-                'description'=>$data->description,
-                'stat'=>$data->stat,
-                'limit_free'=>$data->limit_free)
-                );
+            foreach($data as $k=>$v){
+                $data[0]->service[$k]['id'] = $v->service_id;
+                $data[0]->service[$k]['name'] = $v->name;
+                $data[0]->service[$k]['price'] = $v->price;
+                $data[0]->service[$k]['description'] = $v->description;
+                $data[0]->service[$k]['stat'] = $v->stat;
+                $data[0]->service[$k]['limit_free'] = $v->limit_free;
+            }
 
             //组装擅长、认证
-            $goodAt = explode(',',$data->good_at);
-            $certification = explode(',',$data->certification);
+            $goodAt = explode(',',$data[0]->good_at);
+            $certification = explode(',',$data[0]->certification);
 
-            unset($data->good_at,$data->certification,$data->province_id,$data->city_id,$data->name,$data->price,$data->description,$data->stat,$data->limit_free);
+            unset($data[0]->good_at,$data[0]->certification,$data[0]->province_id,$data[0]->city_id,$data[0]->name,$data[0]->price,$data[0]->description,$data[0]->stat,$data[0]->limit_free);
             if($goodAt){
                 foreach ($goodAt as $k=>$v){
-                    $data->good_at[$k] = $config['good_at'][$v];
+                    $data[0]->good_at[$k] = $config['good_at'][$v];
                 }
             }else{
-                $data->good_at = [];
+                $data[0]->good_at = [];
             }
             //dd($data['good_at']);
             if($certification){
                 foreach ($certification as $k=>$v){
-                    $data->certification[$k] = $config['certification'][$v];
+                    $data[0]->certification[$k] = $config['certification'][$v];
                 }
             }else{
-                $data->certification = [];
+                $data[0]->certification = [];
             }
         }
         //dd($data);
-        return api_success($data);
+        return api_success($data[0]);
     }
 }
