@@ -67,6 +67,7 @@ class TopicController extends Controller
                 }else{
                     $v->cate = '';
                 }
+                $v->created_at = date('m-d H:i',strtotime($v->created_at));
                 unset($v->province_id,$v->city_id);
             }
         }
