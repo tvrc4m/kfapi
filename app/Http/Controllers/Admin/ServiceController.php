@@ -54,11 +54,11 @@ class ServiceController extends Controller
         ]);
 
         $createService = Services::create($request->all());
-
+//dd($createService);
         if(!$createService){
             return api_error();
         }
-        return api_success();
+        return api_success($createService->toArray());
     }
 
     /**
