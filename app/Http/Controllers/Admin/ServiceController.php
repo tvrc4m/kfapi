@@ -19,9 +19,10 @@ class ServiceController extends Controller
     }
 
     //服务列表
-    public function getAllService()
+    public function getAllService(Request $request)
     {
-        $services = Services::paginate(20)->toArray();
+        $cate = $request->input('cate');
+        $services = Services::paginate(20)->where('cate',$cate)->toArray();
         return api_success($services);
     }
 
