@@ -221,20 +221,6 @@ class RecordController extends Controller
      */
     public function getOneOpinion(Request $request,$opinionId)
     {
-
-        $device = $request->header('device');
-        $userId = Auth::user()['id'];
-        //dd($myDevice);
-        $info = DB::table('user_question_report')
-                ->leftJoin('users','users.id','=','user_question_report.user_id')
-                ->select(['user_question_report.is_hide','users.device'])
-                ->where(['user_question_report.id'=>$opinionId])->first();
-        //dd($info);
-        if($info && $info->is_hide==2){
-            if($info->device !== $device){
-                return api_error('您没有权限查看此意见书');
-            }
-        }
         $opinion = DB::table('user_question_report')
             ->select('id','law_rule_ids','user_question_report.case_ids','user_question_report.suggest_ids','user_question_report.type','understand','remark')
             ->where('id',$opinionId)
