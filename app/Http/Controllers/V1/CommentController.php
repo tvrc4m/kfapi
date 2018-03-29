@@ -59,7 +59,7 @@ class CommentController extends Controller
             ->leftJoin('experts', 'experts.id', '=', 'comments.expert_id')
             ->leftJoin('topics','comments.topic_id','=','topics.id')
             ->select('comments.id as comment_id','topics.id as topic_id','experts.nickname as expertname','experts.icon','experts.job_id','comments.content')
-            ->where('comments.top',1)
+            ->where(['comments.top'=>1,'topics.is_hide'=>1])
             ->orderBy('comments.created_at','desc')
             ->limit(4)
             ->get()
