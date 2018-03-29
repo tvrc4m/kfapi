@@ -86,7 +86,7 @@ class QuestionController extends Controller
             'options' => 'required|array',
             'options.*.name' => 'required',
             'options.*.weight' => 'numeric',
-            'options.*.keyword' => 'required|array',
+            'options.*.keyword' => 'array',
         ],[
             'title.required' => '标题不能为空',
             'title.max' => '标题不能超过255个字符',
@@ -99,7 +99,6 @@ class QuestionController extends Controller
             'options.array' => '问题选项格式不对',
             'options.*.name.required' => '选项名称不能为空',
             'options.*.weight.numeric' => '选项权重必须是数字',
-            'options.*.keyword.required' => '选项关键词必填',
             'options.*.keyword.array' => '选项关键词必须是数组',
         ]);
 
