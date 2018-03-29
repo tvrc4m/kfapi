@@ -16,8 +16,8 @@
         ),
         //认证
         'certification' => array(
-            '1'=>array('id'=>1,'name'=>'官方认证'),
-            '2'=>array('id'=>2,'name'=>'专业律师'),
-            '3'=>array('id'=>3,'name'=>'专业咨询师'),
+            '1'=>array('id'=>1,'name'=>'官方认证','sort'=>1),
+            '2'=>array('id'=>2,'name'=>'专业律师','sort'=>2),
+            '3'=>array('id'=>3,'name'=>'专业咨询师','sort'=>3),
         ),
     );
