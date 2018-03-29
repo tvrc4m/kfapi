@@ -289,7 +289,7 @@ class UserQuestionReport extends Model
         $percentArrSorted = arraySort($percentArr, 'percent');
         $law_rule_ids = [];
         foreach ($percentArrSorted as $v) {
-            if (count($law_rule_ids) < 1) { // 只取得相似度前一
+            if (count($law_rule_ids) < 3) { // 只取得相似度前三
                 $law_rule_ids[] = $v['law_rule_id'];
             }
         }

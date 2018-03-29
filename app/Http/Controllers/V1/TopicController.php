@@ -67,6 +67,7 @@ class TopicController extends Controller
                 }else{
                     $v->cate = '';
                 }
+                $v->created_at = date('m-d H:i',strtotime($v->created_at));
                 unset($v->province_id,$v->city_id);
             }
         }
@@ -135,7 +136,7 @@ class TopicController extends Controller
         }else{
             $topic->cate = '';
         }
-
+        $topic->created_at = date('m-d H:i',strtotime($topic->created_at));
         unset($topic->province_id,$topic->city_id,$topic->suggest_ids,$topic->case_ids);
         //dd($topic);
         return api_success($topic);

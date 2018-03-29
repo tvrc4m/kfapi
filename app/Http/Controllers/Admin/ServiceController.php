@@ -19,9 +19,11 @@ class ServiceController extends Controller
     }
 
     //服务列表
-    public function getAllService()
+    public function getAllService(Request $request)
     {
-        $services = Services::paginate(20)->toArray();
+        $cate = $request->input('cate');
+        $services = Services::where('cate',$cate)->paginate(20)->toArray();
+        //dd($services);
         return api_success($services);
     }
 
@@ -53,11 +55,11 @@ class ServiceController extends Controller
         ]);
 
         $createService = Services::create($request->all());
-
+//dd($createService);
         if(!$createService){
             return api_error();
         }
-        return api_success();
+        return api_success($createService->toArray());
     }
 
     /**
