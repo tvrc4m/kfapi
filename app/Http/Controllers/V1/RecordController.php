@@ -219,24 +219,15 @@ class RecordController extends Controller
      * @param $id
      * @return \Illuminate\Http\JsonResponse
      */
-    public function getOneOpinion(Request $request)
+    public function getOneOpinion(Request $request,$opinionId)
     {
-        //dd($user_id);
-        //dd($topicIds);
-        $opinionId = $request->input('opinion_id');
-        $topicId = $request->input('topic_id');
-        $myDevice = Auth::user()['device'];
-        $device = $request->header('device');
-        //dd($device);
-        //dd($topicId);
-        $topic = Topics::select('is_hide')->where('id',$topicId)->first()->toArray();
-        //dd($topic);
-        if($topic['is_hide']==2){
-            if($device = '' || $device !==$myDevice){
-                return api_error('您没有权限查看');
-            }
-        }
 
+        $device = $request->header('device');
+        $myDevice = Auth::user()['device'];
+        //dd($myDevice);
+        if($device = '' || $device !==$myDevice){
+            return api_error('您没有权限查看');
+        }
         $opinion = DB::table('user_question_report')
             ->select('id','law_rule_ids','user_question_report.case_ids','user_question_report.suggest_ids','user_question_report.type','understand','remark')
             ->where('id',$opinionId)
