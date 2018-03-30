@@ -149,9 +149,8 @@
             })
             $(document).on('click','.list-hide',function(){
                 var parent=$(this).parent()
-                parent.find('article').slideUp("fast");
+                parent.find('article').slideUp("fast",function(){$(this).parent().find('.list-show').show()});
                 $(this).hide();
-                parent.find('.list-show').show();
             })
         })
     </script>  
