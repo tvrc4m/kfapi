@@ -59,7 +59,6 @@ class TopicController extends Controller
             $city = DB::select('select p.name as provincename,c.name as cityname from bu_provinces as p left join bu_citys as c on c.provinceid= p.id where c.provinceid =? and c.cityid=?',[$topic->province_id,$topic->city_id]);
             //dd($city);
             $topic->area = $city ? $city[0]->provincename.$city[0]->cityname : '';
-            $topic->opinion_id = $topic->id;
             $topic->opinion_content = mb_substr($topic->understand,0,40);
             unset($topic->id,$topic->understand,$topic->province_id,$topic->city_id);
             return api_success($topic);
