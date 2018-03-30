@@ -130,11 +130,16 @@ class ExpertController extends Controller
             //dd($data['good_at']);
             if($certification){
                 foreach ($certification as $k=>$v){
+                    //dd($v);
+
                     $data[0]->certification[$k] = $config['certification'][$v];
+                    $sort[] = $data[0]->certification[$k]['sort'];
                 }
             }else{
                 $data[0]->certification = [];
             }
+            //dd($sort);
+            array_multisort($sort,SORT_ASC,$data[0]->certification);
         }
         //dd($data);
         return api_success($data[0]);
