@@ -51,7 +51,7 @@ class TopicController extends Controller
         $topic = DB::table('topics')
             ->leftJoin('users', 'users.id', '=', 'topics.user_id')
             ->leftJoin('user_question_report', 'user_question_report.user_id', '=', 'topics.user_id')
-            ->select('topics.content','topics.created_at','users.user_name','users.province_id','users.city_id','user_question_report.id','user_question_report.understand')
+            ->select('topics.content','topics.created_at','users.user_name','users.id as user_id','users.province_id','users.city_id','user_question_report.id','user_question_report.understand')
             ->where('topics.id',$id)
             ->first();
         //dd($topic);
