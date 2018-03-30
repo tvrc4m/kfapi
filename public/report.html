@@ -143,15 +143,14 @@
                 // other.find('.list-hide').fadeOut();
 
                 var parent=$(this).parents('.section')
-                parent.find('article').slideDown();
-                parent.find('.list-hide').fadeIn().css('display','block');
-                $(this).fadeOut();
+                parent.find('article').slideDown("fast");
+                parent.find('.list-hide').show().css('display','block');
+                $(this).hide();
             })
             $(document).on('click','.list-hide',function(){
                 var parent=$(this).parent()
-                parent.find('article').slideUp();
-                $(this).fadeOut();
-                parent.find('.list-show').fadeIn();
+                parent.find('article').slideUp("fast",function(){$(this).parent().find('.list-show').show()});
+                $(this).hide();
             })
         })
     </script>  
