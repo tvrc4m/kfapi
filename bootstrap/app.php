@@ -27,6 +27,8 @@ $app->withFacades();
 
 $app->withEloquent();
 
+$app->configure('common');
+
 /*
 |--------------------------------------------------------------------------
 | Register Container Bindings
