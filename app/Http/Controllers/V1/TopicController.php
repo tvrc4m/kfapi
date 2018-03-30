@@ -147,11 +147,14 @@ class TopicController extends Controller
     {
         $this->validate($request, [
             'paper_id' => 'required|numeric',
+            'cate' => 'required|numeric',
             'content' => 'required|max:255',
             'description' => 'required|max:500',
         ],[
             'paper_id.required' => '答卷ID不能为空',
             'paper_id.numeric' => '答卷ID不合法',
+            'cate.required' => '问题分类不能为空',
+            'cate.numeric' => '问题分类不合法',
             'content.required' => '问题不能为空',
             'content.max' => '问题不超过255个字符',
             'description.required' => '情感描述不能为空',
@@ -161,6 +164,7 @@ class TopicController extends Controller
         $userid = \Auth::user()['id'];
         $data = array(
             'user_id'=>$userid,
+            'cate'=>$request->input('cate'),
             'user_answer_id'=>$request->input('paper_id'),
             'content'=>$request->input('content'),
             'description'=>$request->input('description'),

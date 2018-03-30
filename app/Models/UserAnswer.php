@@ -86,7 +86,7 @@ class UserAnswer extends Model
 
         // 取得问题集
         $collect_id_arr = $paper->wait_question_collection_ids;
-        if (empty($collect_id_arr)) {
+        if (empty($collect_id_arr)) { // 如果代做问题集为空
             // 修改试卷状态为已完成
             $paper->stat = self::STATUS_FINISH;
             $paper->save();
@@ -97,6 +97,7 @@ class UserAnswer extends Model
                 'type' => $paper->type ?? 1, // 试卷类型
             ];
         }
+        // 查询需要回答的题集
         $collect_id = $collect_id_arr[0];
         $collect    = QuestionCollection::where('id', $collect_id)->firstOrFail();
 
