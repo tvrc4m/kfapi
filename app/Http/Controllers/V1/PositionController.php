@@ -53,7 +53,7 @@ class PositionController extends Controller
         if (!empty($province)){
             $province_info = Province::where('name', 'like', '%'.$province.'%')->get()->toArray();
             if (!empty($province_info)){
-                if (in_array($province_info[0]['id'], [11,12,31,50])){
+                if (in_array($province_info[0]['id'], [11,12,31,50,81,82])){
                     $city = $district;
                 }
                 $city_info = City::where('provinceid', $province_info[0]['id'])->where('name', 'like', '%'.$city.'%')->get()->toArray();
