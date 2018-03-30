@@ -31,7 +31,7 @@ class TopicController extends Controller
         $topics = DB::table('topics')
             ->leftJoin('invitations', 'invitations.topic_id', '=', 'topics.id')
             ->leftJoin('users', 'users.id', '=', 'topics.user_id')
-            ->select('invitations.id as invi_id','topics.id','topics.content','topics.created_at','users.user_name')
+            ->select('invitations.id as invi_id','topics.id','topics.user_id','topics.content','topics.created_at','users.user_name')
             ->where('invitations.expert_id',$expertId)
             ->orderBy('topics.created_at','desc')
             ->paginate(20)
@@ -50,7 +50,7 @@ class TopicController extends Controller
         //dd($data);
         $topic = DB::table('topics')
             ->leftJoin('users', 'users.id', '=', 'topics.user_id')
-            ->leftJoin('user_question_report', 'user_question_report.user_id', '=', 'topics.user_id')
+            ->leftJoin('user_question_report', 'user_question_report.id', '=', 'topics.opinion_id')
             ->select('topics.content','topics.created_at','topics.opinion_id','users.user_name','users.id as user_id','users.province_id','users.city_id','user_question_report.understand')
             ->where('topics.id',$id)
             ->first();
