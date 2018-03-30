@@ -47,12 +47,9 @@ class PositionController extends Controller
         $info = file_get_contents($string);
         $position_info = simplexml_load_string($info);
         $position_info = json_decode(json_encode($position_info), true);
-//dd($position_info['result']['addressComponent']);
         $province = mb_substr($position_info['result']['addressComponent']['province'], 0 ,2);
         $city = mb_substr($position_info['result']['addressComponent']['city'], 0 ,2);
         $district = mb_substr($position_info['result']['addressComponent']['district'], 0 ,2);
-        $province_id = '';
-        $city_id = '';
         if (!empty($province)){
             $province_info = Province::where('name', 'like', '%'.$province.'%')->get()->toArray();
             if (!empty($province_info)){
@@ -75,9 +72,15 @@ class PositionController extends Controller
             $province_id = '11';
             $city_id = '1105';
         }
-
         //更新
-
+        $user_id = $request->user()->id;
+        if (!$user_id){
+            return api_error('未找到用户id');
+        }
+        $result = User::where('id', $user_id)->update(['province_id' => $province_id, 'city_id' => $city_id]);
+        if (!$result){
+            return api_error();
+        }
         return api_success();
     }
 
