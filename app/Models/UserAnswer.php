@@ -93,7 +93,8 @@ class UserAnswer extends Model
 
             return [
                 'paper_stat' => self::STATUS_FINISH,
-                'paper_id' => $paper_id
+                'paper_id' => $paper_id,
+                'type' => $paper->type ?? 1, // 试卷类型
             ];
         }
         $collect_id = $collect_id_arr[0];
