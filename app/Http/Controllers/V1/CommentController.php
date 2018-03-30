@@ -44,6 +44,7 @@ class CommentController extends Controller
                 }else{
                     $v->job = '';
                 }
+                $v->created_at = date('m-d H:i',strtotime($v->created_at));
             }
         }
 
