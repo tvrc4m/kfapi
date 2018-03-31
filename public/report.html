@@ -153,16 +153,16 @@
                 $(this).hide();
             })
 
-            // if (/(iPhone|iPad|iPod|iOS)/i.test(navigator.userAgent)) {  //判断iPhone|iPad|iPod|iOS
+            if (/(iPhone|iPad|iPod|iOS)/i.test(navigator.userAgent)) {  //判断iPhone|iPad|iPod|iOS
             // alert("您的操作平台是iPhone|iPad|iPod|iOS");  
-            //     // window.location.href ="iPhone.html";
-            // } else if (/(Android)/i.test(navigator.userAgent)) {   //判断Android
+                // window.location.href ="iPhone.html";
+            } else if (/(Android)/i.test(navigator.userAgent)) {   //判断Android
             // alert("您的操作平台是Android"); 
-            //     // window.location.href ="Android.html";
-            // } else {  //pc
+                // window.location.href ="Android.html";
+            } else {  //pc
             // alert("您的操作平台是Pc端");
-            //     $('body').addClass(".max-width");
-            // };
+                $('body').addClass("max-width");
+            };
         })
     </script>  
 </body>
