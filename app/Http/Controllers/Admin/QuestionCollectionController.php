@@ -43,7 +43,7 @@ class QuestionCollectionController extends Controller
         //开启事务
         DB::beginTransaction();
         if (QuestionCollection::destroy(intval($id))) {
-            $quesOpList = QuesOpQuesCollect::where('id', $id)->get()->toArray();
+            $quesOpList = QuesOpQuesCollect::where('question_collection_id', $id)->get()->toArray();
             if (empty($quesOpList)){
                 DB::commit();
                 return api_success();
