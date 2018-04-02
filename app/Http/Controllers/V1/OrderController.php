@@ -49,7 +49,7 @@ class OrderController extends Controller
         $userId = \Auth::user()['id'];
         $data['user_id'] = $userId;
         file_put_contents('/tmp/order.log',$data).'\n';
-        //dd($data);
+        dd($data);
         // 开启事务
         DB::beginTransaction();
 
