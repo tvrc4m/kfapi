@@ -24,7 +24,7 @@ class OrderController extends Controller
     public function addOrder(Request $request)
     {
         //dd($request);
-        file_put_contents('/tmp/order.log',$request->input('service_id'));
+        file_put_contents('/tmp/order.log',$request->input('expert_id'));
         $this->validate($request, [
             'service_id' => 'required|numeric',
             'expert_id' => 'required|numeric',
