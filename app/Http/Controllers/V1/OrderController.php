@@ -48,7 +48,7 @@ class OrderController extends Controller
         $data=$request->except('user_name','phone');
         $userId = \Auth::user()['id'];
         $data['user_id'] = $userId;
-        dd($data);
+        //dd($data);
         // 开启事务
         DB::beginTransaction();
 
