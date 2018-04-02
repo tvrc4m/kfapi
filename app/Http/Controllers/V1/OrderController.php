@@ -24,7 +24,7 @@ class OrderController extends Controller
     public function addOrder(Request $request)
     {
         //dd($request);
-
+        file_put_contents('/tmp/order.log',$request->input('service_id'));
         $this->validate($request, [
             'service_id' => 'required|numeric',
             'expert_id' => 'required|numeric',
@@ -48,7 +48,6 @@ class OrderController extends Controller
         $data=$request->except('user_name','phone');
         $userId = \Auth::user()['id'];
         $data['user_id'] = $userId;
-        file_put_contents('/tmp/order.log',$data).'\n';
         dd($data);
         // 开启事务
         DB::beginTransaction();
