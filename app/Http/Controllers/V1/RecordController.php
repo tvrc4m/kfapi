@@ -55,7 +55,8 @@ class RecordController extends Controller
         //dd($cArr);
         if($record['data']){
             foreach ($record['data'] as $k=>&$v){
-                //dd($city);
+                //dd($v->created_at);
+                $v->topic_time = $this->getReadable(strtotime($v->created_at),1);
                 $v->created_at = date('m-d H:i:s',strtotime($v->created_at));
                 if($v->province_id && $v->city_id){
                     $v->area = $pArr[$v->province_id].$cArr[$v->city_id];
@@ -159,6 +160,7 @@ class RecordController extends Controller
                         }
                     }
                 }
+                $opinion->opinion_time = $this->getReadable(strtotime($opinion->created_at),2);
                 $opinion->created_at = date('m-d H:i:s',strtotime($opinion->created_at));
                 $opinion->updated_at = date('m-d H:i:s',strtotime($opinion->created_at));
                 $opinion->opinion_content = mb_substr($newSuggest,0,100);
@@ -288,13 +290,13 @@ class RecordController extends Controller
      * @param  [type] $time 时间戳
      * @return [type]       [description]
      */
-    function getReadable($time)
+    function getReadable($time,$type)
     {
         $j = time() - $time;
         if ($j < 0) {
             return false;
         }elseif ($j <= 1800) {
-            return '刚刚';
+            return '您在刚刚提问';
         }else {
             $hourTime = 3600;
             $dayTime = $hourTime * 24;
@@ -312,7 +314,11 @@ class RecordController extends Controller
             );
             foreach ($it as $item => $value) {
                 if (0 !=$c=floor($j/(int)$item)) {
-                    return $c.$value.'前';
+                    if($type==1){
+                        return '您在'.$c.$value.'前提问';
+                    }else{
+                        return '您在'.$c.$value.'前完成测试';
+                    }
                 }
 
             }
