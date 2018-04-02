@@ -282,4 +282,25 @@ class RecordController extends Controller
         //dd($opinion);
         return api_success($data);
     }
+
+    //时间转换格式
+    function secToTime($times){
+        $result = '00:00:00';
+        if ($times>0) {
+            $hour = floor($times/3600);
+            if($hour<10){
+                $hour = "0".$hour;
+            }
+            $minute = floor(($times-3600 * $hour)/60);
+            if($minute<10){
+                $minute = "0".$minute;
+            }
+            $second = floor((($times-3600 * $hour) - 60 * $minute) % 60);
+            if($second<10){
+                $second = "0".$second;
+            }
+            $result = $hour.':'.$minute.':'.$second;
+        }
+        return $result;
+    }
 }

@@ -23,6 +23,7 @@ class OrderController extends Controller
     //提交订单
     public function addOrder(Request $request)
     {
+        file_put_contents('/tmp/order.log',$request).'\n';
         $this->validate($request, [
             'service_id' => 'required|numeric',
             'expert_id' => 'required|numeric',
@@ -50,10 +51,11 @@ class OrderController extends Controller
         DB::beginTransaction();
 
         $order = Order::create($data);
+        file_put_contents('/tmp/order.log',$order).'\n';
         $userinfo = $request->only('user_name','phone');
-
+        file_put_contents('/tmp/order.log',$userinfo).'\n';
         $user = User::create($userinfo);
-        if(!$order && !$user){
+        if(!$user){
             DB::rollBack();
             return api_error();
         }
