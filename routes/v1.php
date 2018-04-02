@@ -7,7 +7,7 @@
  */
 
 $router->get('test', 'TestController@index');
-$router->post('test', 'TestController@post');
+$router->post('test/add', 'TestController@addComment');
 
 // 问题相关
 $router->group(['prefix' => 'question'], function () use ($router) {
