@@ -43,15 +43,21 @@ class ExpertController extends Controller
             foreach ($list['data'] as $k=>$v){
                 $expert_id[] = $v['id'];
             }
+        }else{
+            $expert_id = array();
         }
-        //dd($expert_id);
-        $invitation = DB::table('invitations')->where(['user_id'=>$user_id,'topic_id'=>$topic_id])->whereIn('expert_id',$expert_id)->get()->toArray();
-//dd($invitation);
-        if($invitation){
-            foreach($invitation as $k=>$v){
-                $expertId[] = $v->expert_id;
+        if($expert_id){
+            $invitation = DB::table('invitations')->where(['user_id'=>$user_id,'topic_id'=>$topic_id])->whereIn('expert_id',$expert_id)->get()->toArray();
+            if($invitation){
+                foreach($invitation as $k=>$v){
+                    $expertId[] = $v->expert_id;
+                }
             }
         }
+        //dd($expert_id);
+
+//dd($invitation);
+
         //dd($expertId);
         $newJobs = [];
         foreach($jobs as $k=>$v){
