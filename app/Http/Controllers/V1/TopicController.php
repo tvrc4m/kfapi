@@ -23,6 +23,7 @@ class TopicController extends Controller
     public function getAllTopic(Request $request)
     {
         //dd($request->header());
+        file_put_contents('/tmp/topic.log',$request);
         file_put_contents('/tmp/topic.log',$request->header('device'));
         $perpage = $request->input('per_page');
 
