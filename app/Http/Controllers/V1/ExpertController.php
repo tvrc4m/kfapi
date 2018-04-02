@@ -36,7 +36,7 @@ class ExpertController extends Controller
         //dd($config);
         $jobs = $config['job'];
         $jobs = array_values($jobs);
-        $list = Experts::select(['id','name','icon', 'job_id', 'intro','type'])->where('type',$type)->paginate($per_page)->toArray();
+        $list = Experts::select(['id','nickname','icon', 'job_id', 'intro','type'])->where('type',$type)->paginate($per_page)->toArray();
 //dd($list);
         //dd($jobs);
         if($list['data']){
@@ -73,7 +73,7 @@ class ExpertController extends Controller
                     $job = '';
                 }
                 $list['data'][$k]['id'] = $v['id'];
-                $list['data'][$k]['name'] = $v['name'];
+                $list['data'][$k]['name'] = $v['nickname'];
                 $list['data'][$k]['icon'] = $v['icon'];
                 $list['data'][$k]['job'] = $job;
                 $list['data'][$k]['intro'] = $v['intro'];
