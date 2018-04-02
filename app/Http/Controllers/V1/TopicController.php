@@ -67,6 +67,7 @@ class TopicController extends Controller
                 }else{
                     $v->cate = '';
                 }
+                $v->created_at = date('m-d H:i',strtotime($v->created_at));
                 unset($v->province_id,$v->city_id);
             }
         }
@@ -85,7 +86,7 @@ class TopicController extends Controller
         $topic = DB::table('topics')
             ->leftJoin('users', 'users.id', '=', 'topics.user_id')
             ->leftJoin('user_question_report', 'user_question_report.id', '=', 'topics.opinion_id')
-            ->select('topics.id','topics.cate','topics.content','topics.comments','topics.created_at','users.user_name','users.id','users.province_id','users.city_id','topics.opinion_id','user_question_report.suggest_ids','user_question_report.case_ids')
+            ->select('topics.id','topics.cate','topics.content','topics.comments','topics.created_at','users.user_name','users.id as user_id','users.province_id','users.city_id','topics.opinion_id','user_question_report.suggest_ids','user_question_report.case_ids')
             ->where('topics.id',$id)
             ->first();
         //dd($topic);
@@ -119,11 +120,13 @@ class TopicController extends Controller
             }
         }
 //dd($newSuggest);
-        $topic->opinion_content = mb_substr($newSuggest,0,20);
+        $topic->opinion_content = $newSuggest;
 
         $city = DB::select('select p.name as provincename,c.name as cityname from bu_provinces as p left join bu_citys as c on c.provinceid= p.id where c.provinceid =? and c.cityid=?',[$topic->province_id,$topic->city_id]);
         if($city){
             $topic->area = $city[0]->provincename.$city[0]->cityname;
+        }else{
+            $topic->area = '';
         }
 
         if($topic->cate == 1){
@@ -133,7 +136,7 @@ class TopicController extends Controller
         }else{
             $topic->cate = '';
         }
-
+        $topic->created_at = date('m-d H:i',strtotime($topic->created_at));
         unset($topic->province_id,$topic->city_id,$topic->suggest_ids,$topic->case_ids);
         //dd($topic);
         return api_success($topic);
@@ -144,20 +147,24 @@ class TopicController extends Controller
     {
         $this->validate($request, [
             'paper_id' => 'required|numeric',
-            'content' => 'required|max:255',
-            'description' => 'required|max:500',
+            'cate' => 'required|numeric',
+            'content' => 'required',
+            'description' => 'required',
         ],[
             'paper_id.required' => '答卷ID不能为空',
             'paper_id.numeric' => '答卷ID不合法',
+            'cate.required' => '问题分类不能为空',
+            'cate.numeric' => '问题分类不合法',
             'content.required' => '问题不能为空',
-            'content.max' => '问题不超过255个字符',
+//            'content.max' => '问题不超过500个字符',
             'description.required' => '情感描述不能为空',
-            'description.max' => '情感描述不超过500个字符',
+//            'description.max' => '情感描述不超过500个字符',
         ]);
 
         $userid = \Auth::user()['id'];
         $data = array(
             'user_id'=>$userid,
+            'cate'=>$request->input('cate'),
             'user_answer_id'=>$request->input('paper_id'),
             'content'=>$request->input('content'),
             'description'=>$request->input('description'),
@@ -174,20 +181,32 @@ class TopicController extends Controller
     {
         $status = $request->input('is_hide');
         $topic_id = $request->input('topic_id');
-
+        $userId = \Auth::user()['id'];
+        //dd($userId);
         $topic = Topics::where('id',$topic_id)->first();
+        //dd($topic);
 
+        if(!$topic){
+            return api_error('没有此问题');
+        }
         $data = array(
             'is_hide'=>$status,
         );
-        if($topic){
-            $result = $topic->update($data);
-            if(!$result){
-                return api_error('修改状态失败');
-            }
-        }else{
-            return api_error('没有此问题');
+        // 开启事务
+        DB::beginTransaction();
+        $result1 = $topic->update($data);
+        $opinionId = $topic->opinion_id??0;
+        //dd($opinionId);
+        if($opinionId){
+            $result2 = DB::table('user_question_report')->where(['user_id'=>$userId,'id'=>$opinionId])->update($data);
         }
+        if (!$result1) {
+            DB::rollBack();
+            return api_error('修改问题状态失败');
+        }
+        DB::commit();
+
+
         return api_success();
     }
 }

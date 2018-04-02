@@ -100,21 +100,19 @@ class Question extends Model
                 DB::rollBack();
                 throw new \Exception('更新失败');
             }
-            // 删除原来的关键词信息
+            /*// 删除原来的关键词信息
             $ops = QuestionOption::where('question_id', $question->id)->with('keyword')->get();
             foreach ($ops as $op) {
                 $op->keyword()->detach();
             }
             // 删除原来的选项信息
-            QuestionOption::where('question_id', $question->id)->delete();
+            QuestionOption::where('question_id', $question->id)->delete();*/
         }
 
         // 保存选项信息
         if (!empty($options['options'])) {
             foreach ($options['options'] as $option) {
-                $questionOption = QuestionOption::create([
-                    'question_id' => $question->id,
-                    'options' => $option['name'],
+                $questionOption = QuestionOption::updateOrCreate(['question_id' => $question->id,'options' => $option['name']],[
                     'weight' => intval($option['weight'] ?? 0)
                 ]);
                 if (!$questionOption) {
@@ -124,7 +122,7 @@ class Question extends Model
                 if (!empty($option['keyword'])) {
                     foreach ($option['keyword'] as $keyword_id) {
                         // 保存关键词信息
-                        $keyword = QuestionOptionKeyword::create([
+                        $keyword = QuestionOptionKeyword::updateOrCreate([
                             'question_option_id' => $questionOption->id,
                             'keyword_id' => $keyword_id,
                         ]);

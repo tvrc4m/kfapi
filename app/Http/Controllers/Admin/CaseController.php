@@ -139,7 +139,7 @@ class CaseController extends Controller
         if (!empty($case_cate_id)) {
             $where['case_cate_id'] = $case_cate_id;
         }
-        if (!empty($is_breakup)) {
+        if (is_numeric($is_breakup) && in_array($is_breakup,[0,1])) {
             $where['is_breakup'] = $is_breakup;
         }
         if (!empty($case_date)) {

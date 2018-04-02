@@ -62,6 +62,12 @@ $router->group(['prefix' => 'order'], function () use ($router) {
     $router->get('/', 'OrderController@getOrder');
 });
 
+// 获取位置
+$router->group(['prefix' => 'position'], function () use ($router) {
+    //获取省和市
+    $router->post('/', 'PositionController@setPosition');
+});
+
 // 评测记录
 $router->group(['prefix' => 'record'], function () use ($router) {
 

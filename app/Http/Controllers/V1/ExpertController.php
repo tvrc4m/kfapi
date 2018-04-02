@@ -36,22 +36,28 @@ class ExpertController extends Controller
         //dd($config);
         $jobs = $config['job'];
         $jobs = array_values($jobs);
-        $list = Experts::select(['id','name','icon', 'job_id', 'intro','type'])->where('type',$type)->paginate($per_page)->toArray();
+        $list = Experts::select(['id','nickname','icon', 'job_id', 'intro','type'])->where('type',$type)->paginate($per_page)->toArray();
 //dd($list);
         //dd($jobs);
         if($list['data']){
             foreach ($list['data'] as $k=>$v){
                 $expert_id[] = $v['id'];
             }
+        }else{
+            $expert_id = array();
         }
-        //dd($expert_id);
-        $invitation = DB::table('invitations')->where(['user_id'=>$user_id,'topic_id'=>$topic_id])->whereIn('expert_id',$expert_id)->get()->toArray();
-//dd($invitation);
-        if($invitation){
-            foreach($invitation as $k=>$v){
-                $expertId[] = $v->expert_id;
+        if($expert_id){
+            $invitation = DB::table('invitations')->where(['user_id'=>$user_id,'topic_id'=>$topic_id])->whereIn('expert_id',$expert_id)->get()->toArray();
+            if($invitation){
+                foreach($invitation as $k=>$v){
+                    $expertId[] = $v->expert_id;
+                }
             }
         }
+        //dd($expert_id);
+
+//dd($invitation);
+
         //dd($expertId);
         $newJobs = [];
         foreach($jobs as $k=>$v){
@@ -73,7 +79,7 @@ class ExpertController extends Controller
                     $job = '';
                 }
                 $list['data'][$k]['id'] = $v['id'];
-                $list['data'][$k]['name'] = $v['name'];
+                $list['data'][$k]['name'] = $v['nickname'];
                 $list['data'][$k]['icon'] = $v['icon'];
                 $list['data'][$k]['job'] = $job;
                 $list['data'][$k]['intro'] = $v['intro'];
@@ -130,11 +136,16 @@ class ExpertController extends Controller
             //dd($data['good_at']);
             if($certification){
                 foreach ($certification as $k=>$v){
+                    //dd($v);
+
                     $data[0]->certification[$k] = $config['certification'][$v];
+                    $sort[] = $data[0]->certification[$k]['sort'];
                 }
             }else{
                 $data[0]->certification = [];
             }
+            //dd($sort);
+            array_multisort($sort,SORT_ASC,$data[0]->certification);
         }
         //dd($data);
         return api_success($data[0]);

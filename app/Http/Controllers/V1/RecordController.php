@@ -55,7 +55,8 @@ class RecordController extends Controller
         //dd($cArr);
         if($record['data']){
             foreach ($record['data'] as $k=>&$v){
-                //dd($city);
+                //dd($v->created_at);
+                $v->topic_time = $this->getReadable(strtotime($v->created_at),1);
                 $v->created_at = date('m-d H:i:s',strtotime($v->created_at));
                 if($v->province_id && $v->city_id){
                     $v->area = $pArr[$v->province_id].$cArr[$v->city_id];
@@ -159,6 +160,7 @@ class RecordController extends Controller
                         }
                     }
                 }
+                $opinion->opinion_time = $this->getReadable(strtotime($opinion->created_at),2);
                 $opinion->created_at = date('m-d H:i:s',strtotime($opinion->created_at));
                 $opinion->updated_at = date('m-d H:i:s',strtotime($opinion->created_at));
                 $opinion->opinion_content = mb_substr($newSuggest,0,100);
@@ -221,13 +223,6 @@ class RecordController extends Controller
      */
     public function getOneOpinion(Request $request,$opinionId)
     {
-
-        $device = $request->header('device');
-        $myDevice = Auth::user()['device'];
-        //dd($myDevice);
-        if($device = '' || $device !==$myDevice){
-            return api_error('您没有权限查看');
-        }
         $opinion = DB::table('user_question_report')
             ->select('id','law_rule_ids','user_question_report.case_ids','user_question_report.suggest_ids','user_question_report.type','understand','remark')
             ->where('id',$opinionId)
@@ -288,5 +283,45 @@ class RecordController extends Controller
         //dd($data);
         //dd($opinion);
         return api_success($data);
+    }
+
+    /**
+     ** 获取 N年，N月，N天，N小时，N分钟前 这种字符串
+     * @param  [type] $time 时间戳
+     * @return [type]       [description]
+     */
+    function getReadable($time,$type)
+    {
+        $j = time() - $time;
+        if ($j < 0) {
+            return false;
+        }elseif ($j <= 1800) {
+            return '您在刚刚提问';
+        }else {
+            $hourTime = 3600;
+            $dayTime = $hourTime * 24;
+            $weekTime = $dayTime * 7;
+            $mouthTime = 30 * $dayTime;
+            $yearTime = 365 * $dayTime;
+            $it = array(
+                $yearTime => '年',
+                $mouthTime => '月',
+                $weekTime => '周',
+                $dayTime => '天',
+                $hourTime => '小时',
+                60 => '分钟',
+                1 => '秒'
+            );
+            foreach ($it as $item => $value) {
+                if (0 !=$c=floor($j/(int)$item)) {
+                    if($type==1){
+                        return '您在'.$c.$value.'前提问';
+                    }else{
+                        return '您在'.$c.$value.'前完成测试';
+                    }
+                }
+
+            }
+        }
     }
 }
