@@ -283,24 +283,39 @@ class RecordController extends Controller
         return api_success($data);
     }
 
-    //时间转换格式
-    function secToTime($times){
-        $result = '00:00:00';
-        if ($times>0) {
-            $hour = floor($times/3600);
-            if($hour<10){
-                $hour = "0".$hour;
+    /**
+     ** 获取 N年，N月，N天，N小时，N分钟前 这种字符串
+     * @param  [type] $time 时间戳
+     * @return [type]       [description]
+     */
+    function getReadable($time)
+    {
+        $j = time() - $time;
+        if ($j < 0) {
+            return false;
+        }elseif ($j <= 1800) {
+            return '刚刚';
+        }else {
+            $hourTime = 3600;
+            $dayTime = $hourTime * 24;
+            $weekTime = $dayTime * 7;
+            $mouthTime = 30 * $dayTime;
+            $yearTime = 365 * $dayTime;
+            $it = array(
+                $yearTime => '年',
+                $mouthTime => '月',
+                $weekTime => '周',
+                $dayTime => '天',
+                $hourTime => '小时',
+                60 => '分钟',
+                1 => '秒'
+            );
+            foreach ($it as $item => $value) {
+                if (0 !=$c=floor($j/(int)$item)) {
+                    return $c.$value.'前';
+                }
+
             }
-            $minute = floor(($times-3600 * $hour)/60);
-            if($minute<10){
-                $minute = "0".$minute;
-            }
-            $second = floor((($times-3600 * $hour) - 60 * $minute) % 60);
-            if($second<10){
-                $second = "0".$second;
-            }
-            $result = $hour.':'.$minute.':'.$second;
         }
-        return $result;
     }
 }

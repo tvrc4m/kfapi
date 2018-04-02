@@ -23,6 +23,7 @@ class OrderController extends Controller
     //提交订单
     public function addOrder(Request $request)
     {
+        //dd($request);
         file_put_contents('/tmp/order.log',$request).'\n';
         $this->validate($request, [
             'service_id' => 'required|numeric',
@@ -45,17 +46,24 @@ class OrderController extends Controller
         ]);
 
         $data=$request->except('user_name','phone');
-        $data['user_id'] = \Auth::user()['id'];
+        $userId = \Auth::user()['id'];
+        $data['user_id'] = $userId;
         //dd($data);
         // 开启事务
         DB::beginTransaction();
 
         $order = Order::create($data);
-        file_put_contents('/tmp/order.log',$order).'\n';
+
         $userinfo = $request->only('user_name','phone');
-        file_put_contents('/tmp/order.log',$userinfo).'\n';
-        $user = User::create($userinfo);
-        if(!$user){
+
+        $user = User::where('id',$userId)->first();
+        if($user){
+            $result = $user->update($userinfo);
+        }else{
+            $result = User::create($userinfo);
+        }
+
+        if(!$result){
             DB::rollBack();
             return api_error();
         }
