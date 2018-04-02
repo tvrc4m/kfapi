@@ -132,4 +132,51 @@ class TopicController extends Controller
         return api_success($comments);
     }
 
+//    /**
+//     * 新增专家回复(添加假数据1000)
+//     * @param Request $request
+//     * @return \Illuminate\Http\JsonResponse
+//     */
+//    public function test(Request $request)
+//    {
+//
+//        $this->validate($request, [
+//            'topic_id' => 'required|numeric',
+//            'content' => 'required|max:1000',
+//        ],[
+//            'topic_id.required' => '问题ID不能为空',
+//            'topic_id.numeric' => '问题ID不合法',
+//            'content.required' => '回复不能为空',
+//            'content.max' => '回复不能超过1000字符',
+//        ]);
+//        $topicId = $request->input('topic_id');
+//        //dd($topicId);
+//        $expert = Auth::guard('expert')->user()->toArray();
+//        if(!$expert){
+//            return api_error('请登录');
+//        }
+//
+//        $data = array(
+//            'topic_id'=>$request->input('topic_id'),
+//            'content'=>$request->input('content'),
+//            'expert_id'=>$expert['id'],
+//        );
+//
+//        $i = 1;
+//        while($i<=200){
+//            // 开启事务
+//            DB::beginTransaction();
+//            $comment = Comments::create($data);
+//            $comments = DB::update('update bu_topics set comments=comments+1 where id = ?', [$topicId]);
+//            if(!$comments || !$comment){
+//                DB::rollBack();
+//                return api_error();
+//            }
+//            DB::commit();
+//
+//            $i++;
+//        }
+//        return api_success();
+//    }
+
 }
