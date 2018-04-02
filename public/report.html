@@ -30,10 +30,10 @@
             var r = window.location.search.substr(1).match(reg);  //匹配目标参数
             if (r != null) return unescape(r[2]); return null; //返回参数值
         }
-        var debug=getUrlParam("debug");
-        if(debug=='dev'){
+        var host=document.location.host;
+        if(/dev\.*?/.test(host)){
             API="http://fdev.vrcdkj.cn/api"
-        }else if(debug=='staging'){
+        }else if(/staging\.*?/.test(host)){
             API="http://fstaging.vrcdkj.cn/api"
         }else{
             alert("未设置live url")
