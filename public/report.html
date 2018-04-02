@@ -24,11 +24,19 @@
     <!-- loading end -->
     <main id="opinionBook"></main>
     <script type="text/javascript">
-        var API="http://fdev.vrcdkj.cn/api"
+        var API=""
         function getUrlParam(name) {
             var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); //构造一个含有目标参数的正则表达式对象
             var r = window.location.search.substr(1).match(reg);  //匹配目标参数
             if (r != null) return unescape(r[2]); return null; //返回参数值
+        }
+        var debug=getUrlParam("debug");
+        if(debug=='dev'){
+            API="http://fdev.vrcdkj.cn/api"
+        }else if(debug=='staging'){
+            API="http://fstaging.vrcdkj.cn/api"
+        }else{
+            alert("未设置live url")
         }
         $(function () {
             var opinion_id=getUrlParam('id') || 15;
