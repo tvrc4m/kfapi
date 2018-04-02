@@ -120,7 +120,7 @@ class TopicController extends Controller
             }
         }
 //dd($newSuggest);
-        $topic->opinion_content = mb_substr($newSuggest,0,20);
+        $topic->opinion_content = $newSuggest;
 
         $city = DB::select('select p.name as provincename,c.name as cityname from bu_provinces as p left join bu_citys as c on c.provinceid= p.id where c.provinceid =? and c.cityid=?',[$topic->province_id,$topic->city_id]);
         if($city){
